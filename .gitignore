@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+*.pbix
+data/
+
+# local editor noise
+.vscode/
+Thumbs.db

@@ -129,7 +129,18 @@ git branch -M main
 git push -u origin main
 ```
 
-**GitHub Pages:** repo → Settings → Pages → Source `Deploy from a branch` → branch `main`, folder `/ (root)` → Save. A minute later the dashboard is at `https://<you>.github.io/ba-system/`. Add it to your phone's home screen so it opens in one tap.
+**GitHub Pages:** repo → Settings → Pages → Source `Deploy from a branch` → branch `main`, folder `/ (root)` → Save. A minute later the dashboard is at `https://<you>.github.io/ba-system/`.
+
+Pages is what makes the dashboard a real page rather than a file. Two things depend on it: `fetch()` is blocked on `file://`, so only a served page reads the markdown live, and you need a URL before a phone can open anything.
+
+### Installing it to your home screen
+
+The page ships a web app manifest and icons, so it installs like an app. No store, no download.
+
+- **iPhone:** open the Pages URL in **Safari** (not Chrome) → Share → *Add to Home Screen*.
+- **Android:** open it in Chrome → three dots → *Install app* or *Add to Home screen*.
+
+It then opens fullscreen with no address bar, and keeps working offline from the last version it loaded.
 
 Note that Pages makes the repo's contents public. Nothing here holds anything private beyond your own progress, but if you would rather it were not indexed, keep the repo private and use the local server instead.
 
@@ -167,6 +178,8 @@ For the tutor and the Day 28 mock interview, use `prompts/tutor-prompt.md` in a 
 ```
 ba-system/
 ├── index.html                    ← the dashboard
+├── manifest.webmanifest          ← lets it install to a phone home screen
+├── icon-180.png / icon-512.png   ← app icon
 ├── README.md                     ← you are here
 ├── START-HERE.md                 ← the original four-step setup
 ├── CLAUDE.md                     ← operating rules for Claude Code

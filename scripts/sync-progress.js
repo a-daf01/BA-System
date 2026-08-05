@@ -8,12 +8,17 @@
 //
 // Accepted input, one per line:
 //   D01 | 2026-08-03 | desk:Y phone:Y | conf:3 | note:
+//   D01 | 2026-08-03 | desk:Y phone:Y | conf:3 | done:2026-08-05 | note:
 //   - tangent I parked
+//
+// The optional `done:` field marks work finished after the day it was set for.
+// It is written by the dashboard when you backfill a day, and it is what the
+// weekly review reads to tell a backfill apart from a miss.
 
 const fs = require('fs');
 const L = require('./lib');
 
-const LOG_RE = /^D(\d{2})\s*\|.*\|\s*desk:\S*\s+phone:\S*\s*\|\s*conf:\S*\s*\|\s*note:/;
+const LOG_RE = /^D(\d{2})\s*\|.*\|\s*desk:\S*\s+phone:\S*\s*\|\s*conf:\S*\s*\|.*note:/;
 
 function apply(input) {
   const lines = input.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
@@ -80,6 +85,15 @@ function apply(input) {
   const rows = L.parseProgress(md);
   const done = Object.values(rows).filter((r) => /^[YP]$/.test(r.desk) || /^[YP]$/.test(r.phone)).length;
   console.log(`${done} of 28 days now have activity logged.`);
+
+  const late = Object.values(rows).filter((r) => r.lateBy > 0).sort((a, b) => a.day - b.day);
+  if (late.length) {
+    console.log(`${late.length} day(s) recorded as done late:`);
+    for (const r of late) {
+      console.log(`  D${String(r.day).padStart(2, '0')} scheduled ${r.date}, done ${r.done} (+${r.lateBy}d)`);
+    }
+    console.log('Run node scripts/catch-up.js --reflow so the review queue follows the work.');
+  }
 }
 
 const file = process.argv[2];

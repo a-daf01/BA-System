@@ -131,7 +131,14 @@ function splitAdds(s) {
 
 // --- progress parsing ------------------------------------------------------
 // D01 | 2026-08-01 | desk:Y phone:Y | conf:3 | note:
-const LOG_RE = /^D(\d{2})\s*\|\s*([^|]*)\|\s*desk:(\S*)\s+phone:(\S*)\s*\|\s*conf:(\S*)\s*\|\s*note:(.*)$/;
+// D01 | 2026-08-01 | desk:Y phone:Y | conf:3 | done:2026-08-05 | note:
+//
+// The optional `done:` field is the date the work actually happened, written
+// only when it is not the day's own date. That is the whole late-work record:
+// second column = when it was scheduled, done = when it got done. Lines
+// without it are days done on the day, and every pre-existing line still
+// parses unchanged.
+const LOG_RE = /^D(\d{2})\s*\|\s*([^|]*)\|\s*desk:(\S*)\s+phone:(\S*)\s*\|\s*conf:(\S*)\s*\|(?:\s*done:([^|]*)\|)?\s*note:(.*)$/;
 
 // The fenced block under "## Log". Scoped deliberately: the Format section
 // higher up the file contains a worked D01 example, and reading or rewriting
@@ -151,17 +158,44 @@ function parseProgress(md) {
     const m = LOG_RE.exec(raw.trim());
     if (!m) continue;
     const conf = /^[1-5]$/.test(m[5]) ? +m[5] : null;
+    const date = m[2].trim();
+    const done = (m[6] || '').trim();
+    const sd = toDate(date), dd = toDate(done);
     rows[+m[1]] = {
       day: +m[1],
-      date: m[2].trim(),
+      date,
       desk: m[3].toUpperCase(),
       phone: m[4].toUpperCase(),
       conf,
-      note: m[6].trim(),
-      logged: !!(m[2].trim() || m[3] || m[4]),
+      done: done || null,
+      lateBy: (sd && dd) ? Math.max(0, daysBetween(sd, dd)) : 0,
+      note: m[7].trim(),
+      // A row is logged only once it carries a date or a real mark. The blank
+      // template rows for Sundays already read "desk:-", which is the plan
+      // saying there is no desk block, not you saying you did it.
+      logged: !!(date || /^[YNP]$/.test(m[3].toUpperCase()) || /^[YNP]$/.test(m[4].toUpperCase())),
     };
   }
   return rows;
+}
+
+// A day is done when both blocks are satisfied. "-" means the plan has no
+// block there (Sundays have no desk block), which counts as satisfied.
+const dayComplete = (r) => !!r && /^[Y-]$/.test(r.desk) && /^[Y-]$/.test(r.phone);
+// Explicitly logged as not done. Written off on purpose, so it stops nagging.
+const dayWrittenOff = (r) =>
+  !!r && /^[N-]$/.test(r.desk) && /^[N-]$/.test(r.phone) && (r.desk === 'N' || r.phone === 'N');
+// Started but not finished, or never logged at all. This is the backlog.
+const dayOutstanding = (r) => !dayComplete(r) && !dayWrittenOff(r);
+
+// The one place a log line is built. index.html mirrors it exactly.
+function formatLogLine({ day, date, desk, phone, conf, done, note }) {
+  const d = String(done || '').trim();
+  const dt = String(date || '').trim();
+  return `D${String(day).padStart(2, '0')} | ${dt}${dt ? ' ' : ''}| desk:${desk || ''} phone:${phone || ''}` +
+    ` | conf:${conf || ''}` +
+    (d && d !== date ? ` | done:${d}` : '') +
+    ` | note:${note ? ' ' + note.trim() : ''}`;
 }
 
 function parkingLot(md) {
@@ -220,6 +254,46 @@ const INTERVALS = [1, 3, 7, 14, 30];
 function nextInterval(i) { const k = INTERVALS.indexOf(i); return INTERVALS[Math.min(k + 1, INTERVALS.length - 1)]; }
 function prevInterval(i) { const k = INTERVALS.indexOf(i); return INTERVALS[Math.max(k - 1, 0)]; }
 
+// Keep any one day's review block under the cap by promoting the strongest
+// items to a longer interval, never by letting the block grow. Repeated passes,
+// because a promoted item can overflow the day it lands on. Items without a
+// real due date (held back, see catch-up.js) are not scheduled, so they are
+// not counted against any day.
+function capDailyLoad(queue, cap = 8) {
+  const promoted = [];
+  const score = (i) => (i.hist.length ? i.hist[i.hist.length - 1] : 3);
+  for (let pass = 0; pass < 12; pass++) {
+    const byDate = {};
+    for (const i of queue) if (toDate(i.due)) (byDate[i.due] ||= []).push(i);
+    let changed = false;
+    for (const date of Object.keys(byDate).sort()) {
+      const bucket = byDate[date];
+      if (bucket.length <= cap) continue;
+      bucket.sort((a, b) => score(b) - score(a));       // strongest move first
+      for (const it of bucket.slice(0, bucket.length - cap)) {
+        const before = it.interval;
+        it.interval = nextInterval(before);
+        it.due = iso(addDays(toDate(date), it.interval));
+        promoted.push({ prompt: it.prompt, from: before, to: it.interval });
+        changed = true;
+      }
+    }
+    if (!changed) break;
+  }
+  return promoted;
+}
+
+// Sorted by due date, with held items last. Keeps the file readable.
+function sortQueue(queue) {
+  return queue.sort((a, b) => {
+    const ad = toDate(a.due), bd = toDate(b.due);
+    if (!ad && !bd) return 0;
+    if (!ad) return 1;
+    if (!bd) return -1;
+    return a.due < b.due ? -1 : a.due > b.due ? 1 : 0;
+  });
+}
+
 // --- applications ----------------------------------------------------------
 function countApplications(md) {
   const sec = /## Applications\s*([\s\S]*?)(?:\n---|$)/.exec(md);
@@ -241,8 +315,9 @@ const normalise = (s) => s.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\
 module.exports = {
   P, read, write, toDate, iso, addDays, today, daysBetween,
   getStartDate, buildSchedule, dayNumberFor, blockDate, CONSOLIDATION,
-  parsePlan, splitAdds, parseProgress, parkingLot, logBlock,
+  parsePlan, splitAdds, parseProgress, parkingLot, logBlock, formatLogLine,
+  dayComplete, dayWrittenOff, dayOutstanding,
   readQueueFile, writeQueueFile, parseQueueLine, formatQueueLine,
-  INTERVALS, nextInterval, prevInterval,
+  INTERVALS, nextInterval, prevInterval, capDailyLoad, sortQueue,
   countApplications, normalise,
 };

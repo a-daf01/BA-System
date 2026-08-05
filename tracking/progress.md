@@ -21,6 +21,20 @@ D01 | 2026-08-01 | desk:Y phone:Y | conf:3 | note:
 
 **If you miss a day, log the miss.** `D09 | 2026-08-09 | desk:N phone:N | conf:- | note: didn't happen`. The system adapts to honest data and breaks on gaps.
 
+## Doing a day late
+
+Missed days don't vanish. Open the dashboard, tap the back arrow until you reach the day, and do it. The line then carries a `done:` field — the date you actually did it:
+
+```
+D02 | 2026-08-04 | desk:Y phone:Y | conf:3 | done:2026-08-06 | note:
+```
+
+Second column is when it was **scheduled**. `done:` is when it **happened**. The field only appears when those differ, so a day done on the day looks exactly as it always did.
+
+This matters because the weekly review reads it. A day with `done:` set counts as **backfilled, not missed** — it does not trigger the "week was too heavy, cut next week" rule. What it does do is tell you how far your learning is drifting from the review schedule, and `node scripts/catch-up.js --reflow` moves that day's review items so they follow the work instead of a date on which nothing happened.
+
+**If you're not going to do it, write it off.** Tap *Write it off* on that day in the dashboard, or run `node scripts/catch-up.js --log-misses`. A written-off day stops appearing in the catch-up list. That is the point: either it gets done or it gets closed, and nothing sits in limbo.
+
 ---
 
 ## Log

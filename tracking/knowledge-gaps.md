@@ -58,7 +58,8 @@ interview question, and it is testing whether you notice the discount.
 **Answer:** It cannot. Two routes: export CSV from DB Browser (2 min, no install), or
 install a third-party SQLite ODBC driver and use Get Data → ODBC. CSV was the right
 call for Day 1 — `reference/datasets.md` explicitly says not to lose a day to setup.
-**Status:** `queued`
+**Status:** `queued` — **asked twice on Day 1.** Re-teach candidate at the Day 05
+checkpoint if it comes back a third time.
 
 ### Aggregating in a Power BI visual
 

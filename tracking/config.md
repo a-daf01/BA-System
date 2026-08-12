@@ -3,7 +3,7 @@
 Set this once. Everything else derives from it: the dashboard, every script, every due date.
 
 ```
-START_DATE: 2026-08-03
+START_DATE: 2026-08-12
 ```
 
 `START_DATE` is the calendar date of **Day 1**. Format `YYYY-MM-DD`.

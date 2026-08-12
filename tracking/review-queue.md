@@ -37,55 +37,55 @@ Saying it aloud is not optional dressing — it's the same skill the interview t
 Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 
 ```
-[1] due:2026-08-05 | NULL handling | 
-[1] due:2026-08-05 | LIKE vs = | 
-[1] due:2026-08-05 | filter logic as an error source | 
-[1] due:2026-08-06 | INNER vs LEFT | 
-[1] due:2026-08-06 | row fan-out | 
-[1] due:2026-08-06 | join direction | 
-[1] due:2026-08-07 | your 3 strongest CV bullets | 
-[1] due:2026-08-08 | WHERE vs HAVING | 
-[1] due:2026-08-08 | GROUP BY with multiple columns | 
-[1] due:2026-08-11 | CTE syntax | 
-[1] due:2026-08-11 | subquery vs CTE tradeoff | 
-[1] due:2026-08-12 | PARTITION BY | 
-[1] due:2026-08-12 | top-N-per-group pattern | 
-[1] due:2026-08-12 | LAG/LEAD | 
-[1] due:2026-08-13 | PK/FK | 
-[1] due:2026-08-13 | cardinality | 
-[1] due:2026-08-13 | 3NF | 
-[1] due:2026-08-13 | normalise vs denormalise tradeoff | 
-[1] due:2026-08-14 | fact vs dimension | 
-[1] due:2026-08-14 | star vs snowflake | 
-[1] due:2026-08-14 | reference vs transactional data | 
-[1] due:2026-08-14 | data mart | 
-[1] due:2026-08-15 | unpivot | 
-[1] due:2026-08-15 | applied steps | 
-[1] due:2026-08-15 | type changes as an error source | 
-[1] due:2026-08-16 | cardinality in Power BI | 
-[1] due:2026-08-16 | filter direction | 
-[1] due:2026-08-16 | date dimension | 
-[1] due:2026-08-18 | measure vs calculated column | 
-[1] due:2026-08-18 | DIVIDE vs / | 
-[1] due:2026-08-18 | filter context (intro) | 
-[1] due:2026-08-19 | ALL vs ALLEXCEPT | 
-[1] due:2026-08-19 | % of total pattern | 
-[1] due:2026-08-19 | filter context (deep) | 
-[1] due:2026-08-20 | YTD/QTD/MTD | 
-[1] due:2026-08-20 | SAMEPERIODLASTYEAR | 
-[1] due:2026-08-20 | marked date table | 
-[1] due:2026-08-21 | your portfolio 1 business question | 
-[1] due:2026-08-23 | portfolio 1 two-minute walkthrough | 
-[1] due:2026-08-25 | BRD vs FRD vs SRS | 
-[1] due:2026-08-25 | functional vs non-functional | 
-[1] due:2026-08-26 | user story format | 
-[1] due:2026-08-26 | Given/When/Then | 
-[1] due:2026-08-26 | UAT pass/fail criteria | 
-[1] due:2026-08-27 | as-is/to-be | 
-[1] due:2026-08-27 | gap analysis | 
-[1] due:2026-08-27 | your root-cause story | 
-[1] due:2026-08-29 | portfolio 2 walkthrough | 
-[1] due:2026-08-30 | the 8 technical answers | 
+[1] due:2026-08-14 | NULL handling | 
+[1] due:2026-08-14 | LIKE vs = | 
+[1] due:2026-08-14 | filter logic as an error source | 
+[1] due:2026-08-15 | INNER vs LEFT | 
+[1] due:2026-08-15 | row fan-out | 
+[1] due:2026-08-15 | join direction | 
+[1] due:2026-08-16 | your 3 strongest CV bullets | 
+[1] due:2026-08-18 | WHERE vs HAVING | 
+[1] due:2026-08-18 | GROUP BY with multiple columns | 
+[1] due:2026-08-20 | CTE syntax | 
+[1] due:2026-08-20 | subquery vs CTE tradeoff | 
+[1] due:2026-08-21 | PARTITION BY | 
+[1] due:2026-08-21 | top-N-per-group pattern | 
+[1] due:2026-08-21 | LAG/LEAD | 
+[1] due:2026-08-22 | PK/FK | 
+[1] due:2026-08-22 | cardinality | 
+[1] due:2026-08-22 | 3NF | 
+[1] due:2026-08-22 | normalise vs denormalise tradeoff | 
+[1] due:2026-08-23 | fact vs dimension | 
+[1] due:2026-08-23 | star vs snowflake | 
+[1] due:2026-08-23 | reference vs transactional data | 
+[1] due:2026-08-23 | data mart | 
+[1] due:2026-08-25 | unpivot | 
+[1] due:2026-08-25 | applied steps | 
+[1] due:2026-08-25 | type changes as an error source | 
+[1] due:2026-08-26 | cardinality in Power BI | 
+[1] due:2026-08-26 | filter direction | 
+[1] due:2026-08-26 | date dimension | 
+[1] due:2026-08-27 | measure vs calculated column | 
+[1] due:2026-08-27 | DIVIDE vs / | 
+[1] due:2026-08-27 | filter context (intro) | 
+[1] due:2026-08-28 | ALL vs ALLEXCEPT | 
+[1] due:2026-08-28 | % of total pattern | 
+[1] due:2026-08-28 | filter context (deep) | 
+[1] due:2026-08-29 | YTD/QTD/MTD | 
+[1] due:2026-08-29 | SAMEPERIODLASTYEAR | 
+[1] due:2026-08-29 | marked date table | 
+[1] due:2026-08-30 | your portfolio 1 business question | 
+[1] due:2026-09-02 | portfolio 1 two-minute walkthrough | 
+[1] due:2026-09-03 | BRD vs FRD vs SRS | 
+[1] due:2026-09-03 | functional vs non-functional | 
+[1] due:2026-09-04 | user story format | 
+[1] due:2026-09-04 | Given/When/Then | 
+[1] due:2026-09-04 | UAT pass/fail criteria | 
+[1] due:2026-09-05 | as-is/to-be | 
+[1] due:2026-09-05 | gap analysis | 
+[1] due:2026-09-05 | your root-cause story | 
+[1] due:2026-09-08 | portfolio 2 walkthrough | 
+[1] due:2026-09-09 | the 8 technical answers | 
 ```
 
 *(Claude Code populates this as you progress. Items are added by the "Adds to review queue" line at the bottom of each day in `plan/month-01.md`.)*

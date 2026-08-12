@@ -30,30 +30,30 @@ D01 | | desk: phone: | conf: | note:
 D02 | | desk: phone: | conf: | note:
 D03 | | desk: phone: | conf: | note:
 D04 | | desk: phone: | conf: | note:
-D05 | | desk: phone: | conf: | note:
+D05 | | desk:- phone: | conf: | note:
 D06 | | desk: phone: | conf: | note:
-D07 | | desk:- phone: | conf: | note:
+D07 | | desk: phone: | conf: | note:
 D08 | | desk: phone: | conf: | note:
 D09 | | desk: phone: | conf: | note:
 D10 | | desk: phone: | conf: | note:
 D11 | | desk: phone: | conf: | note:
-D12 | | desk: phone: | conf: | note:
+D12 | | desk:- phone: | conf: | note:
 D13 | | desk: phone: | conf: | note:
-D14 | | desk:- phone: | conf: | note:
+D14 | | desk: phone: | conf: | note:
 D15 | | desk: phone: | conf: | note:
 D16 | | desk: phone: | conf: | note:
 D17 | | desk: phone: | conf: | note:
 D18 | | desk: phone: | conf: | note:
-D19 | | desk: phone: | conf: | note:
+D19 | | desk:- phone: | conf: | note:
 D20 | | desk: phone: | conf: | note:
-D21 | | desk:- phone: | conf: | note:
+D21 | | desk: phone: | conf: | note:
 D22 | | desk: phone: | conf: | note:
 D23 | | desk: phone: | conf: | note:
 D24 | | desk: phone: | conf: | note:
 D25 | | desk: phone: | conf: | note:
-D26 | | desk: phone: | conf: | note:
+D26 | | desk:- phone: | conf: | note:
 D27 | | desk: phone: | conf: | note:
-D28 | | desk:- phone: | conf: | note:
+D28 | | desk: phone: | conf: | note:
 ```
 
 ---

@@ -41,6 +41,8 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [1] due:2026-08-13 | Write the SQL for top 5 Northwind products by revenue. Say why Discount changes the answer. | 
 [1] due:2026-08-13 | Why does SELECT * FROM Order Details fail, and what are the two ways to fix it? | 
 [1] due:2026-08-13 | Why does WHERE COUNT(*) > 10 fail, and what do you use instead? | 
+[1] due:2026-08-13 | In Power Query, what does Remove Errors actually do to your rows, and why is that dangerous in an analysis? | 
+[1] due:2026-08-13 | Is ROUND an alternative to SUM? Say what each one does and how you would use both in one query. | 
 [1] due:2026-08-14 | NULL handling | 
 [1] due:2026-08-14 | LIKE vs = | 
 [1] due:2026-08-14 | filter logic as an error source | 
@@ -50,7 +52,10 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [1] due:2026-08-15 | row fan-out | 
 [1] due:2026-08-15 | join direction | 
 [1] due:2026-08-15 | Write the SQL for Northwind customers with more than 10 orders, then say what it tells the business. | 
+[3] due:2026-08-15 | Why does SELECT TOP 5 fail in SQLite, and what replaces it? | 
+[3] due:2026-08-15 | In a GROUP BY query, what does SUM() do and where does the multiplication actually happen? | 
 [1] due:2026-08-16 | your 3 strongest CV bullets | 
+[3] due:2026-08-16 | Say the order you build a SQL query in, and why it is not the order it reads in. | 
 [1] due:2026-08-18 | WHERE vs HAVING | 
 [1] due:2026-08-18 | GROUP BY with multiple columns | 
 [1] due:2026-08-20 | CTE syntax | 

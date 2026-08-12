@@ -40,7 +40,7 @@ This matters because the weekly review reads it. A day with `done:` set counts a
 ## Log
 
 ```
-D01 | | desk: phone: | conf: | note:
+D01 | 2026-08-12 | desk:Y phone:Y | conf:4 | note: baseline test - got 1,2,3 unaided; looked up 4 (HAVING) and 5 (revenue). Self-corrected TOP->LIMIT and SUM. Power Query remove-errors not understood.
 D02 | | desk: phone: | conf: | note:
 D03 | | desk: phone: | conf: | note:
 D04 | | desk: phone: | conf: | note:

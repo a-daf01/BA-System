@@ -68,6 +68,21 @@ grouped by `ShipCountry` gives orders per country. The visual aggregates; you do
 pre-aggregate the data.
 **Status:** `queued`
 
+### HAVING vs WHERE
+
+**Gap:** Couldn't write "customers with more than 10 orders" — question 4 of the Day 1
+baseline test.
+**Answer:** `WHERE` filters individual rows *before* grouping. `HAVING` filters grouped
+results *after* aggregation. `WHERE COUNT(*) > 10` fails because no groups exist yet at
+the point `WHERE` runs.
+**Also surfaced:** every non-aggregated column in the `SELECT` must appear in `GROUP BY`.
+SQLite tolerates breaking this; SQL Server and Postgres reject it, so write it strictly.
+And a plain `JOIN` drops customers with zero orders — correct for this question, wrong
+if the ask were "including zeros", which needs `LEFT JOIN` and `COUNT(o.OrderID)`.
+**Why it matters:** This is the standard screening question for whether someone actually
+writes SQL or has only read about it. Expect it in an interview.
+**Status:** `queued`
+
 ### One config value drives every date in this system
 
 **Gap:** Didn't know what changing `START_DATE` would touch.

@@ -40,6 +40,7 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [1] due:2026-08-13 | Which Northwind download works with DB Browser for SQLite, and why does the sql-server-samples one not? | 
 [1] due:2026-08-13 | Write the SQL for top 5 Northwind products by revenue. Say why Discount changes the answer. | 
 [1] due:2026-08-13 | Why does SELECT * FROM Order Details fail, and what are the two ways to fix it? | 
+[1] due:2026-08-13 | Why does WHERE COUNT(*) > 10 fail, and what do you use instead? | 
 [1] due:2026-08-14 | NULL handling | 
 [1] due:2026-08-14 | LIKE vs = | 
 [1] due:2026-08-14 | filter logic as an error source | 
@@ -48,6 +49,7 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [1] due:2026-08-15 | INNER vs LEFT | 
 [1] due:2026-08-15 | row fan-out | 
 [1] due:2026-08-15 | join direction | 
+[1] due:2026-08-15 | Write the SQL for Northwind customers with more than 10 orders, then say what it tells the business. | 
 [1] due:2026-08-16 | your 3 strongest CV bullets | 
 [1] due:2026-08-18 | WHERE vs HAVING | 
 [1] due:2026-08-18 | GROUP BY with multiple columns | 

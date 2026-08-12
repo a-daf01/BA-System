@@ -50,6 +50,33 @@ Keep the daily review load at **5–8 items maximum**. If it exceeds that, promo
 ### 4. Month 2 generation
 At Day 28, read everything, then generate `plan/month-02.md` using `plan/day-template.md`. Weight it toward whatever confidence scores say is weakest, and toward whatever the applications tracker says employers are actually asking for in interviews.
 
+### 5. Knowledge gap capture
+
+Every prompt he types is appended to `tracking/questions-log.md` automatically by the
+UserPromptSubmit hook in `.claude/settings.json`. That file is a raw inbox — it needs no
+maintenance and nothing in it should ever be deleted.
+
+**Your job is to turn it into `tracking/knowledge-gaps.md`.** Do this at the end of any
+session where he asked about something he did not already know. He should never have to
+ask you to log something, and he should never write in either file himself.
+
+For each genuine gap, write an entry with: what he assumed or didn't know, the correct
+answer, why it matters if it bears on the job, and a status of `open`, `queued` or `known`.
+
+- **Promote job-relevant gaps into the review queue** at interval 1. SQL, Power BI, data
+  modelling, BA terminology, anything an interviewer could ask. Phrase the queue line as a
+  question he has to answer aloud, not as a fact to re-read.
+- **Do not promote system-operation trivia.** How this repo works, how git behaves, how the
+  dashboard syncs — audit it as `open` and leave it out of the queue. It is real, but it is
+  not what he is being hired for, and the queue has a hard cap.
+- **Respect the 5–8 item daily cap** when choosing due dates. Check the existing load first
+  and spread across days rather than stacking one.
+- **Mark an item `known` only on evidence** — a 4–5 confidence recall on a later review. Not
+  because it was explained well at the time. Explaining is exposure; the gap is retention.
+
+A gap that keeps coming back at `open` is a re-teach candidate for the weekly checkpoint,
+the same as a confidence 1–2 item.
+
 ## Hard rules
 
 - **Never let a day be unspecified.** Vague instructions ("practice SQL") are the failure mode. Every block names a concrete deliverable.

@@ -90,6 +90,25 @@ Run it after backfilling, and after `--log-misses`.
 
 ---
 
+## Questions you ask get logged
+
+You do not have to notice a gap, or remember to write it down. Every prompt you type in
+Claude Code is appended to `tracking/questions-log.md` by a `UserPromptSubmit` hook in
+`.claude/settings.json`. It runs whether or not Claude thinks to do it.
+
+That file is a raw inbox. The reviewable record is `tracking/knowledge-gaps.md`, which
+Claude Code writes up at the end of a session: what you assumed, the correct answer, and
+a status of `open`, `queued` or `known`.
+
+Job-relevant gaps get promoted into the review queue as spoken questions, so spaced
+repetition owns them. System trivia stays audited but out of the queue — the daily cap is
+8 items and it is not what you are being hired for.
+
+**`open` means answered once, not learned.** Only `known` — a 4–5 recall on a later
+review — means it stuck.
+
+---
+
 ## Weekly, on Days 7, 14, 21 and 28
 
 ```bash
@@ -230,6 +249,8 @@ ba-system/
 │   ├── config.md                 ← START_DATE. Set once
 │   ├── progress.md               ← the one file you write to daily
 │   ├── review-queue.md           ← spaced repetition, the retention engine
+│   ├── questions-log.md          ← every prompt, captured automatically
+│   ├── knowledge-gaps.md         ← what you didn't know, curated and audited
 │   └── applications.md           ← job pipeline
 ├── reference/
 │   ├── target-roles.md
@@ -240,6 +261,7 @@ ba-system/
 │   └── tutor-prompt.md
 └── scripts/
     ├── lib.js                    ← shared parsing and date logic
+    ├── log-question.js           ← hook target: captures every prompt
     ├── seed-queue.js
     ├── sync-progress.js
     ├── catch-up.js               ← missed days: backfill, write off, reflow

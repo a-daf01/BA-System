@@ -37,9 +37,14 @@ Saying it aloud is not optional dressing — it's the same skill the interview t
 Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 
 ```
+[1] due:2026-08-13 | Which Northwind download works with DB Browser for SQLite, and why does the sql-server-samples one not? | 
+[1] due:2026-08-13 | Write the SQL for top 5 Northwind products by revenue. Say why Discount changes the answer. | 
+[1] due:2026-08-13 | Why does SELECT * FROM Order Details fail, and what are the two ways to fix it? | 
 [1] due:2026-08-14 | NULL handling | 
 [1] due:2026-08-14 | LIKE vs = | 
 [1] due:2026-08-14 | filter logic as an error source | 
+[1] due:2026-08-14 | How do you get Northwind data into Power BI, given there is no SQLite connector? | 
+[1] due:2026-08-14 | In a Power BI bar chart, how do you show orders per country without pre-aggregating the data? | 
 [1] due:2026-08-15 | INNER vs LEFT | 
 [1] due:2026-08-15 | row fan-out | 
 [1] due:2026-08-15 | join direction | 

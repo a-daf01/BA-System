@@ -35,6 +35,8 @@ function main() {
   let deskExpected = 0, deskMissed = 0, phoneMissed = 0, deskDoneOnly = 0, unlogged = 0;
   const confs = [];
   const notes = [];
+  const backfilled = [];   // done, but after the day it was set for
+  const stillOpen = [];    // elapsed, not done, not written off — still catchable
 
   // Days that have not happened yet are not misses. Only judge elapsed days.
   const elapsed = days.filter((s) => s.date <= now);
@@ -43,6 +45,12 @@ function main() {
     const r = rows[s.day];
     const hasDesk = (planByBlock[s.block]?.desk.length || 0) > 0;
     if (hasDesk) deskExpected++;
+    if (r && r.lateBy > 0) backfilled.push({ day: s.day, lateBy: r.lateBy, date: r.date, done: r.done });
+    // Anything not finished and not deliberately written off is still open.
+    // Backfilling it later is the intended move, so it is not scored as a miss
+    // here — it is listed, and it stops being listed when it is done or logged
+    // as a miss on purpose.
+    if (s.date < now && L.dayOutstanding(r)) stillOpen.push(s.day);
     if (!r || !r.logged) { unlogged++; continue; }
     const deskOk = /^[YP]$/.test(r.desk);
     const phoneOk = /^[YP]$/.test(r.phone);
@@ -60,7 +68,12 @@ function main() {
   const confByDate = {};
   for (const s of schedule) {
     const r = rows[s.day];
-    if (r && r.conf) confByDate[L.iso(s.date)] = r.conf;
+    if (!r || !r.conf) continue;
+    confByDate[L.iso(s.date)] = r.conf;
+    // A day done late scores the date the work actually happened too, so items
+    // that fell due around the backfill are graded from it rather than from a
+    // date on which nothing was learned.
+    if (r.done) confByDate[r.done] = r.conf;
   }
 
   const changes = { advanced: [], repeated: [], dropped: [], untouched: 0, promoted: [] };
@@ -105,31 +118,8 @@ function main() {
   f.permanent = f.permanent.map((i) => reschedule(i, true));
 
   // --- cap the daily load at 8 --------------------------------------------
-  // Promote the strongest items to longer intervals rather than making any
-  // single day's block longer. An overlong block is the first thing he skips.
-  // Repeated passes, because a promoted item can overflow the day it lands on.
-  const CAP = 8;
-  const score = (i) => (i.hist.length ? i.hist[i.hist.length - 1] : 3);
-  for (let pass = 0; pass < 12; pass++) {
-    const byDate = {};
-    for (const i of f.queue) (byDate[i.due] ||= []).push(i);
-    let changed = false;
-    for (const date of Object.keys(byDate).sort()) {
-      const bucket = byDate[date];
-      if (bucket.length <= CAP) continue;
-      bucket.sort((a, b) => score(b) - score(a));       // strongest move first
-      for (const it of bucket.slice(0, bucket.length - CAP)) {
-        const before = it.interval;
-        it.interval = L.nextInterval(before);
-        it.due = L.iso(L.addDays(L.toDate(date), it.interval));
-        changes.promoted.push({ prompt: it.prompt, from: before, to: it.interval });
-        changed = true;
-      }
-    }
-    if (!changed) break;
-  }
-
-  f.queue.sort((a, b) => (a.due < b.due ? -1 : a.due > b.due ? 1 : 0));
+  changes.promoted = L.capDailyLoad(f.queue, 8);
+  L.sortQueue(f.queue);
   if (!dry) L.writeQueueFile(f, f.queue, f.permanent);
 
   // --- weak items worth a re-teach block -----------------------------------
@@ -156,6 +146,13 @@ function main() {
     line(`Desk blocks missed: ${deskMissed} of ${deskExpected}.`);
     line(`Phone blocks missed: ${phoneMissed} of ${elapsed.length}.`);
     line(avgConf ? `Average confidence: ${avgConf.toFixed(1)}.` : 'No confidence scores logged.');
+    if (backfilled.length) {
+      const lag = backfilled.reduce((a, b) => a + b.lateBy, 0) / backfilled.length;
+      line(`Done late: ${backfilled.length} day(s), on average ${lag.toFixed(1)} day(s) after schedule.`);
+    }
+    if (stillOpen.length) {
+      line(`Still open: ${stillOpen.map((d) => 'D' + String(d).padStart(2, '0')).join(' ')}.`);
+    }
   }
   line('');
 
@@ -168,7 +165,26 @@ function main() {
     line(`  ${deskMissed} desk blocks missed. The week was too heavy.`);
     line(`  Cut next week's desk blocks by about 20 percent. Do not carry the backlog forward.`);
   }
-  if (elapsed.length && deskMissed < 2 && deskDoneOnly === 0 && unlogged === 0) {
+  if (backfilled.length) {
+    const lag = backfilled.reduce((a, b) => a + b.lateBy, 0) / backfilled.length;
+    const worst = Math.max(...backfilled.map((b) => b.lateBy));
+    line(`  ${backfilled.length} day(s) backfilled. The work happened, so this is not a miss.`);
+    if (lag >= 3 || worst >= 5) {
+      line(`  But the lag is ${lag.toFixed(1)} days on average, worst ${worst}. At that distance the review`);
+      line('  intervals stop matching when you actually learned the material, which is the');
+      line('  one thing this system exists to get right. Reflow the queue, and treat this');
+      line('  as a signal the daily load is landing at the wrong time of day for you.');
+    } else {
+      line('  Lag is short enough that the review intervals still line up. Carry on.');
+    }
+  }
+  if (stillOpen.length >= 3) {
+    line(`  ${stillOpen.length} elapsed days are still open. That is a backlog, and a backlog you`);
+    line('  cannot see the end of is the thing that gets systems abandoned. Pick the two');
+    line('  most recent, backfill those, and write the rest off in progress.md as misses.');
+    line('  Do not try to clear all of them.');
+  }
+  if (elapsed.length && deskMissed < 2 && deskDoneOnly === 0 && unlogged === 0 && stillOpen.length < 3) {
     line('  Week held. Nothing needs reducing.');
   }
   if (avgConf !== null && avgConf < 2.5) {
@@ -198,6 +214,20 @@ function main() {
   if (parked.length >= 3) {
     line(`PARKING LOT has ${parked.length} items. Schedule one as a Sunday deep dive so it stops nagging:`);
     for (const p of parked.slice(0, 5)) line(`  - ${p}`);
+    line('');
+  }
+  if (backfilled.length) {
+    line('DONE LATE');
+    for (const b of backfilled) {
+      line(`  D${String(b.day).padStart(2, '0')}  set for ${b.date}, done ${b.done}  (+${b.lateBy}d)`);
+    }
+    line('  node scripts/catch-up.js --reflow moves these days\' review items to follow the work.');
+    line('');
+  }
+  if (stillOpen.length) {
+    line(`STILL OPEN (elapsed, not done, not written off): ${stillOpen.length}`);
+    line(`  ${stillOpen.map((d) => 'D' + String(d).padStart(2, '0')).join(' ')}`);
+    line('  Open the dashboard, arrow back to the day, and either do it or tap Write it off.');
     line('');
   }
   if (notes.length) {

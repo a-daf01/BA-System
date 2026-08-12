@@ -28,6 +28,17 @@ Read `tracking/progress.md` and `tracking/review-queue.md`, then:
 - **Missed PHONE blocks but completed DESK** → this is the dangerous pattern. Flag it directly. Retention is the entire point.
 - **Parking lot has 3+ items** → schedule one as a Sunday deep-dive so it stops nagging at him.
 
+### Days done late
+
+A log line carrying `done:YYYY-MM-DD` was **backfilled**: the work happened, just after the day it was set for. Treat it as done.
+
+- **Never count a backfilled day as a missed desk block.** It doesn't trigger the 20% reduction. Saying "you missed three days" about work he actually did is exactly the kind of unfair scoring that makes him drop the system.
+- **Do report the lag.** Average lag of 3+ days, or any single day 5+ late, means his review intervals no longer match when he actually learned the material. Say that plainly and run `node scripts/catch-up.js --reflow`, which re-dates that day's review items to follow the work.
+- **A consistent lag is a scheduling signal, not a discipline problem.** If he's routinely doing days one or two days late, the daily slot is wrong, not him. Say so.
+- **Elapsed days that are neither done nor written off are "still open".** Three or more is a backlog. Tell him to backfill the two most recent and write the rest off — do not let him try to clear it all, and do not carry it silently.
+- **A written-off day** (`desk:N phone:N`) is a closed question. Don't resurface it, don't moralise about it, don't count it against him beyond the ordinary "week was too heavy" arithmetic.
+- **Review items belonging to a day that hasn't happened must not come due.** `--reflow` sets those to `due:hold` and the dashboard hides them. Asking him to recall material he has never met is the fastest way to produce a false confidence-1 and corrupt the queue.
+
 ### 3. Spaced repetition scheduling
 `tracking/review-queue.md` uses intervals of **1, 3, 7, 14, 30 days**. When an item is reviewed:
 - Confidence 4–5 → advance to next interval

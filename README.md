@@ -52,6 +52,44 @@ The indicator at the top says **synced** or **N unsynced**. Unsynced means the d
 
 ---
 
+## When you miss a day
+
+You will. The system is built for it, and none of it costs you visible progress.
+
+**To go back and do it:** tap the **←** arrow on the today card until you reach the day. The card shows that day's blocks exactly as it did on the day, ticking works the same, and a banner tells you how far back you are. Tap **Today** to jump forward again. You can never navigate into the future — seeing days that have not happened is the paralysis this layout exists to avoid.
+
+**It gets logged as late, not missed.** Ticking a past day stamps the date you actually did it:
+
+```
+D02 | 2026-08-04 | desk:Y phone:Y | conf:3 | done:2026-08-06 | note:
+```
+
+Second column is when it was scheduled, `done:` is when it happened. The field only appears when those differ. The weekly review reads it and counts that day as **backfilled, not missed**, so it never triggers the "week was too heavy, cut next week" rule for work you actually did. What it does report is the lag — how far your learning is drifting from your review schedule.
+
+**If you are not going to do it, close it.** Tap **Write it off** on that day. It stops appearing in the catch-up list, the streak counter does not reset, and the weekly review treats it as a logged miss, which is honest data. Either it gets done or it gets closed. Nothing sits in limbo.
+
+**The Not finished card** lists elapsed days that are neither done nor written off, most recent first, capped at six. If there are three or more it tells you to backfill the last one or two and write off the rest, rather than trying to clear a backlog.
+
+### catch-up.js
+
+```bash
+node scripts/catch-up.js                  # what is outstanding, and the next move
+node scripts/catch-up.js --log-misses     # write every unlogged elapsed day as a miss
+node scripts/catch-up.js --reflow         # re-date review items to follow the actual work
+node scripts/catch-up.js --restart-today  # move Day 1 to today and reseed
+```
+
+`--reflow` is the one that matters for retention. It does two things:
+
+- A day you did late has its review items re-dated from the day you actually did it, so the 1/3/7/14/30 intervals measure from when you met the material.
+- A day you have **not** done has its review items **held**: `due:hold`, invisible on the dashboard, until that day is done. Being asked to recall something you have never seen produces a false confidence-1 and corrupts the queue.
+
+Run it after backfilling, and after `--log-misses`.
+
+`--restart-today` is for one situation only: you never actually started. It moves `START_DATE` to today, blanks the log, and reseeds the queue, so nothing is behind. It refuses to run if there is real activity logged.
+
+---
+
 ## Weekly, on Days 7, 14, 21 and 28
 
 ```bash
@@ -70,6 +108,7 @@ All Node, no dependencies, all run from the repo root.
 |---|---|
 | `node scripts/seed-queue.js` | Builds `tracking/review-queue.md` from the plan. Run once at setup, and again after changing `START_DATE`. Rebuilds every due date. |
 | `node scripts/sync-progress.js paste.txt` | Writes copied log lines into `tracking/progress.md`. Replaces the row for that day, never duplicates it. Lines starting with `- ` go to the parking lot. Also reads stdin, so `node scripts/sync-progress.js` then paste then Ctrl+Z works. |
+| `node scripts/catch-up.js` | Missed days. Reports what is still open. `--log-misses` writes unlogged elapsed days as misses, `--reflow` re-dates review items to follow the work you actually did, `--restart-today` moves Day 1 to today. |
 | `node scripts/weekly-review.js` | The weekly checkpoint. `--dry` reports without writing. Pass a week number to force one, for example `node scripts/weekly-review.js 2`. |
 | `node scripts/new-month.js` | Generates `plan/month-02.md` from `plan/day-template.md`, weighted by your weakest confidence scores. `--dry` prints the weighting only. |
 | `node scripts/build-snapshot.js` | Refreshes the offline copy inside `index.html`. `weekly-review.js` calls it for you. |
@@ -203,6 +242,7 @@ ba-system/
     ├── lib.js                    ← shared parsing and date logic
     ├── seed-queue.js
     ├── sync-progress.js
+    ├── catch-up.js               ← missed days: backfill, write off, reflow
     ├── weekly-review.js
     ├── new-month.js
     └── build-snapshot.js
@@ -216,4 +256,4 @@ ba-system/
 2. **Never redesign the plan mid-week.** Write the problem in the progress note and let the weekly checkpoint handle it. Redesigning is procrastination wearing a productive hat.
 3. **Park tangents.** One box, one button, move on.
 4. **Confidence 1 or 2 is useful data, not failure.** It is how the queue knows what to bring back. Flattering yourself breaks the system.
-5. **Missing a day is fine. Missing the log is not.** The streak counter never resets to zero, so a miss costs you nothing visible. Log it.
+5. **Missing a day is fine. Missing the log is not.** The streak counter never resets to zero, so a miss costs you nothing visible. Log it. Then either go back and do it late, or write it off. Both are real answers. Leaving it undecided is the only wrong one.

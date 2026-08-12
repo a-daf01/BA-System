@@ -42,11 +42,14 @@ REQUIRED SECTIONS, IN THIS ORDER
 8. **"I missed a day"** — a decision table. Situation in the left column, exact action
    in the right. This must cover: did it late, not going to do it, several days behind,
    never actually started.
-9. **Weekly checkpoint** — when, the command, and what each rule triggers.
-10. **Prompts I paste elsewhere** — the daily prompt, the weekly prompt, and the note
+9. **Capture and digest** — the brain dump, the automatic questions log, and the
+   knowledge-gaps record. Make clear which of the three he writes in (one) and which
+   maintain themselves (two). Include the end-of-day trigger phrase.
+10. **Weekly checkpoint** — when, the command, and what each rule triggers.
+11. **Prompts I paste elsewhere** — the daily prompt, the weekly prompt, and the note
     about keeping the tutor chat separate.
-11. **The five rules** — verbatim, condensed to one line each.
-12. **Troubleshooting** — the offline-vs-live behaviour, and the sync indicator.
+12. **The five rules** — verbatim, condensed to one line each.
+13. **Troubleshooting** — the offline-vs-live behaviour, and the sync indicator.
 
 End with a single line marked 👉 giving the one thing to do if he is ever unsure
 where he stands. One action, not a menu.
@@ -93,6 +96,10 @@ ba-system/
 │   ├── config.md                 START_DATE. Set once
 │   ├── progress.md               the one file written to daily
 │   ├── review-queue.md           spaced repetition, the retention engine
+│   ├── braindump.md              unstructured daily notes, digested each evening
+│   ├── braindump-archive.md      digested days, kept for later review
+│   ├── questions-log.md          every prompt, captured automatically by a hook
+│   ├── knowledge-gaps.md         curated record of what he did not know
 │   └── applications.md           job pipeline + agency contacts
 ├── reference/
 │   ├── target-roles.md           salaries, titles, where to search
@@ -104,6 +111,8 @@ ba-system/
 │   └── cheatsheet-prompt.md      this prompt
 └── scripts/
     ├── lib.js                    shared parsing and date logic
+    ├── braindump.js
+    ├── log-question.js
     ├── seed-queue.js
     ├── sync-progress.js
     ├── catch-up.js
@@ -236,6 +245,42 @@ The system is built for it. None of it costs visible progress.
   `--reflow` re-dates a late day's review items from when the work happened, and holds
   items belonging to days that never happened.
 - Either it gets done or it gets closed. Leaving it undecided is the only wrong answer.
+
+## Capture and digest
+Three files. He types in ONE of them; the other two maintain themselves.
+
+`tracking/braindump.md` — the only one he writes in. Unstructured notes during the day:
+solutions, struggles, half-thoughts, questions, frustrations. No format, fragments fine,
+nothing graded. Commands:
+- `node scripts/braindump.js` — show today's entries
+- `node scripts/braindump.js "text"` — append a line without opening the file
+- `node scripts/braindump.js --archive` — move today into the archive
+He can also just open the file and type.
+
+**Trigger phrase: say "I'm done" to Claude Code at the end of the day.** It then digests
+today's dump:
+- Something that blanked or broke → review queue, due tomorrow
+- Something he worked out → review queue, due in three days
+- An open question → answered now, or parked if it needs its own session
+- A tangent → parking lot in `tracking/progress.md`
+Then it proposes the day's log line and **asks him for the confidence score — it never
+guesses that number**, because it saw a description of the day rather than the day, and an
+invented score corrupts every interval derived from it. After he confirms, the day is
+archived to `tracking/braindump-archive.md` and the file is blank for tomorrow.
+
+`tracking/questions-log.md` — automatic. Every prompt he types in Claude Code is appended
+by a `UserPromptSubmit` hook in `.claude/settings.json` running `scripts/log-question.js`.
+It fires whether or not Claude thinks to log anything. Raw inbox, never curated, never
+deleted.
+
+`tracking/knowledge-gaps.md` — the curated record, written by Claude Code: what he assumed,
+the correct answer, why it matters, and a status.
+- `open` = answered once, not yet revisited. Assume it has not stuck.
+- `queued` = promoted into the review queue; spaced repetition owns it.
+- `known` = recalled at 4–5 confidence on a later review. **Only this one means it stuck.**
+Job-relevant gaps (SQL, Power BI, data modelling, BA terminology) get promoted to the
+queue as spoken questions. System and git trivia is audited but deliberately left out of
+the queue, because the daily cap is 8 items.
 
 ## Weekly checkpoint — Days 7, 14, 21, 28
 `node scripts/weekly-review.js`

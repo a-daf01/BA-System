@@ -90,6 +90,40 @@ Run it after backfilling, and after `--log-misses`.
 
 ---
 
+## Brain dump, digested at the end of the day
+
+`tracking/braindump.md` is a scratch file with no format. Type into it whenever — what
+worked, what blanked, what took forty minutes for no reason, questions you could not be
+bothered to chase mid-session. Fragments are the point. Nothing in it is graded.
+
+```bash
+node scripts/braindump.js                    # show today's entries
+node scripts/braindump.js "HAVING blanked"   # append a line without opening the file
+node scripts/braindump.js --archive          # move today into the archive
+```
+
+Or just open the file and type. The script only exists so capture from a terminal is one
+command.
+
+**Say "I'm done" to Claude Code at the end of the day** and it digests the lot:
+
+| What you wrote | Where it ends up |
+|---|---|
+| Something that blanked or broke | Review queue, due tomorrow |
+| Something you worked out | Review queue, due in three days |
+| An open question | Answered, or parked if it needs its own session |
+| A tangent | Parking lot |
+
+It then proposes the day's log line and **asks you for the confidence score**. It will not
+guess that number — it saw a description of your day, not your day, and a confidence score
+it invented would corrupt every review interval that derives from it.
+
+Once you confirm, the day is archived to `tracking/braindump-archive.md` and the file is
+blank again for tomorrow. The archive is kept so the weekly review and Month 2 planning can
+read what the days actually felt like, not just the scores.
+
+---
+
 ## Questions you ask get logged
 
 You do not have to notice a gap, or remember to write it down. Every prompt you type in
@@ -127,6 +161,7 @@ All Node, no dependencies, all run from the repo root.
 |---|---|
 | `node scripts/seed-queue.js` | Builds `tracking/review-queue.md` from the plan. Run once at setup, and again after changing `START_DATE`. Rebuilds every due date. |
 | `node scripts/sync-progress.js paste.txt` | Writes copied log lines into `tracking/progress.md`. Replaces the row for that day, never duplicates it. Lines starting with `- ` go to the parking lot. Also reads stdin, so `node scripts/sync-progress.js` then paste then Ctrl+Z works. |
+| `node scripts/braindump.js` | Shows today's brain dump. Pass text to append a line, `--archive` to file the day away once digested. |
 | `node scripts/catch-up.js` | Missed days. Reports what is still open. `--log-misses` writes unlogged elapsed days as misses, `--reflow` re-dates review items to follow the work you actually did, `--restart-today` moves Day 1 to today. |
 | `node scripts/weekly-review.js` | The weekly checkpoint. `--dry` reports without writing. Pass a week number to force one, for example `node scripts/weekly-review.js 2`. |
 | `node scripts/new-month.js` | Generates `plan/month-02.md` from `plan/day-template.md`, weighted by your weakest confidence scores. `--dry` prints the weighting only. |
@@ -250,6 +285,8 @@ ba-system/
 │   ├── progress.md               ← the one file you write to daily
 │   ├── review-queue.md           ← spaced repetition, the retention engine
 │   ├── questions-log.md          ← every prompt, captured automatically
+│   ├── braindump.md              ← unstructured notes, digested each evening
+│   ├── braindump-archive.md      ← digested days, kept for review
 │   ├── knowledge-gaps.md         ← what you didn't know, curated and audited
 │   └── applications.md           ← job pipeline
 ├── reference/
@@ -262,6 +299,7 @@ ba-system/
 └── scripts/
     ├── lib.js                    ← shared parsing and date logic
     ├── log-question.js           ← hook target: captures every prompt
+    ├── braindump.js              ← show / append / archive the brain dump
     ├── seed-queue.js
     ├── sync-progress.js
     ├── catch-up.js               ← missed days: backfill, write off, reflow

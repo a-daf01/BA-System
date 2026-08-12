@@ -9,3 +9,4 @@ This is the inbox, not the record. The reviewable record is
 ---
 
 - 2026-08-12 10:27 | how do i do (4) customers with more than 10 orders?
+- 2026-08-12 15:40 | lets add a text file where i can just brain dump my solutions, thought process, struggles and stuff throughout the day and it gets digested end of the day when i say im done - or add it to the system itself

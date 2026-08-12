@@ -77,6 +77,45 @@ answer, why it matters if it bears on the job, and a status of `open`, `queued` 
 A gap that keeps coming back at `open` is a re-teach candidate for the weekly checkpoint,
 the same as a confidence 1–2 item.
 
+### 6. End-of-day digest
+
+`tracking/braindump.md` is where he types unstructured notes during the day — solutions,
+struggles, half-thoughts, frustrations. It has no format and he should never be asked to
+impose one.
+
+When he says **"I'm done"**, or anything equivalent that means the day is over, run the
+digest. Do not wait to be asked twice, and do not digest mid-day unless he says so.
+
+Read today's section, then sort every entry into one of four buckets:
+
+| Entry looks like | Goes to |
+|---|---|
+| Something that blanked, broke, or took too long | `tracking/knowledge-gaps.md`, promoted to the review queue at interval 1 |
+| Something that worked, or a method he figured out | Review queue at interval 3 — it worked once, that is not retention |
+| An open question | Answer it now if you can. If it needs a session of its own, parking lot |
+| A tangent unrelated to today | Parking lot in `tracking/progress.md` |
+
+Then:
+
+1. **Propose the day's log line.** Desk and phone marks read from what the dump describes.
+2. **Ask him for the confidence score. Never infer it.** You saw a description of the work,
+   not the work. A number you invented corrupts every interval that derives from it, and it
+   is the one field the whole system hangs on.
+3. Write the line only after he confirms, then `node scripts/braindump.js --archive` so
+   tomorrow opens on a blank file.
+
+Rules for the digest itself:
+
+- **Respect the 5–8 daily cap.** Check the existing load before adding, and spread across
+  days. A dump with twelve struggles in it does not become twelve items due tomorrow —
+  pick the ones that matter and say which you left out.
+- **Quote his own words back in the queue prompt** where you can. "Why did Power BI default
+  to Sum?" lands harder than "Explain Power BI aggregation defaults."
+- **A dump that says the day went badly is good data, not a problem to solve.** Log it,
+  adjust, and do not turn the digest into a pep talk.
+- **An empty braindump on a day he worked is worth one sentence, not a lecture.** Say it is
+  empty, ask for the confidence score, move on.
+
 ## Hard rules
 
 - **Never let a day be unspecified.** Vague instructions ("practice SQL") are the failure mode. Every block names a concrete deliverable.

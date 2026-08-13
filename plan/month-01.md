@@ -103,7 +103,17 @@
 *Dataset: Northwind.*
 
 **DESK (65 min)**
-- [ ] 35 min — COUNT / SUM / AVG / MIN / MAX with GROUP BY. Ten queries, three with multiple grouping columns.
+- [ ] 35 min — These ten, in order. The last three group by two columns.
+  1. Number of customers per country.
+  2. Total revenue per product.
+  3. Average unit price per category.
+  4. Highest and lowest unit price in `Products`, in one query.
+  5. Number of orders per employee.
+  6. Total quantity sold per product.
+  7. Average order value per customer.
+  8. Orders per country, per year.
+  9. Revenue per category, per year.
+  10. Orders per employee, per shipper.
 - [ ] 15 min — HAVING vs WHERE. One query needing both; explain in writing why each clause sits where it does.
 - [ ] 15 min — Single query: "which product categories generate the most revenue, and which have the highest average order value?"
 
@@ -157,7 +167,17 @@
 *Dataset: Northwind.*
 
 **DESK (70 min)**
-- [ ] 30 min — Subqueries in WHERE and SELECT. Five each.
+- [ ] 30 min — Five subqueries in `WHERE`, then five in `SELECT`.
+  1. `WHERE` — products priced above the average product price.
+  2. `WHERE` — customers who have placed at least one order.
+  3. `WHERE` — customers who have never placed an order.
+  4. `WHERE` — orders with freight above the average freight.
+  5. `WHERE` — products whose supplier is based in Germany.
+  6. `SELECT` — every product, with the overall average price beside it.
+  7. `SELECT` — every customer, with their total order count.
+  8. `SELECT` — every category, with how many products it holds.
+  9. `SELECT` — every employee, with the date of their most recent order.
+  10. `SELECT` — every order, with how many line items it has.
 - [ ] 30 min — Rewrite three as CTEs (`WITH ... AS`). Note which you'd rather debug in six months.
 - [ ] 10 min — One paragraph: when do you choose a CTE over a subquery?
 
@@ -176,7 +196,11 @@
 
 **DESK (75 min)**
 - [ ] 30 min — ROW_NUMBER, RANK, DENSE_RANK. Build "top 3 products per category" — the classic interview question.
-- [ ] 30 min — Running totals and moving averages: `SUM() OVER (PARTITION BY ... ORDER BY ...)`.
+- [ ] 30 min — Running totals and moving averages with `SUM() OVER (PARTITION BY … ORDER BY …)`.
+  1. Running total of order count by month across 1997.
+  2. Running total of revenue per category, ordered by month.
+  3. Three-month moving average of order volume.
+  4. Every order with a running total of freight for that customer.
 - [ ] 15 min — LAG / LEAD. Month-on-month change on order volume.
 
 **PHONE (25 min)**
@@ -211,7 +235,8 @@
 **Theme:** Star schema, reference vs transactional, data marts. All named in real BSA ads. *Dataset: Contoso — switch today, it's purpose-built for this.*
 
 **DESK (70 min)**
-- [ ] 25 min — Load Contoso. Identify fact tables and dimension tables. Why is each what it is?
+- [ ] 25 min — Load Contoso from the SQLBI Contoso Data Generator (`sqlbi.com/tools/contoso-data-generator`). **Take the smallest size offered.** Then identify every fact table and every dimension table, and say why each is what it is.
+  - *If it fights you for more than 10 minutes, stop.* Open Power BI → File → Open → Sample reports, or download any Microsoft sample `.pbix`, and do the same exercise on that model instead. The exercise is reading a star schema, not sourcing one. Log the swap in the brain dump.
 - [ ] 25 min — Compare Contoso to Northwind. One is built for transactions, one for reporting. Write down five concrete differences.
 - [ ] 20 min — Classify Contoso's tables as reference vs transactional. Then define "reporting data mart" in a paragraph, as you'd explain it to a non-technical manager.
 
@@ -229,7 +254,8 @@
 **Theme:** Where 80% of real Power BI work happens. *Dataset: a messy UK public CSV.*
 
 **DESK (75 min)**
-- [ ] 20 min — Download a genuinely messy dataset from data.gov.uk or ONS. Government CSVs are structurally awful, and that's the point.
+- [ ] 20 min — Get a genuinely messy CSV. Go to `data.gov.uk`, search **"local authority spending over £500"**, and take the **first result you find that meets all three**: it is a `.csv`, it is over 1,000 rows, and it has at least one date column. Do not browse past the third candidate — any of them works.
+  - Government CSVs are structurally awful. That is the point of the exercise, not a reason to keep looking for a better one.
 - [ ] 40 min — Clean it in Power Query: remove columns, change types, split columns, replace values, remove duplicates, unpivot. Each transformation at least once.
 - [ ] 15 min — Open Applied Steps. Rename every step meaningfully.
 
@@ -281,7 +307,17 @@
 *Dataset: Contoso.*
 
 **DESK (70 min)**
-- [ ] 25 min — Five measures and five calculated columns on the same data. Observe where each is evaluated.
+- [ ] 25 min — Build these five measures, then these five calculated columns, on the same model. Watch where each one is evaluated.
+  1. Measure — Total Sales.
+  2. Measure — Total Quantity.
+  3. Measure — Order Count.
+  4. Measure — Average Sale Value.
+  5. Measure — Distinct Customer Count.
+  6. Column — line total (`Quantity * UnitPrice`) on the fact table.
+  7. Column — price band (`High` / `Medium` / `Low`) on the product table.
+  8. Column — order year on the date table.
+  9. Column — full name, first and last concatenated, on the customer or employee table.
+  10. Column — `Yes`/`No` flag for whether a row was discounted.
 - [ ] 30 min — SUM, AVERAGE, COUNTROWS, DISTINCTCOUNT, DIVIDE. Use DIVIDE instead of `/` and find out why.
 - [ ] 15 min — The rule for measure vs column, in your own words.
 
@@ -299,7 +335,17 @@
 **Theme:** The hardest concept in Power BI. Expect discomfort. *Dataset: Contoso.*
 
 **DESK (75 min)**
-- [ ] 35 min — CALCULATE with simple filter arguments. Ten variations.
+- [ ] 35 min — Ten `CALCULATE` variations on your Total Sales measure, in order.
+  1. Sales for one named product category.
+  2. Sales for one named country.
+  3. Sales for a single year.
+  4. Sales for two categories at once.
+  5. Sales excluding one category.
+  6. Sales where unit price is above a fixed value.
+  7. Sales for one category **and** one year together.
+  8. Sales for one category **or** one country.
+  9. Sales for the top price band only, reusing the column you built on Day 15.
+  10. Sales with one filter that contradicts the visual's own filter. Work out which one wins, and why.
 - [ ] 25 min — ALL, ALLEXCEPT, FILTER. Build a "% of total" measure.
 - [ ] 15 min — Explain filter context in writing, under 100 words, no jargon.
 

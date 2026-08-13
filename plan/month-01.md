@@ -36,8 +36,23 @@
 *Dataset: Northwind.*
 
 **DESK (60 min)**
-- [ ] 40 min — 15 queries escalating: single filter → multiple conditions → IN / BETWEEN / LIKE → NULL handling → multi-column sorting.
-- [ ] 20 min — Rewrite 3 of them as **business questions**, e.g. "which customers ordered in the last 30 days but not the 30 before?"
+- [ ] 40 min — Write these 15 queries against Northwind, in order. Build each one `FROM` first, `SELECT` last.
+  1. All customers in Germany.
+  2. All products with a unit price above 20.
+  3. All orders placed in 1997.
+  4. Products above 20 that are **not** discontinued.
+  5. Customers in Germany **or** France.
+  6. Products under 10 **or** above 100, that are not discontinued. *(Watch the brackets — this is the one that goes wrong.)*
+  7. Rewrite 5 using `IN`, and add Spain.
+  8. Products priced `BETWEEN` 10 and 30.
+  9. Orders placed `BETWEEN` 1997-01-01 and 1997-03-31.
+  10. Customers whose company name starts with "B". Then customers whose name contains "market".
+  11. Orders that were never shipped (`ShippedDate` is empty).
+  12. Customers with no `Region`. Try `= NULL` first and watch it return nothing.
+  13. Count of unshipped orders next to the count of all orders.
+  14. All products sorted by `CategoryID` ascending, then `UnitPrice` descending.
+  15. Non-discontinued products sorted by `SupplierID`, then `ProductName`, first 20 rows only.
+- [ ] 20 min — Take queries **6, 11 and 13**. For each, write the one-sentence question a manager would have asked to make you write it. Not a description of the SQL — the business question behind it.
 
 **PHONE (25 min)**
 - [ ] 10 min — Review queue.

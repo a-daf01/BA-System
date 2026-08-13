@@ -12,3 +12,4 @@ This is the inbox, not the record. The reviewable record is
 - 2026-08-12 15:40 | lets add a text file where i can just brain dump my solutions, thought process, struggles and stuff throughout the day and it gets digested end of the day when i say im done - or add it to the system itself
 - 2026-08-12 16:54 | i am doing task 3, how do i import the northwind.db into powerbi?
 - 2026-08-12 17:07 | D01 / 2026-08-12 / desk:Y phone:Y / conf:4 / note: im fully done for today push everything and prepare for tomorrow
+- 2026-08-13 14:51 | ok i am here to do day 2, but i don't understand what is requested from me

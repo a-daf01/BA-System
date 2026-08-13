@@ -90,6 +90,26 @@ Run it after backfilling, and after `--log-misses`.
 
 ---
 
+## Sub-steps
+
+A task that names several concrete steps opens into them. Tap the task row and it expands;
+tap it again and it closes. The count on the right (`3/15`) is how far through you are.
+
+- **Tap a sub-step** to tick it off.
+- **Tick every sub-step** and the parent task ticks itself. Untick one and it comes back off.
+- **Tap the pencil** on any sub-step to write a note against that step specifically — what
+  went wrong, what you had to look up, what surprised you.
+- **Tap the parent's checkbox** (not the row) to tick the whole task without walking the
+  list, for a day you did the work another way.
+
+Sub-steps are collapsed by default. Fifteen queries on screen at once is exactly the wall
+this layout exists to prevent.
+
+Notes gather into a **Copy brain dump** button next to the log line buttons. Paste them
+into `tracking/braindump.md` and they get digested with everything else.
+
+---
+
 ## Brain dump, digested at the end of the day
 
 `tracking/braindump.md` is a scratch file with no format. Type into it whenever — what

@@ -42,6 +42,15 @@ function main() {
     }
   }
 
+  // Items that did not come from the plan — gaps promoted out of a brain dump
+  // or a question Ahmed asked — are kept exactly as they are, intervals and
+  // scores intact. The plan is the source of truth for its own items only.
+  // Without this, re-running after a START_DATE change silently deletes every
+  // item the system learned about him, which is the opposite of the point.
+  const planNorm = new Set(queue.map((q) => L.normalise(q.prompt)));
+  const kept = f.queue.filter((q) => !planNorm.has(L.normalise(q.prompt)));
+  for (const k of kept) queue.push(k);
+
   queue.sort((a, b) => (a.due < b.due ? -1 : a.due > b.due ? 1 : 0));
 
   // Permanent items start one interval out from the day their subject lands,

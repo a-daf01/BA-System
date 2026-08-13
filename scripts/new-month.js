@@ -240,7 +240,7 @@ function reteachDay(n, entry) {
   const topic = (entry.day.adds[0] || entry.day.title).replace(/\.$/, '');
   // Strip the original task's own "40 min —" prefix, or the day ends up
   // carrying two contradictory timings.
-  const original = (entry.day.desk[0] || 'the original desk work for that day')
+  const original = ((entry.day.desk[0] || {}).text || 'the original desk work for that day')
     .replace(/^\d+\s*min\s*[-—–]\s*/, '');
   return {
     t: `Re-teach: ${topic}`,

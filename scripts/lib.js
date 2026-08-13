@@ -113,12 +113,21 @@ function parsePlan(md) {
       mode = null;
       continue;
     }
+    // An indented list line belongs to the task above it. Tested against the
+    // raw line, not the trimmed one, because indentation is the only thing
+    // separating a sub-item from a top-level task.
+    const sub = /^\s{2,}(?:\d+[.)]|[-*])\s+(.+)$/.exec(raw);
+    if (sub && mode && cur[mode].length) {
+      cur[mode][cur[mode].length - 1].subs.push(sub[1].trim());
+      continue;
+    }
+
     // Any other bold label ends the current task list. Stops the Day 28
     // "Targets" checkboxes being read as phone tasks.
     if (/^\*\*/.test(line)) { mode = null; continue; }
 
     const task = /^-\s*\[[ xX]\]\s*(.*)$/.exec(line);
-    if (task && mode) cur[mode].push(task[1].trim());
+    if (task && mode) cur[mode].push({ text: task[1].trim(), subs: [] });
   }
   return days;
 }

@@ -191,6 +191,137 @@ refetches. There is no store update and no build step.
 
 ---
 
+## 2026-08-13 — Day 2
+
+### Your Northwind has no 1997 orders — the plan was wrong, not you
+
+**Gap:** Query 3 returned nothing. Concluded "I think it's just a trick question."
+**Answer:** It wasn't a trick, and your SQL was right. `jpwhite3/northwind-SQLite3`
+re-dates the classic dataset. Verified range: **2012-07-10 to 2023-10-28, 16,282
+orders.** The original Microsoft Northwind runs 1996–1998; this build does not. The
+plan's Day 2 and Day 9 blocks were written against the original dates and have been
+corrected.
+**What you did right:** on query 9 you tested a different year, got results, and said
+"I don't think there's no 1997 orders." That instinct — suspect the data before
+concluding the query is broken — is the right one.
+**The habit to make automatic:** before deciding a filter is wrong, run
+`SELECT MIN(OrderDate), MAX(OrderDate) FROM Orders;`. Three seconds, and it tells you
+whether you're querying wrong or querying an assumption.
+**Why it matters:** "the report came back empty" is a ticket you will be handed
+constantly. Half the time the filter is fine and the data doesn't cover the period.
+**Status:** `queued`
+
+### BETWEEN on a datetime column silently drops the last day
+
+**Gap:** Query 9 — `WHERE OrderDate BETWEEN '2016-01-01' AND '2016-03-31'`. It ran, it
+returned rows, you moved on.
+**Answer:** It returned **350 orders. The correct answer is 357.** `OrderDate` stores a
+full timestamp (`2016-03-31 14:22:00`), and as a string that sorts *after* `'2016-03-31'`.
+So every order placed on the last day of the range was excluded — 7 of them.
+**The fix:** use a half-open range, never `BETWEEN`, on anything with a time component:
+
+```sql
+WHERE OrderDate >= '2016-01-01' AND OrderDate < '2016-04-01'
+```
+
+**Why it matters:** this is the most dangerous class of bug in reporting. The query
+doesn't error. The number looks plausible. Q1 revenue is quietly 2% light and nobody
+finds out until someone reconciles it. If you can explain this in an interview you will
+sound like someone who has shipped a report, not someone who has done a course.
+**Status:** `queued`
+
+### Two queries answered a question you weren't asked
+
+**Gap:** Query 4 asked for *products above 20 that are not discontinued* — you wrote only
+the discontinued condition. **69 rows returned; the answer is 31.** Query 15 asked for
+*non-discontinued* products sorted and limited to 20 — the filter is missing there too.
+**Answer:** Both queries are syntactically perfect. Neither answers the question. The
+SQL wasn't the failure; reading the requirement was.
+**The habit:** before writing, count the conditions in the sentence. "Products above 20
+that are not discontinued" is two. Your `WHERE` should have two. It's a five-second check
+and it catches this every time.
+**Why it matters:** this is the actual job. A BSA who writes elegant SQL against a
+misread requirement produces a confident, wrong report — which is worse than no report.
+In an interview, "how do you make sure you've built what was asked for?" is a question
+you will get, and this is your honest answer to it.
+**Status:** `queued`
+
+### Conditional aggregation — the CASE-inside-SUM pattern
+
+**Gap:** Query 13, the only one you couldn't finish. You wrote
+`COUNT(SELECT * FROM Orders WHERE ShippedDate IS NULL)` with a `GROUP BY OrderID`, then
+said: *"I genuinely don't know how I am supposed to come up with these solutions."*
+**Answer:** The blocker is a specific, nameable one — you reached for a second query
+because you were thinking of it as two questions. It's one pass over the table with two
+different counters:
+
+```sql
+SELECT COUNT(OrderID) AS TotalOrders,
+       SUM(CASE WHEN ShippedDate IS NULL THEN 1 ELSE 0 END) AS UnshippedOrders
+FROM Orders;
+```
+
+Read the `CASE` as: *for each row, put a 1 in the bucket if it's unshipped, else a 0.*
+`SUM` then adds the bucket up. Counting a subset of rows alongside all of them is
+**always** this shape.
+**The recognition trigger** — this is what you said you were missing: any time the ask
+contains **"X out of Y", "how many of them", or "% that are"**, it's conditional
+aggregation. Not a subquery.
+**The `GROUP BY OrderID` tell:** you grouped by the primary key, which makes one group
+per row and aggregates nothing. If you find yourself grouping by an ID that's unique,
+you don't want a `GROUP BY` at all.
+**On your own answer:** verified — 16,282 total, 21 unshipped.
+**Status:** `queued` — this is the Day 1 "translating logic into SQL" gap in a new
+costume. Second appearance. Re-teach candidate at the Day 7 checkpoint if it returns.
+
+### `IS` works where `=` belongs, but only in SQLite
+
+**Gap:** Wrote `WHERE Country IS 'Germany'`-style comparisons — `Discontinued IS 0` on
+query 4, `OrderDate IS 1997` on query 3.
+**Answer:** SQLite lets `IS` stand in for `=`. **SQL Server, Postgres and MySQL reject
+it.** `IS` is for null-comparison only — `IS NULL`, `IS NOT NULL` — because `= NULL` is
+never true. Everything else takes `=`.
+**Why it matters:** you're learning on the most permissive engine in common use. Habits
+it tolerates will fail on your first day in a job running SQL Server. Write it strictly
+now.
+**Status:** `queued`
+
+### Things you got right unaided — logged so they don't quietly rot
+
+Not gaps. Queued at interval 3 because working once is exposure, not retention.
+
+- **Bracket precedence, query 6.** `AND` binds tighter than `OR`, so the OR pair needs
+  its own parentheses. You flagged that the brackets nearly got you and then fixed it
+  yourself. You also read "under 10 / above 100" as `UnitsInStock` where the plan meant
+  price — defensible, arguably the better business read, but **say the assumption out
+  loud next time.** Stating an ambiguous requirement back is a BA skill in itself.
+- **`IN`, query 7.** Looked up the operator, not the answer, then wrote it yourself.
+  That's the right way to be stuck.
+- **`LIKE` wildcards, query 10.** `'B%'` for prefix, `'%market%'` for contains.
+- **`ORDER BY` multi-column, queries 14 and 15.** Correct, and yes — `ASC` is the
+  default, you were right to leave it off.
+- **`strftime('%Y', OrderDate) = '1997'`.** The right tool for year extraction in SQLite.
+  Note it's a string comparison, so `'1997'` in quotes.
+
+### The three business questions
+
+Query 11 — *"Why are we getting reports about customers not receiving their orders in
+time? How long does it take our orders to get shipped from order date?"* — is the
+strongest of the three. It's a real question with a follow-up metric attached, which is
+what a manager actually sounds like.
+
+Query 6 hedged across two different reports (restocking vs. storage cost). Pick one and
+commit — a BA who offers the stakeholder two interpretations is asking them to do the
+analysis.
+
+Query 13 you called a guess: *"what's the percentage of unshipped orders compared to all
+our orders."* It isn't a guess, it's correct, and it's exactly why the conditional
+aggregation pattern exists. Trust that instinct more than you did.
+
+**Status:** `open` — not queued separately; carried by the Day 6 and Day 20 write-up work.
+
+---
+
 ## How this file gets maintained
 
 Claude Code appends to it at the end of any session where you asked something you

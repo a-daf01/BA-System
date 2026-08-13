@@ -11,7 +11,13 @@ Microsoft's classic sample database modelling a fictional food trading company. 
 
 **Why this one:** it's the standard beginner SQL database precisely because the schema is small enough to hold in your head but real enough to practise joins, aggregations and date queries against.
 
-**Get it:** SQLite version — search "northwind SQLite github". Open with **DB Browser for SQLite** (free, no server setup). Postgres and SQL Server ports also exist if you prefer.
+**Get it:** SQLite version — `jpwhite3/northwind-SQLite3`, already downloaded to `data/northwind.db`. Open with **DB Browser for SQLite** (free, no server setup). Postgres and SQL Server ports also exist if you prefer.
+
+**Know this before you write a date filter:** this build is *not* the original 1996–1998
+Northwind. It has been re-dated and expanded — **16,282 orders spanning 2012-07-10 to
+2023-10-28.** Most tutorials online assume the 1997 dates and their queries will return
+nothing here. `OrderDate` is also a full timestamp, not a date, so `BETWEEN 'x' AND 'y'`
+silently excludes the final day. Use `>= start AND < day-after-end`.
 
 ### Contoso — Days 11 to 17 (star schemas, Power BI, DAX)
 Microsoft's BI demo dataset for retail. Built explicitly to demonstrate data warehouse and BI functionality, with high-volume transactions plus properly structured reference and dimension data.

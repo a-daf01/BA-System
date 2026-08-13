@@ -37,15 +37,16 @@ Saying it aloud is not optional dressing — it's the same skill the interview t
 Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 
 ```
-[1] due:2026-08-13 | Which Northwind download works with DB Browser for SQLite, and why does the sql-server-samples one not? | 
-[1] due:2026-08-13 | Write the SQL for top 5 Northwind products by revenue. Say why Discount changes the answer. | 
-[1] due:2026-08-13 | Why does SELECT * FROM Order Details fail, and what are the two ways to fix it? | 
-[1] due:2026-08-13 | Why does WHERE COUNT(*) > 10 fail, and what do you use instead? | 
-[1] due:2026-08-13 | In Power Query, what does Remove Errors actually do to your rows, and why is that dangerous in an analysis? | 
-[1] due:2026-08-13 | Is ROUND an alternative to SUM? Say what each one does and how you would use both in one query. | 
-[1] due:2026-08-14 | NULL handling | 
-[1] due:2026-08-14 | LIKE vs = | 
-[1] due:2026-08-14 | filter logic as an error source | 
+[3] due:2026-08-17 | Write the SQL for top 5 Northwind products by revenue. Say why Discount changes the answer. | 4
+[3] due:2026-08-17 | Why does WHERE COUNT(*) > 10 fail, and what do you use instead? | 4
+[3] due:2026-08-17 | In Power Query, what does Remove Errors actually do to your rows, and why is that dangerous in an analysis? | 4
+[3] due:2026-08-18 | Which Northwind download works with DB Browser for SQLite, and why does the sql-server-samples one not? | 4
+[3] due:2026-08-18 | Why does SELECT * FROM Order Details fail, and what are the two ways to fix it? | 4
+[3] due:2026-08-18 | Is ROUND an alternative to SUM? Say what each one does and how you would use both in one query. | 4
+[1] due:2026-08-14 | "Count of unshipped orders next to the count of all orders." Write it. One query, no subquery — then say what phrase in a request tells you to reach for this pattern. | 
+[1] due:2026-08-14 | Your query 9 returned 350 orders. The right answer was 357. Say what BETWEEN did to the last day of the range, and what you write instead. | 
+[1] due:2026-08-14 | Read this aloud: "products above 20 that are not discontinued". How many conditions is that? How many did you write? What is the five-second check that catches it? | 
+[1] due:2026-08-14 | Query 12 told you to try `= NULL` first and watch it return nothing. Say why it returns nothing, and what you use instead. | 
 [1] due:2026-08-14 | How do you get Northwind data into Power BI, given there is no SQLite connector? | 
 [1] due:2026-08-14 | In a Power BI bar chart, how do you show orders per country without pre-aggregating the data? | 
 [1] due:2026-08-15 | INNER vs LEFT | 
@@ -55,6 +56,10 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [3] due:2026-08-15 | Why does SELECT TOP 5 fail in SQLite, and what replaces it? | 
 [3] due:2026-08-15 | In a GROUP BY query, what does SUM() do and where does the multiplication actually happen? | 
 [1] due:2026-08-16 | your 3 strongest CV bullets | 
+[1] due:2026-08-16 | You wrote `Discontinued IS 0` and it worked. Say why, and why that same query fails on SQL Server. | 
+[1] due:2026-08-16 | "I think it's just a trick question." Your 1997 query returned nothing. Say the one line of SQL you run before deciding a filter is wrong. | 
+[3] due:2026-08-16 | You wrote 'B%' and '%market%'. Say what each wildcard does, and name one case where LIKE is the wrong tool. | 
+[3] due:2026-08-16 | "The brackets got me at first." Say why `A OR B AND C` is not `(A OR B) AND C`, and which one binds tighter. | 
 [3] due:2026-08-16 | Say the order you build a SQL query in, and why it is not the order it reads in. | 
 [1] due:2026-08-18 | WHERE vs HAVING | 
 [1] due:2026-08-18 | GROUP BY with multiple columns | 

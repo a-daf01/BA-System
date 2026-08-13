@@ -39,13 +39,13 @@
 - [ ] 40 min — Write these 15 queries against Northwind, in order. Build each one `FROM` first, `SELECT` last.
   1. All customers in Germany.
   2. All products with a unit price above 20.
-  3. All orders placed in 1997.
+  3. All orders placed in 2016. *(Not 1997 — check the date range before you trust an empty result.)*
   4. Products above 20 that are **not** discontinued.
   5. Customers in Germany **or** France.
   6. Products under 10 **or** above 100, that are not discontinued. *(Watch the brackets — this is the one that goes wrong.)*
   7. Rewrite 5 using `IN`, and add Spain.
   8. Products priced `BETWEEN` 10 and 30.
-  9. Orders placed `BETWEEN` 1997-01-01 and 1997-03-31.
+  9. Orders placed in Q1 2016. Write it with `BETWEEN` first, then count the rows again using `>= '2016-01-01' AND < '2016-04-01'`. The numbers differ — work out why before moving on.
   10. Customers whose company name starts with "B". Then customers whose name contains "market".
   11. Orders that were never shipped (`ShippedDate` is empty).
   12. Customers with no `Region`. Try `= NULL` first and watch it return nothing.
@@ -197,7 +197,7 @@
 **DESK (75 min)**
 - [ ] 30 min — ROW_NUMBER, RANK, DENSE_RANK. Build "top 3 products per category" — the classic interview question.
 - [ ] 30 min — Running totals and moving averages with `SUM() OVER (PARTITION BY … ORDER BY …)`.
-  1. Running total of order count by month across 1997.
+  1. Running total of order count by month across 2016.
   2. Running total of revenue per category, ordered by month.
   3. Three-month moving average of order volume.
   4. Every order with a running total of freight for that customer.

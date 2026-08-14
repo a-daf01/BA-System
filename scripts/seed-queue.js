@@ -32,11 +32,15 @@ function main() {
       seen.add(n);
 
       const d = L.blockDate(schedule, day.block);
+      // If this item is already in the queue, keep its interval and its scores.
+      // Re-running mid-month must not reset a month of review history back to
+      // interval 1 — that silently throws away the only data the system has.
+      const existing = f.queue.find((q) => L.normalise(q.prompt) === n);
       queue.push({
-        interval: 1,
-        due: L.iso(L.addDays(d, 1)),
+        interval: existing ? existing.interval : 1,
+        due: existing ? existing.due : L.iso(L.addDays(d, 1)),
         prompt: item,
-        hist: [],
+        hist: existing ? existing.hist : [],
         block: day.block,
       });
     }
@@ -51,6 +55,9 @@ function main() {
   const kept = f.queue.filter((q) => !planNorm.has(L.normalise(q.prompt)));
   for (const k of kept) queue.push(k);
 
+  // No day gets more than 7 items. An overlong review block is the first thing
+  // he skips, and skipping it is the failure this whole system exists to stop.
+  const promoted = L.capDailyLoad(queue, 7);
   queue.sort((a, b) => (a.due < b.due ? -1 : a.due > b.due ? 1 : 0));
 
   // Permanent items start one interval out from the day their subject lands,
@@ -70,6 +77,7 @@ function main() {
 
   console.log(`Seeded ${queue.length} items into tracking/review-queue.md.`);
   console.log(`Skipped ${skipped} duplicates or items already covered by a permanent entry.`);
+  if (promoted.length) console.log(`Promoted ${promoted.length} item(s) to a longer interval to keep every day under 7.`);
   console.log(`${f.permanent.length} permanent items kept on the 30-day cycle.`);
   console.log(`Day 1 is ${L.iso(start)} (${start.toDateString().slice(0, 3)}).`);
   if (busiest) console.log(`Heaviest seeded day: ${busiest[0]} with ${busiest[1]} items.`);

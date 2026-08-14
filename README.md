@@ -186,6 +186,8 @@ All Node, no dependencies, all run from the repo root.
 | `node scripts/weekly-review.js` | The weekly checkpoint. `--dry` reports without writing. Pass a week number to force one, for example `node scripts/weekly-review.js 2`. |
 | `node scripts/new-month.js` | Generates `plan/month-02.md` from `plan/day-template.md`, weighted by your weakest confidence scores. `--dry` prints the weighting only. |
 | `node scripts/build-snapshot.js` | Refreshes the offline copy inside `index.html`. `weekly-review.js` calls it for you. |
+| `node scripts/check.js` | Health check on the whole system: day time budgets, missing Say It Out Loud lines, `Open:` files that don't exist or are empty, stub review prompts, days over the review cap, permanent items due before their material exists. `--tomorrow` checks just the next day. Exits non-zero on failure. |
+| `python scripts/export-csv.py` | Exports every Northwind table to `data/csv/` for Power BI, which has no SQLite connector. Run once; Days 13 to 17 need it. |
 
 ### How the spaced repetition actually runs
 
@@ -308,12 +310,39 @@ ba-system/
 │   ├── braindump.md              ← unstructured notes, digested each evening
 │   ├── braindump-archive.md      ← digested days, kept for review
 │   ├── knowledge-gaps.md         ← what you didn't know, curated and audited
+│   ├── cv-workspace.md           ← Days 4 and 6 type in here
 │   └── applications.md           ← job pipeline
+├── workspace/                    ← one prefilled file per working day
+│   ├── README.md                 ← which file belongs to which day
+│   ├── day-03-joins.sql          ← questions + expected answers, you type underneath
+│   ├── day-05-aggregation.sql
+│   ├── day-08-subqueries.sql
+│   ├── day-09-windows.sql
+│   ├── day-10-relational-model.md
+│   ├── day-11-star-schema.md
+│   ├── day-12-power-query.md
+│   ├── day-13-power-bi-model.md
+│   ├── day-15-dax-basics.md
+│   ├── day-16-calculate.md
+│   ├── day-17-time-intelligence.md
+│   ├── day-22-brd.md
+│   ├── day-23-stories.md
+│   ├── day-24-rootcause.md
+│   ├── day-27-interview.md
+│   ├── portfolio-1.md
+│   └── portfolio-2.md / .sql
 ├── reference/
 │   ├── target-roles.md
 │   ├── datasets.md
 │   ├── glossary.md
-│   └── portfolio.md
+│   ├── portfolio.md
+│   └── answers/                  ← model SQL. Open me SECOND
+│       ├── day-05-aggregation.sql
+│       ├── day-08-subqueries.sql
+│       └── day-09-windows.sql
+├── data/                         ← gitignored, lives on your machine only
+│   ├── northwind.db
+│   └── csv/                      ← same data for Power BI (no SQLite connector)
 ├── prompts/
 │   └── tutor-prompt.md
 └── scripts/
@@ -325,8 +354,30 @@ ba-system/
     ├── catch-up.js               ← missed days: backfill, write off, reflow
     ├── weekly-review.js
     ├── new-month.js
+    ├── export-csv.py             ← Northwind → data/csv for Power BI
     └── build-snapshot.js
 ```
+
+---
+
+## Where you actually type
+
+**No day starts on a blank page.** Every day that asks you to produce something names
+its file on an **Open first** line, shown at the top of the day card in the dashboard.
+That file already exists with the questions, the structure and the expected answers in
+it — you open it and type underneath.
+
+- **SQL days** → `workspace/day-NN-*.sql`. Each question carries the row count or total
+  it should produce, so you know immediately whether to move on.
+- **Written days** → `workspace/day-NN-*.md`. Headings, tables and prompts, already
+  filled in.
+- **CV** → `tracking/cv-workspace.md`, because Days 4 and 6 both write to it.
+- **Portfolio** → `workspace/portfolio-1.md` and `portfolio-2.md`, then copied into
+  `reference/portfolio.md` when finished.
+
+`reference/answers/` holds the model SQL. Every file in it says **open me second**, and
+that is not decoration — reading a solution before attempting produces recognition
+rather than recall, and recall is the entire problem this system exists to solve.
 
 ---
 

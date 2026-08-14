@@ -322,6 +322,121 @@ aggregation pattern exists. Trust that instinct more than you did.
 
 ---
 
+## 2026-08-14 — Day 3
+
+### You got the right answer from a query that could never have produced it
+
+**Gap:** Task 1. You wrote `INNER JOIN Orders o ... WHERE o.OrderID IS NULL`, got 0 rows,
+and concluded *"I guess there are no customers with no orders."*
+**Answer:** The conclusion is correct. **The query is not evidence for it.** An INNER JOIN
+only emits rows where a match was found, so `o.OrderID` is guaranteed non-null in every
+row it returns. `WHERE o.OrderID IS NULL` on an INNER JOIN returns 0 rows on **every
+database that has ever existed**, whatever the data says. It is a structurally empty
+query.
+
+Verified on your file: the LEFT JOIN version also returns 0. This build genuinely has no
+orphan customers — and no orphan products, suppliers, employees or orders either. It is
+fully dense. So the plan's task couldn't demonstrate the difference, and it has been
+corrected in `plan/month-01.md`.
+
+**What you did right:** your written explanation of *why* it needs a LEFT JOIN — "it forces
+a list of every single customer even if they don't have orders, then the WHERE filters out
+the ones with orders" — is exactly right. You explained the correct method and then typed a
+different one. That's the gap: not the concept, the gap between saying it and writing it.
+**Why it matters:** this is the dangerous shape of error. Nothing errored, the number was
+plausible, and you drew a business conclusion from it. In a job that conclusion goes in an
+email. **Rule: a query that returns 0 rows needs a second query proving 0 is possible.**
+**Status:** `queued` at interval 1
+
+### Row fan-out is not "LEFT JOIN adds unmatched rows"
+
+**Gap:** Task 3 asked when a join silently inflates row counts. You answered that a LEFT
+JOIN adds customers who have no orders, detectable by checking for NULLs.
+**Answer:** That's the definition of a LEFT JOIN, not inflation — those extra rows are
+ones you asked for, and there is one per unmatched customer. **Fan-out is a different
+thing and it happens on INNER JOINs too.** Joining across a one-to-many relationship
+*multiplies* the rows on the "one" side, once per child row:
+
+| Query | Rows | SUM(Freight) |
+|---|---|---|
+| `Orders` alone | 16,282 | £4,047,470.50 |
+| `Orders JOIN [Order Details]` | 609,283 | £206,911,676.00 |
+
+Freight is stored **once per order**. After the join it is repeated once per line item, so
+the total comes back **51× too big**. Nothing errors. Nothing is NULL. Checking for NULLs
+would not have found it.
+**Detection:** count rows before the join and after. If the count grew, every measure
+coming from the left-hand table is now multiplied and must be aggregated differently
+(`SUM(DISTINCT)` won't save you either — aggregate freight on `Orders` separately, or
+sum line-level values only).
+**Why it matters:** this is the Day 3 Say It Out Loud line — *"if a report's totals
+suddenly doubled, my first check is whether a join is fanning out rows"* — and it is one
+of the two or three most common questions asked to separate people who have shipped a
+report from people who have done a course.
+**Status:** `queued` at interval 1
+
+### A WHERE clause on the right-hand table cancels your LEFT JOIN
+
+**Gap:** Not reached — the plan didn't ask for it, and it's the case you'll actually meet.
+**Answer:** "Every customer, with orders since 1 Oct 2023." Put the date filter in `WHERE`
+and you get **58 customers**; put it in the `ON` and you get **93, with 35 at zero**.
+`WHERE o.OrderDate >= …` is evaluated after the join, and a customer with no matching order
+has `OrderDate = NULL`, which fails the comparison — so the row is discarded and the LEFT
+JOIN has been quietly demoted to an INNER JOIN.
+**The rule:** conditions on the **right-hand** table of a LEFT JOIN belong in `ON`.
+Conditions on the left-hand table belong in `WHERE`.
+**Why it matters:** the 35 customers this deletes are precisely the ones a churn or
+re-engagement report exists to find. The report looks fine and answers the opposite question.
+**Status:** `queued` at interval 1
+
+### The three-table join — no gap, but nothing was proved either
+
+**Gap:** Task 2 ran and you said *"I kind of remember this quite well already, not sure
+what much I can do with it."* The task said "break one deliberately and observe" and that
+half didn't happen.
+**Answer:** Fair — the instruction was vague about *what* to break and *what* to observe.
+The point it was reaching for is the fan-out above: your three-table join returns 609,283
+rows from 16,282 orders, and knowing that number is the whole lesson. The extension block
+makes that explicit.
+**Status:** `open` — covered by the fan-out item, not queued separately.
+
+### The system itself is creating friction — logged, not dismissed
+
+**Gap:** *"wtf is Query 9 or Query 12"* — review prompts referencing work by number, and
+bare stub prompts like `INNER vs LEFT` with nothing to actually answer.
+**Answer:** Correct complaint, and it was a real defect. A review prompt has to be
+answerable from the prompt alone; if it sends you back to another file, the review doesn't
+get done.
+
+**What was done about it, same day:** every queue item across all 28 days rewritten as a
+self-contained spoken question; every day given an `Open:` file that already exists with
+the questions in it; every SQL exercise verified against the real database and given the
+answer it should produce; Contoso dropped so there is no second dataset to install;
+`scripts/check.js` added so these can't come back silently.
+**Status:** `open` — system operation, deliberately not queued. Not what you're hired for.
+
+### Two bugs found in the system's own code while fixing the above
+
+Not your gaps — logged because they were silently corrupting your data and you would
+have had no way to see it.
+
+**`weekly-review.js` was inventing confidence scores.** When a review item fell due on a
+day you hadn't logged, it graded that item from the *week average* rather than leaving it
+alone. It did this to three of your items during this session — awarding them a 4 you
+never gave — and every future interval for those items would have derived from that
+invented number. Fixed: no score, no grading. An item that falls due on an unlogged day is
+now left untouched, and one that falls due on a logged-but-unscored day is carried forward
+at its current interval with nothing recorded.
+
+**The dashboard's "full 28 days" list rendered `[object Object]` for every task.** It had
+been passing the task object where a string was expected since sub-steps were added. The
+today card was fine, which is why it went unnoticed — but the one place you'd look to see
+what's coming was unreadable. Fixed, and sub-steps now nest underneath.
+
+**Status:** `open` — both fixed. Recorded so the fix isn't silently undone later.
+
+---
+
 ## How this file gets maintained
 
 Claude Code appends to it at the end of any session where you asked something you

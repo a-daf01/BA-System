@@ -91,7 +91,7 @@ function parsePlan(md) {
     const line = raw.trim();
     const head = /^##\s+Day\s+(\d+)\s*[-—–]?\s*(.*)$/.exec(line);
     if (head) {
-      cur = { block: +head[1], title: head[2].trim(), theme: '', desk: [], phone: [], say: '', adds: [] };
+      cur = { block: +head[1], title: head[2].trim(), theme: '', open: '', desk: [], phone: [], say: '', adds: [] };
       days.push(cur);
       mode = null;
       continue;
@@ -103,6 +103,11 @@ function parsePlan(md) {
 
     const theme = /^\*\*Theme:\*\*\s*(.*)$/i.exec(line);
     if (theme) { cur.theme = theme[1].trim(); mode = null; continue; }
+
+    // The file this day writes into. Rendered as the first thing on the day
+    // card, because "what do I open" was a real source of friction.
+    const open = /^\*\*Open:\*\*\s*(.*)$/i.exec(line);
+    if (open) { cur.open = open[1].trim(); mode = null; continue; }
 
     const say = /^\*\*Say It Out Loud:\*\*\s*(.*)$/i.exec(line);
     if (say) { cur.say = say[1].trim(); mode = null; continue; }

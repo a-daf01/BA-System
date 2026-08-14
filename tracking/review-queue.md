@@ -30,6 +30,11 @@ For each item:
 
 Saying it aloud is not optional dressing — it's the same skill the interview tests. Silent recognition is not recall.
 
+**Every prompt is answerable from the prompt alone.** No "see Day 4", no "query 9",
+no bare topic labels. If a line ever sends you to another file to work out what it
+is asking, that's a bug — say so and it gets fixed, because a review block with
+friction in it is a review block that doesn't happen.
+
 ---
 
 ## Queue
@@ -37,72 +42,68 @@ Saying it aloud is not optional dressing — it's the same skill the interview t
 Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 
 ```
+[3] due:2026-08-15 | Why does SELECT TOP 5 fail in SQLite, and what replaces it? | 
+[3] due:2026-08-15 | In a GROUP BY query, what does SUM() do, and where does the multiplication actually happen? | 
+[1] due:2026-08-15 | Write the SQL for Northwind customers with more than 10 orders, then say what it tells the business. | 
+[1] due:2026-08-15 | You wrote `INNER JOIN Orders ... WHERE o.OrderID IS NULL` and got 0 rows. Say why that returns 0 on every database that has ever existed, and what you should have written | 
+[1] due:2026-08-15 | Orders holds 16,282 rows and £4,047,470 of freight. Join it to [Order Details] and freight comes back £206,911,676. Say what happened, and the one check that catches it before you send the report | 
+[1] due:2026-08-15 | "Every customer, and their order count since Oct 2023." One version returns 93 customers, the other 58. Say which clause the date filter is in, in each — and why the 58 version is the wrong answer to that question | 
+[1] due:2026-08-16 | You wrote `Discontinued IS 0` and it worked. Say why, and why that same query fails on SQL Server. | 
+[1] due:2026-08-16 | Your 1997 query returned nothing and you called it a trick question. Say the one line of SQL you run before deciding a filter is wrong. | 
+[3] due:2026-08-16 | Say why `A OR B AND C` is not `(A OR B) AND C`, and which operator binds tighter. | 
+[3] due:2026-08-16 | Say the order you build a SQL query in, and why it is not the order it reads in. | 
+[1] due:2026-08-16 | Say your three strongest CV bullets aloud from memory, in the problem → action → change shape | 
+[1] due:2026-08-14 | Read "products above 20 that are not discontinued" aloud. How many conditions is that, and what is the five-second check that catches a dropped one? | 
 [3] due:2026-08-17 | Write the SQL for top 5 Northwind products by revenue. Say why Discount changes the answer. | 4
 [3] due:2026-08-17 | Why does WHERE COUNT(*) > 10 fail, and what do you use instead? | 4
 [3] due:2026-08-17 | In Power Query, what does Remove Errors actually do to your rows, and why is that dangerous in an analysis? | 4
+[3] due:2026-08-17 | "Count of unshipped orders next to the count of all orders." Write it — one query, no subquery. Then say what phrase in a request tells you to reach for this pattern. | 
+[3] due:2026-08-17 | Your Q1 2016 query returned 350 orders using BETWEEN. The right answer is 357. Say what BETWEEN did to the last day of the range, and what you write instead. | 
+[3] due:2026-08-17 | Power BI has no SQLite connector. Say the two routes for getting Northwind into it, and which one this repo already did for you. | 
+[3] due:2026-08-17 | In a Power BI bar chart, how do you show orders per country without pre-aggregating the data? | 
 [3] due:2026-08-18 | Which Northwind download works with DB Browser for SQLite, and why does the sql-server-samples one not? | 4
-[3] due:2026-08-18 | Why does SELECT * FROM Order Details fail, and what are the two ways to fix it? | 4
+[3] due:2026-08-18 | Why does SELECT * FROM [Order Details] fail, and what are the two ways to fix it? | 4
 [3] due:2026-08-18 | Is ROUND an alternative to SUM? Say what each one does and how you would use both in one query. | 4
-[1] due:2026-08-14 | "Count of unshipped orders next to the count of all orders." Write it. One query, no subquery — then say what phrase in a request tells you to reach for this pattern. | 
-[1] due:2026-08-14 | Your query 9 returned 350 orders. The right answer was 357. Say what BETWEEN did to the last day of the range, and what you write instead. | 
-[1] due:2026-08-14 | Read this aloud: "products above 20 that are not discontinued". How many conditions is that? How many did you write? What is the five-second check that catches it? | 
-[1] due:2026-08-14 | Query 12 told you to try `= NULL` first and watch it return nothing. Say why it returns nothing, and what you use instead. | 
-[1] due:2026-08-14 | How do you get Northwind data into Power BI, given there is no SQLite connector? | 
-[1] due:2026-08-14 | In a Power BI bar chart, how do you show orders per country without pre-aggregating the data? | 
-[1] due:2026-08-15 | INNER vs LEFT | 
-[1] due:2026-08-15 | row fan-out | 
-[1] due:2026-08-15 | join direction | 
-[1] due:2026-08-15 | Write the SQL for Northwind customers with more than 10 orders, then say what it tells the business. | 
-[3] due:2026-08-15 | Why does SELECT TOP 5 fail in SQLite, and what replaces it? | 
-[3] due:2026-08-15 | In a GROUP BY query, what does SUM() do and where does the multiplication actually happen? | 
-[1] due:2026-08-16 | your 3 strongest CV bullets | 
-[1] due:2026-08-16 | You wrote `Discontinued IS 0` and it worked. Say why, and why that same query fails on SQL Server. | 
-[1] due:2026-08-16 | "I think it's just a trick question." Your 1997 query returned nothing. Say the one line of SQL you run before deciding a filter is wrong. | 
-[3] due:2026-08-16 | You wrote 'B%' and '%market%'. Say what each wildcard does, and name one case where LIKE is the wrong tool. | 
-[3] due:2026-08-16 | "The brackets got me at first." Say why `A OR B AND C` is not `(A OR B) AND C`, and which one binds tighter. | 
-[3] due:2026-08-16 | Say the order you build a SQL query in, and why it is not the order it reads in. | 
-[1] due:2026-08-18 | WHERE vs HAVING | 
-[1] due:2026-08-18 | GROUP BY with multiple columns | 
-[1] due:2026-08-20 | CTE syntax | 
-[1] due:2026-08-20 | subquery vs CTE tradeoff | 
-[1] due:2026-08-21 | PARTITION BY | 
-[1] due:2026-08-21 | top-N-per-group pattern | 
-[1] due:2026-08-21 | LAG/LEAD | 
-[1] due:2026-08-22 | PK/FK | 
-[1] due:2026-08-22 | cardinality | 
-[1] due:2026-08-22 | 3NF | 
-[1] due:2026-08-22 | normalise vs denormalise tradeoff | 
-[1] due:2026-08-23 | fact vs dimension | 
-[1] due:2026-08-23 | star vs snowflake | 
-[1] due:2026-08-23 | reference vs transactional data | 
-[1] due:2026-08-23 | data mart | 
-[1] due:2026-08-25 | unpivot | 
-[1] due:2026-08-25 | applied steps | 
-[1] due:2026-08-25 | type changes as an error source | 
-[1] due:2026-08-26 | cardinality in Power BI | 
-[1] due:2026-08-26 | filter direction | 
-[1] due:2026-08-26 | date dimension | 
-[1] due:2026-08-27 | measure vs calculated column | 
-[1] due:2026-08-27 | DIVIDE vs / | 
-[1] due:2026-08-27 | filter context (intro) | 
-[1] due:2026-08-28 | ALL vs ALLEXCEPT | 
-[1] due:2026-08-28 | % of total pattern | 
-[1] due:2026-08-28 | filter context (deep) | 
-[1] due:2026-08-29 | YTD/QTD/MTD | 
-[1] due:2026-08-29 | SAMEPERIODLASTYEAR | 
-[1] due:2026-08-29 | marked date table | 
-[1] due:2026-08-30 | your portfolio 1 business question | 
-[1] due:2026-09-02 | portfolio 1 two-minute walkthrough | 
-[1] due:2026-09-03 | BRD vs FRD vs SRS | 
-[1] due:2026-09-03 | functional vs non-functional | 
-[1] due:2026-09-04 | user story format | 
-[1] due:2026-09-04 | Given/When/Then | 
-[1] due:2026-09-04 | UAT pass/fail criteria | 
-[1] due:2026-09-05 | as-is/to-be | 
-[1] due:2026-09-05 | gap analysis | 
-[1] due:2026-09-05 | your root-cause story | 
-[1] due:2026-09-08 | portfolio 2 walkthrough | 
-[1] due:2026-09-09 | the 8 technical answers | 
+[1] due:2026-08-18 | A stakeholder wants "countries where we have more than 5 customers". Say which clause the `> 5` goes in, and what error you get if you put it in the other one | 
+[1] due:2026-08-18 | "Categories whose 2023 revenue was above £4m." Say why the year filter cannot go in HAVING, and why the £4m filter cannot go in WHERE | 
+[1] due:2026-08-19 | Your 30-second self-introduction, out loud and timed | 
+[1] due:2026-08-20 | Name the two things a CTE gives you that a subquery does not, and one case where the plain subquery is still the better call | 
+[1] due:2026-08-20 | Why is `NOT IN` dangerous when the inner query can return a NULL, and what do you write instead? | 
+[1] due:2026-08-20 | Say the difference between a correlated and an uncorrelated subquery, and which one runs once per row | 
+[1] due:2026-08-21 | "Rank products by revenue within each category." Say which clause does the "within each category" part, and why GROUP BY cannot do this job | 
+[1] due:2026-08-21 | Describe the top-N-per-group pattern out loud, and say why you cannot filter on the rank in the same SELECT | 
+[1] due:2026-08-21 | Your 2016 month-on-month query returned NULL for January. Say why, and what you show a stakeholder instead of a blank cell | 
+[1] due:2026-08-22 | Point at Northwind: name one primary key, one foreign key, and say what breaks if the foreign key is not enforced | 
+[1] due:2026-08-22 | Say the cardinality of Customers→Orders and of Orders→[Order Details] using the words "one to many", then say which of the two caused your £206m freight number | 
+[1] due:2026-08-22 | Explain 3NF to a non-technical manager in two sentences, without using the words "normal form" | 
+[1] due:2026-08-23 | State the grain of your Northwind fact table in one sentence, then say what you did with Freight and why | 
+[1] due:2026-08-23 | Draw a star and a snowflake in the air and say the one structural difference, then why BI tools generally prefer the star | 
+[1] due:2026-08-23 | What is a data mart, and how is it different from a warehouse? Answer as if a hiring manager asked it | 
+[1] due:2026-08-14 | Why does `= NULL` return nothing, and what do you use instead? | 
+[1] due:2026-08-14 | You wrote 'B%' and '%market%'. Say what each wildcard does, and name one case where LIKE is the wrong tool | 
+[1] due:2026-08-25 | What does Remove Errors actually do to your rows, and what do you do instead? | 
+[1] due:2026-08-25 | What is unpivot for, and what shape of data tells you that you need it? | 
+[1] due:2026-08-26 | You set one relationship to both-directional and the number on screen changed. Say what happened, and how you would spot it on a model someone else built | 
+[1] due:2026-08-26 | Say what cardinality and filter direction each control in Power BI, and which way the arrow should point on a fact-to-dimension relationship | 
+[1] due:2026-08-27 | When can SUM not do the job, so you need SUMX? Give the Northwind revenue example | 
+[1] due:2026-08-27 | Measure or calculated column? Say the rule, then say which of your ten you would delete first if the model got slow | 
+[1] due:2026-08-27 | What does DIVIDE do that `/` does not? | 
+[1] due:2026-08-28 | Say what CALCULATE does to filter context in one sentence — the version you would say to a manager, not to an analyst | 
+[1] due:2026-08-28 | Your % of total has to sum to 100. Say where ALL goes to make that true, and what ALLEXCEPT would have given you instead | 
+[1] due:2026-08-29 | 2022 was £39.7m and 2023 was £33.1m. Say why that is not a 17% fall, and how you would check for it on a dataset you had never seen | 
+[1] due:2026-08-29 | Say what YTD, QTD and MTD each give you, and what breaks the moment the date table is unmarked | 
+[1] due:2026-08-30 | Your portfolio 1 business question, in one sentence, with the metric in it | 
+[1] due:2026-08-30 | State the grain of your portfolio 1 fact table, and name the two model decisions you would defend | 
+[1] due:2026-09-02 | Portfolio 1 — the full two-minute walkthrough, then answer the follow-up: how do you know that number is right? | 
+[1] due:2026-09-03 | BRD vs FRD vs SRS — what each one states, who reads it, and what goes wrong when two of them get merged | 
+[1] due:2026-09-03 | What makes a non-functional requirement testable? Give one of your three, with its number in it | 
+[1] due:2026-09-04 | Give one of your user stories in full As-a / I-want / So-that form, then its Given/When/Then criteria including the missing-data case | 
+[1] due:2026-09-04 | What happens at UAT when the business signs off without actually testing, and how do you stop that? | 
+[1] due:2026-09-05 | Your root-cause story — the full 90-second STAR version, timed | 
+[1] due:2026-09-05 | What is gap analysis, and name one gap your portfolio 1 work does not close | 
+[1] due:2026-09-08 | Portfolio 2 — the two-minute walkthrough, ending on requirement-to-visual traceability | 
+[1] due:2026-09-09 | All six STAR stories, timed, no notes | 
+[1] due:2026-09-09 | The eight technical answers, no notes | 
 ```
 
 *(Claude Code populates this as you progress. Items are added by the "Adds to review queue" line at the bottom of each day in `plan/month-01.md`.)*
@@ -111,14 +112,19 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 
 ## Permanent items — never leave the queue
 
-These stay on a 30-day cycle indefinitely, because they're what interviews actually test:
+These stay on a 30-day cycle indefinitely, because they're what interviews actually test.
+
+**They start after Day 28**, deliberately. Every one of them depends on work you
+haven't done yet — asking for a portfolio 2 walkthrough in week 3 would produce a
+false confidence-1 and corrupt the queue with it.
 
 ```
-[30] due:2026-08-31 | Your 30-second self-introduction | 
-[30] due:2026-08-31 | Portfolio 1 — full 2-minute walkthrough | 
-[30] due:2026-08-31 | Portfolio 2 — full 2-minute walkthrough | 
-[30] due:2026-08-31 | Your root-cause investigation story | 
-[30] due:2026-08-31 | All 6 STAR stories | 
-[30] due:2026-08-31 | What is a star schema and why does it matter commercially? | 
-[30] due:2026-08-31 | What does CALCULATE do in DAX? | 
+[30] due:2026-09-10 | Your 30-second self-introduction. Out loud, timed, no notes. | 
+[30] due:2026-09-10 | Portfolio 1 — the full two-minute walkthrough, ending on what you would do differently. | 
+[30] due:2026-09-11 | Portfolio 2 — the full two-minute walkthrough, ending on requirement-to-visual traceability. | 
+[30] due:2026-09-11 | Your root-cause story. Symptom, trace, calculation, configuration, cause, fix — in 90 seconds. | 
+[30] due:2026-09-12 | All six STAR stories, back to back. Time each one; anything over two minutes gets cut. | 
+[30] due:2026-09-12 | What is a star schema, and why does it matter commercially? Answer the "commercially" part properly. | 
+[30] due:2026-09-13 | What does CALCULATE do in DAX? One sentence, in the words you'd use with a manager. | 
+[30] due:2026-09-13 | A report's totals have doubled overnight. Walk through your first three checks, in order. | 
 ```

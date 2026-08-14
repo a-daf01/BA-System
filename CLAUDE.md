@@ -45,6 +45,25 @@ A log line carrying `done:YYYY-MM-DD` was **backfilled**: the work happened, jus
 - Confidence 3 → repeat current interval
 - Confidence 1–2 → drop back one interval
 
+**Every queue line must be answerable from the line alone.** Two failure modes, both
+reported by him on Day 3 and both fatal to the block getting done at all:
+
+- **No cross-references.** "Your query 9 returned 350" is useless on a phone — he has to
+  go and find what query 9 was. Restate the situation inside the prompt.
+- **No bare stubs.** `INNER vs LEFT`, `row fan-out`, `PARTITION BY` are topic labels, not
+  questions. He cannot answer a label aloud, so he skips it. Write the question he has to
+  say out loud, and where possible anchor it in a number or a query he actually produced.
+
+When a day's `Adds to review queue` line is a list of topic labels — which most of
+`plan/month-01.md` still is — expand it into real questions **at the end of that day**,
+using what actually happened, rather than copying the labels in.
+
+**Before writing any day's exercise, verify it against `data/northwind.db`.** Two days in
+a row have shipped tasks that the dataset cannot support — the 1997 date filter on Day 2,
+"find customers with no orders" on Day 3 (this build has zero orphan rows anywhere). Run
+the query yourself first. An exercise that returns nothing teaches him that he is wrong
+when he isn't, which is worse than no exercise.
+
 Keep the daily review load at **5–8 items maximum**. If it exceeds that, promote the strongest items to longer intervals rather than expanding the block. An overlong review block is the first thing he'll skip.
 
 ### 4. Month 2 generation
@@ -116,13 +135,53 @@ Rules for the digest itself:
 - **An empty braindump on a day he worked is worth one sentence, not a lecture.** Say it is
   empty, ask for the confidence score, move on.
 
+### 7. Next-day readiness check — run this at the end of every digest
+
+He asked for this directly: *"the skill checks and updates the next day to ensure it's
+fully ready and friction free so I can have a clear plan and guide to follow."*
+
+**After the digest, before you finish the session, run this and then read tomorrow's
+block yourself:**
+
+```
+node scripts/check.js --tomorrow
+```
+
+The script catches the mechanical failures — a missing or empty workspace file, a day
+over its time budget, a missing Say It Out Loud, a review day over the cap, a permanent
+item due before the work that produces it exists. **It cannot judge whether a task is
+actually specific, and it cannot run the SQL.** Those are yours. Do not report the day
+as closed until you have done both. Five checks, in order:
+
+1. **Does every task name a deliverable?** "Practice SQL" and "explore the model" are
+   failures. If a task doesn't say what he produces, rewrite it now.
+2. **Does the data support it?** Run the query yourself against `data/northwind.db`
+   before he does. Two separate days shipped exercises this build cannot satisfy — the
+   1997 date filter on Day 2, "find customers with no orders" on Day 3. **An exercise
+   that returns nothing teaches him he is wrong when he isn't**, and he will believe it.
+3. **Does the `Open:` file exist and have content in it?** Every day that asks him to
+   write something names a file in `workspace/`, prefilled with the questions and the
+   structure. If tomorrow's is missing, create it.
+4. **Does every task that produces a number carry the number?** Row count, total, top
+   row. Self-checking is what makes a day feel finished rather than ambiguous, and
+   ambiguity is what he abandons.
+5. **Is tomorrow's review load between 5 and 8, and is every line answerable from the
+   line alone?** Check the actual count for that date, not the average.
+
+Say in one line what you checked and what you changed. If nothing needed changing, say
+that — it is information, not filler.
+
 ## Hard rules
 
 - **Never let a day be unspecified.** Vague instructions ("practice SQL") are the failure mode. Every block names a concrete deliverable.
-- **Never expand a day past 75 min desk + 30 min phone.** He'll do exactly what's written — which means overwriting a day is as harmful as underwriting it.
+- **Never expand a day past 75 min desk + 30 min phone.** He'll do exactly what's written — which means overwriting a day is as harmful as underwriting it. *(The four Sunday consolidation blocks run 35–40 min phone with no desk block at all. That is the exception, it is deliberate, and it stays.)*
 - **Keep the Say It Out Loud line on every day.** It's the interview-readiness mechanism and it's easy to drop when regenerating.
 - **Preserve the DESK/PHONE split.** Phone tasks must be genuinely doable lying down with no keyboard: reading, watching, recall, voice notes, reviewing job ads.
 - **Don't gamify with streaks that punish.** A broken streak should not reset visible progress. He's had motivation collapse from single-point failures before.
+- **Never invent a confidence score, anywhere, for any reason.** Not from a braindump, not from a week average, not from "it looked like it went well". `scripts/weekly-review.js` used to fall back to the week average for items that fell due on an unlogged day; that was a bug and it is fixed. If there is no evidence, the item carries forward unscored.
+- **He never opens a blank page.** Every day that asks him to write something has an `Open:` line naming a prefilled file in `workspace/`. If you add a day, you add its file.
+- **Verify against the real data before writing an exercise.** Not from memory of what Northwind usually contains — this build is re-dated, re-sized and fully dense, and it has already broken two days' worth of tasks.
+- **Model answers live in `reference/answers/` and say "open me second".** Never paste a full solution into the plan or the workspace file. Expected row counts and totals, yes; the query, no.
 
 ## Tone when reporting back
 

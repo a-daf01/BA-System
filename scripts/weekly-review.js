@@ -76,21 +76,48 @@ function main() {
     if (r.done) confByDate[r.done] = r.conf;
   }
 
-  const changes = { advanced: [], repeated: [], dropped: [], untouched: 0, promoted: [] };
+  // Days that have been logged at all, whether or not they carry a confidence.
+  // An item that fell due on a logged-but-unscored day was not reviewed; an item
+  // that fell due on a day never logged is simply still waiting.
+  const loggedDates = new Set();
+  for (const s of schedule) {
+    const r = rows[s.day];
+    if (r && r.logged) { loggedDates.add(L.iso(s.date)); if (r.done) loggedDates.add(r.done); }
+  }
+
+  const changes = { advanced: [], repeated: [], dropped: [], untouched: 0, promoted: [], carried: [] };
 
   function reschedule(item, permanent) {
     const due = L.toDate(item.due);
     if (!due || due > now) { changes.untouched++; return item; }
 
     // Score for this review: the item's own most recent score, else the daily
-    // confidence logged on the day it fell due, else the week average.
+    // confidence logged on the day it fell due. Never the week average.
+    //
+    // Grading an item from an average is grading work that was never described,
+    // and every future interval derives from that number. A day with no logged
+    // confidence produces no score here — the item is either carried forward
+    // untouched (the day was logged as done-but-unscored, or written off) or
+    // left alone entirely (the day has not been logged yet, so it is still
+    // legitimately waiting to be reviewed).
     let conf = item.hist.length ? item.hist[item.hist.length - 1] : null;
     let derived = false;
     if (conf === null) {
-      conf = confByDate[item.due] ?? (avgConf ? Math.round(avgConf) : null);
+      conf = confByDate[item.due] ?? null;
       derived = true;
     }
-    if (conf === null) { changes.untouched++; return item; }
+    if (conf === null) {
+      if (loggedDates.has(item.due)) {
+        // The day happened and was logged without a score. Move the item on at
+        // its current interval so it stops sitting permanently overdue, but
+        // record nothing — no evidence, no score.
+        item.due = L.iso(L.addDays(now, item.interval));
+        changes.carried.push({ prompt: item.prompt, interval: item.interval });
+        return item;
+      }
+      changes.untouched++;
+      return item;
+    }
 
     const before = item.interval;
     if (permanent) {
@@ -197,7 +224,11 @@ function main() {
   line(`  Repeated at the same interval: ${changes.repeated.length}`);
   line(`  Dropped back an interval:      ${changes.dropped.length}`);
   line(`  Promoted to protect the 8-item cap: ${changes.promoted.length}`);
+  line(`  Carried forward unscored:      ${changes.carried.length}`);
   line(`  Not due yet, untouched:        ${changes.untouched}`);
+  if (changes.carried.length) {
+    line('    (fell due on a day logged without a confidence score — moved on, not graded)');
+  }
   for (const c of changes.dropped.slice(0, 8)) line(`    down  ${c.from} -> ${c.to}d  conf ${c.conf}  ${c.prompt}`);
   line('');
 

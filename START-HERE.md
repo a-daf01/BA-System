@@ -169,7 +169,12 @@ Full version in `prompts/tutor-prompt.md`, including the Day 28 mock interview p
 | `plan/day-template.md` | Format for generating month 2+ |
 | `tracking/progress.md` | **The one file you write to daily.** 10 seconds |
 | `tracking/review-queue.md` | Spaced repetition — the retention engine |
+| `tracking/braindump.md` | Unstructured notes during the day. Digested each evening |
+| `tracking/knowledge-gaps.md` | What you didn't know, the answer, and whether it stuck |
+| `tracking/cv-workspace.md` | Where the CV gets written, Days 4 and 6 |
 | `tracking/applications.md` | Job pipeline + agency contacts |
+| **`workspace/`** | **One prefilled file per working day.** You never open a blank page |
+| `reference/answers/` | Model SQL. Open me *second* |
 | `reference/target-roles.md` | Market research: salaries, titles, where to search |
 | `reference/datasets.md` | Every dataset you'll use. All free and public |
 | `reference/glossary.md` | BA/BSA terminology for interviews |

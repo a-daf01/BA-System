@@ -13,20 +13,65 @@ Microsoft's classic sample database modelling a fictional food trading company. 
 
 **Get it:** SQLite version — `jpwhite3/northwind-SQLite3`, already downloaded to `data/northwind.db`. Open with **DB Browser for SQLite** (free, no server setup). Postgres and SQL Server ports also exist if you prefer.
 
+**What is actually in this build** — checked against the file, not the documentation:
+
+| Table | Rows | | Table | Rows |
+|---|---|---|---|---|
+| Order Details | 609,283 | | Territories | 53 |
+| Orders | 16,282 | | EmployeeTerritories | 49 |
+| Customers | 93 | | Suppliers | 29 |
+| Products | 77 | | Employees | 9 |
+| Categories | 8 | | Shippers | 3 |
+| Regions | 4 | | | |
+
+`CustomerDemographics` and `CustomerCustomerDemo` exist and are **empty** — a table
+nobody ever populated, which is a thing you will meet constantly in real systems.
+
+**Two things that will catch you out, both of which already have:**
+
+- **There are no orphan rows anywhere.** Every customer has orders, every product has
+  been sold, every order has line items. So every "find the records with no match"
+  exercise you will read online returns zero here — and a zero that means *the data is
+  dense* looks identical to a zero that means *your query is broken*. Day 3 was rewritten
+  because of this.
+- **`Discontinued` is stored as text**, `'0'` / `'1'`, not as a number. SQLite compares
+  it happily. SQL Server would not.
+
 **Know this before you write a date filter:** this build is *not* the original 1996–1998
 Northwind. It has been re-dated and expanded — **16,282 orders spanning 2012-07-10 to
 2023-10-28.** Most tutorials online assume the 1997 dates and their queries will return
 nothing here. `OrderDate` is also a full timestamp, not a date, so `BETWEEN 'x' AND 'y'`
 silently excludes the final day. Use `>= start AND < day-after-end`.
 
-### Contoso — Days 11 to 17 (star schemas, Power BI, DAX)
-Microsoft's BI demo dataset for retail. Built explicitly to demonstrate data warehouse and BI functionality, with high-volume transactions plus properly structured reference and dimension data.
+### Northwind again — Days 11 to 17 (star schemas, Power BI, DAX)
 
-**Why this one:** Northwind teaches you transactional structure; Contoso teaches you reporting structure. Comparing the two is how the star schema concept actually lands. It's designed around a star schema, which is exactly what you need to be able to describe in interviews.
+**There is no second database to install.** Days 11 to 17 run on the same Northwind
+data, exported to CSV.
 
-**Get it:** Microsoft's `sql-server-samples` GitHub repo, or SQLBI's free Contoso Data Generator which produces ready-made databases at various sizes. The SQLBI version pairs well with DAX learning resources.
+**Why the plan changed.** It used to send you to Contoso, on the reasoning that
+Northwind teaches transactional structure and Contoso teaches reporting structure.
+That reasoning is sound but the sequencing was backwards. **Contoso hands you a star
+schema already built; Northwind makes you build one.** Converting a normalised OLTP
+schema into a dimensional model is not a warm-up for the Business Systems Analyst
+job — it *is* the job, and it is the single strongest thing you can describe in an
+interview. So Day 11 designs the star from Northwind and Day 13 builds it.
 
-**Fallback if setup fights you:** Power BI Desktop ships with sample .pbix files, and Microsoft publishes several ready-made sample reports with datasets. Use those rather than losing a day to installation.
+It also removes the biggest install risk in the month. A dataset download that fights
+you on Day 11 costs a day, and the plan cannot afford one.
+
+**Power BI has no SQLite connector.** The CSVs are already exported to `data/csv/`.
+If they are ever missing, rebuild them in one command:
+
+```
+python scripts/export-csv.py
+```
+
+Then in Power BI: **Get Data → Folder → `data/csv` → Combine and Load.**
+
+**Still want Contoso?** It is a genuinely good dataset and a reasonable month-2
+project — SQLBI's free Contoso Data Generator produces ready-made databases at
+several sizes. It is optional enrichment, not a dependency. Nothing in month 1
+needs it.
 
 ---
 

@@ -76,7 +76,7 @@ D28 | | desk: phone: | conf: | note:
 
 Tangents that tried to eat a session. Write it here, move on. Claude Code will schedule one as a Sunday deep-dive if this list hits 3+.
 
-- 
+- **Full friction audit of Days 5–28** (raised Day 3). Every remaining day checked against `data/northwind.db` for exercises the data can't support, every vague instruction made concrete, every `Adds to review queue` stub expanded into real questions. Days 3 and 4 and the near-term queue are already done. This is a session of its own — Day 7 (Sunday) is the slot.
 
 ---
 

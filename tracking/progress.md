@@ -42,7 +42,7 @@ This matters because the weekly review reads it. A day with `done:` set counts a
 ```
 D01 | 2026-08-12 | desk:Y phone:Y | conf:4 | note: baseline test - got 1,2,3 unaided; looked up 4 (HAVING) and 5 (revenue). Self-corrected TOP->LIMIT and SUM. Power Query remove-errors not understood.
 D02 | 2026-08-13 | desk:Y phone:Y | conf:4 | note: 13/15 queries correct. Q13 conditional aggregation failed - looked up CASE/SUM. Q4 and Q15 dropped a stated condition. Q9 BETWEEN silently lost the last day (350 vs 357). Everything unnoted was recalled from courses ~a year old.
-D03 | | desk: phone: | conf: | note:
+D03 | 2026-08-14 | desk:Y phone:Y | conf:5 | note: joins done, called it easy. INNER+IS NULL returned the right answer via a query that could not have produced it. Fan-out answer wrong - described LEFT JOIN behaviour, not row multiplication. Flagged system friction; system rebuilt same day.
 D04 | | desk: phone: | conf: | note:
 D05 | | desk:- phone: | conf: | note:
 D06 | | desk: phone: | conf: | note:

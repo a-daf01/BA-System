@@ -437,6 +437,55 @@ what's coming was unreadable. Fixed, and sub-steps now nest underneath.
 
 ---
 
+## 2026-08-15 — from the CV and profile review
+
+### The 40 percent is the only number on your CV and you may not be able to defend it
+
+**Gap:** "improving dashboard performance by 40 percent by identifying and resolving
+inefficient PL/SQL queries" is the single hard figure on the page, so it is the first
+thing an interviewer probes. Nothing in the profile records how it was measured.
+**Answer:** A number on a CV is a claim you have volunteered to be cross-examined on.
+You need three things ready: the baseline, what it became, and the method. If you have
+them, it is your strongest bullet. If you don't, "measurably improved dashboard
+performance by rewriting inefficient PL/SQL" is honest and costs you almost nothing —
+whereas failing to defend a stated percentage costs you the room.
+**Why it matters:** every posting in `reference/target-roles.md` lists "presenting
+findings to management". Presenting a number you cannot source is the failure mode of
+that competency, demonstrated live.
+**Status:** `queued` — Day 4 Step 3 defend-check, and in the queue for 16 Aug as part
+of the three-bullets item.
+
+### Your own two documents disagree about who you work for
+
+**Gap:** the CV says "Smart Independent Technologies (SITCO)", the old
+`career_profile.json` said "Smart Technologies UK".
+**Answer:** Settle on the legal entity name and use it identically on the CV, LinkedIn
+and every application form. Recruiters cross-check LinkedIn against the CV as a matter
+of routine, and an employer-name mismatch reads as either carelessness or invention.
+**Status:** `open` — needs you, not me. Listed in `needs_ahmed_to_confirm` in
+`data/career_profile.json`.
+
+### You are underselling your experience by a year
+
+**Gap:** the CV says "two years of production experience". Employment runs from August
+2023, so as of August 2026 it is three.
+**Answer:** Say three. In a market where the gap between GBP 28k and GBP 40k is
+demonstrable depth, a year of production experience is not a rounding error.
+**Status:** `open` — fix on the CV.
+
+### The profile file was the hallucination risk, not the CV
+
+**Gap:** `career_profile.json` carried four invented metrics ("reduced time-to-insight
+by 90%", "100% data sovereignty", "eliminating hallucinations at the source",
+"dramatically reducing hallucination rates") and described you as a Back End Developer.
+Anything generated from that file would have inherited both.
+**Answer:** Rewritten 2026-08-15 as a source of truth with evidence flags on every
+claim, a `do_not_claim` section listing what was removed and why, and a
+`needs_ahmed_to_confirm` list. Applications now generate from that file only.
+**Status:** `open` — system operation, deliberately not queued.
+
+---
+
 ## How this file gets maintained
 
 Claude Code appends to it at the end of any session where you asked something you

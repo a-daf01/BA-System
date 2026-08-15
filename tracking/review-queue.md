@@ -44,7 +44,7 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 ```
 [3] due:2026-08-15 | Why does SELECT TOP 5 fail in SQLite, and what replaces it? | 
 [3] due:2026-08-15 | In a GROUP BY query, what does SUM() do, and where does the multiplication actually happen? | 
-[1] due:2026-08-15 | Write the SQL for Northwind customers with more than 10 orders, then say what it tells the business. | 
+[1] due:2026-08-15 | Write the SQL for Northwind customers with more than 180 orders, then say what it tells the business. (Every customer in this build has at least 154, so a threshold of 10 would return all 93 and tell you nothing — say how you'd pick a threshold on data you'd never seen.) | 
 [1] due:2026-08-15 | You wrote `INNER JOIN Orders ... WHERE o.OrderID IS NULL` and got 0 rows. Say why that returns 0 on every database that has ever existed, and what you should have written | 
 [1] due:2026-08-15 | Orders holds 16,282 rows and £4,047,470 of freight. Join it to [Order Details] and freight comes back £206,911,676. Say what happened, and the one check that catches it before you send the report | 
 [1] due:2026-08-15 | "Every customer, and their order count since Oct 2023." One version returns 93 customers, the other 58. Say which clause the date filter is in, in each — and why the 58 version is the wrong answer to that question | 
@@ -56,7 +56,7 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [1] due:2026-08-16 | Order 10273 carries £48.00 of freight and has 5 product lines. Join Orders to [Order Details] and that order's freight sums to £240.00. Say the rule that predicts the 240 before you run it | 
 [1] due:2026-08-16 | You ranked customers by freight two ways. Joined through [Order Details] the top 5 ended IT, B's Beverages, Hungry Coyote, Morgenstern, Piccolo; straight from Orders, positions 4 and 5 were two different companies. Say why inflated numbers still change *who* is top, and what that costs if you send it | 
 [1] due:2026-08-14 | Read "products above 20 that are not discontinued" aloud. How many conditions is that, and what is the five-second check that catches a dropped one? | 
-[3] due:2026-08-17 | Write the SQL for top 5 Northwind products by revenue. Say why Discount changes the answer. | 4
+[1] due:2026-08-19 | Northwind's top 5 products by revenue come back in the same order whether you apply Discount or ignore it, and the total only moves 0.02%. Say why you apply it anyway. | 
 [3] due:2026-08-17 | Why does WHERE COUNT(*) > 10 fail, and what do you use instead? | 4
 [3] due:2026-08-17 | In Power Query, what does Remove Errors actually do to your rows, and why is that dangerous in an analysis? | 4
 [3] due:2026-08-17 | "Count of unshipped orders next to the count of all orders." Write it — one query, no subquery. Then say what phrase in a request tells you to reach for this pattern. | 
@@ -70,6 +70,8 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [1] due:2026-08-18 | "Categories whose 2023 revenue was above £4m." Say why the year filter cannot go in HAVING, and why the £4m filter cannot go in WHERE | 
 [1] due:2026-08-18 | Northwind holds 93 customers but only 92 distinct company names, and one CustomerID has a trailing space. Say what breaks if you GROUP BY the company name instead of the key, and how you'd word that as a defect for a stakeholder | 
 [1] due:2026-08-19 | Your 30-second self-introduction, out loud and timed | 
+[1] due:2026-08-19 | `WHERE OrderDate >= '2023'` returns all 16,282 orders. `WHERE OrderDate >= '2023-01-01'` returns 1,132. Say what the database did with the bare '2023', and why this is more dangerous than a query that errors. | 
+[1] due:2026-08-20 | Rank revenue by country using Customers.Country and then using Orders.ShipCountry: positions 2 and 3 swap between Germany and France. Both queries are correct SQL. Say what question each one actually answers, and what you'd ask the stakeholder before picking. | 
 [1] due:2026-08-20 | Name the two things a CTE gives you that a subquery does not, and one case where the plain subquery is still the better call | 
 [1] due:2026-08-20 | Why is `NOT IN` dangerous when the inner query can return a NULL, and what do you write instead? | 
 [1] due:2026-08-20 | Say the difference between a correlated and an uncorrelated subquery, and which one runs once per row | 

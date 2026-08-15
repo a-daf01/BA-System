@@ -58,11 +58,20 @@ When a day's `Adds to review queue` line is a list of topic labels — which mos
 `plan/month-01.md` still is — expand it into real questions **at the end of that day**,
 using what actually happened, rather than copying the labels in.
 
-**Before writing any day's exercise, verify it against `data/northwind.db`.** Two days in
-a row have shipped tasks that the dataset cannot support — the 1997 date filter on Day 2,
-"find customers with no orders" on Day 3 (this build has zero orphan rows anywhere). Run
-the query yourself first. An exercise that returns nothing teaches him that he is wrong
-when he isn't, which is worse than no exercise.
+**Before writing any day's exercise, read `reference/dataset-profile.md`, then verify the
+query against `data/northwind.db`.** The profile is a full audit of this build — row
+counts, the five verified traps, the real data quality defects, the reference totals, and
+a **"what this data cannot support"** section. Check that section first; it is the list of
+exercises that have already failed or would fail.
+
+Two days shipped tasks the dataset could not satisfy — the 1997 date filter on Day 2,
+"find customers with no orders" on Day 3 — both because it was assumed to be textbook
+Northwind. It is not: re-dated to 2012–2023, 16,282 orders, 609,283 detail lines, and
+zero orphan rows anywhere. Run the query yourself first. An exercise that returns nothing
+teaches him that he is wrong when he isn't, which is worse than no exercise.
+
+The profile is a snapshot, not a substitute for running the query. If the database is ever
+rebuilt, re-profile it and update that file.
 
 Keep the daily review load at **5–8 items maximum**. If it exceeds that, promote the strongest items to longer intervals rather than expanding the block. An overlong review block is the first thing he'll skip.
 

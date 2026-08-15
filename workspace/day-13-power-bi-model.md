@@ -27,6 +27,41 @@ Keep these seven: `Orders`, `OrderDetails`, `Products`, `Customers`,
 > If Folder import gives you trouble, load the seven CSVs individually. Same
 > result, two extra minutes, not worth debugging.
 
+- [ ] **Dropped the `Picture` column from Categories.** It is a binary image blob.
+      It is useless to you and it bloats the model.
+
+---
+
+## 1b. One decision before you build anything (5 min)
+
+Your model has two country columns and **they disagree on 13,832 of 16,282 orders —
+85%.**
+
+- `Customers.Country` — where the account is registered
+- `Orders.ShipCountry` — where that order was delivered
+
+It is not a rounding difference. Revenue by country comes out in a different order:
+
+| Rank | By `Customers.Country` | By `Orders.ShipCountry` |
+|---|---|---|
+| 1 | USA £62.6m | USA £63.9m |
+| 2 | **France £53.3m** | **Germany £59.1m** |
+| 3 | **Germany £51.2m** | **France £49.1m** |
+
+**Neither is wrong.** They answer different questions. Billing country tells you where
+your customers are; shipping country tells you where your goods go. A sales director
+and a logistics manager want opposite ones.
+
+**The failure here is not picking the wrong column. It is not noticing you picked.**
+
+**My model uses:** ______________________
+
+**Because the question it answers is:** ______________________
+
+> Say this one out loud. "Which country column does your model use and why" is a
+> completely fair interview question about a model you built, and "I hadn't thought
+> about it" is the answer that ends the conversation.
+
 ---
 
 ## 2. Relationships (30 min)

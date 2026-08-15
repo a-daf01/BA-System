@@ -12,6 +12,8 @@
 
 **One dataset, all month.** Northwind for SQL (Days 2–10), the same Northwind exported to CSV for Power BI (Days 11–17), UK public data for the two portfolio pieces. There is no second database to install. `reference/datasets.md` has the detail.
 
+**This Northwind is not the textbook one.** It has been re-dated to 2012–2023 and inflated to 16,282 orders and 609,283 detail lines, and it carries five verified traps that will silently give you a wrong number rather than an error. `reference/dataset-profile.md` is the full audit — row counts, the traps, the real data quality defects, every reference total, and a list of what this data *cannot* support. **If a query returns something that surprises you, check that file before assuming you're wrong.**
+
 ---
 
 # WEEK 1 — Baseline, SQL core, pipeline live
@@ -148,6 +150,7 @@
   9. Revenue per category, per year. *(96 rows = 8 categories × 12 years)*
   10. Orders per employee, per shipper. *(27 rows = 9 × 3)*
 - [ ] 15 min — **One query that needs WHERE and HAVING together:** categories whose 2023 revenue was above £4m. *(5 rows: Beverages, Confections, Meat/Poultry, Dairy Products, Condiments.)* Then write two sentences — why the year filter cannot go in `HAVING`, and why the £4m filter cannot go in `WHERE`.
+  1. ⚠️ **Write the year filter as `>= '2023-01-01' AND < '2024-01-01'`, or as `strftime('%Y', OrderDate) = '2023'`.** If you write `>= '2023'` you get all 16,282 orders and no error — the column is declared `DATETIME`, so a bare `'2023'` is read as the *number* 2023 and every text date sorts above it. Try it once, see the 16,282, then never do it again.
 - [ ] 15 min — Business framing. Take query 9 and write the one-sentence question a commercial manager would have asked to make you write it. Then say what you would *do* with the answer.
 
 **PHONE (25 min)**
@@ -271,6 +274,7 @@
   2. For each table: name every foreign key and what it points at.
   3. Mark the cardinality on each relationship — one-to-one, one-to-many, many-to-many.
   4. Find the one many-to-many and name the junction table that resolves it. *(Employees ↔ Territories, resolved by EmployeeTerritories, 49 rows)*
+  5. **Two tables in this schema hold zero rows** — `CustomerDemographics` and `CustomerCustomerDemo`. Find them, then write one line: what does an empty table in a live schema tell you, and what would you ask the business about it? *(This is a real BSA question, not a trivia one. An unused table is either dead scope, a feature that was never switched on, or something that broke.)*
 - [ ] 20 min — Normalisation. Write, in the workspace file, why `Orders` and `[Order Details]` are two tables and not one. Then list four concrete things that break if you flatten them into one.
 - [ ] 15 min — The other side of the argument: two costs of over-normalising when the job is reporting. Tie one of them to something you actually hit on Day 3.
 
@@ -316,6 +320,7 @@
 **DESK (75 min)**
 - [ ] 15 min — Get a messy CSV. `data.gov.uk`, search **"local authority spending over £500"**. Take the **first result** that is a `.csv`, is over 1,000 rows, and has a date column. Do not look past the third candidate.
   1. **Hard stop at 15 minutes.** If it is fighting you, use `data/csv/Orders.csv` instead and log the swap in the brain dump. The exercise is the transformations, not the sourcing.
+  2. *Useful to know if you do fall back to `Orders.csv`: its date columns are genuinely mixed — 830 rows are `2017-03-31` and 15,452 are `2017-03-31 14:22:07`, in the same column. Power Query will complain. That is the dataset, not you.*
 - [ ] 40 min — Clean it. Each of these at least once, in this order:
   1. Remove unneeded columns.
   2. Change a column type — and when one throws errors, **click the error cell and read the actual value before doing anything else.**
@@ -344,6 +349,8 @@
 **DESK (70 min)**
 - [ ] 10 min — Load the data. Power BI → Get Data → **Folder** → `data/csv` → Combine and Load. Keep Orders, OrderDetails, Products, Customers, Employees, Shippers, Categories.
   1. *If Folder import gives you trouble, load the seven CSVs individually. Same result, two extra minutes.*
+  2. **Drop the `Picture` column from Categories** on the way in. It is a binary image blob, it is useless to you, and it bloats the model.
+- [ ] 5 min — **A modelling decision you have to make before you build anything.** Both `Customers.Country` and `Orders.ShipCountry` exist, and they disagree on **13,832 of 16,282 orders (85%)**. Revenue by country ranks Germany 2nd and France 3rd on one, and the reverse on the other. Write one line in the workspace file: which one your model will use, and what business question that choice answers. *(Neither is wrong. Billing country and delivery country are different things — the failure is not noticing you chose.)*
 - [ ] 30 min — Build the relationships in Model view to match your Day 11 design.
   1. Set every relationship's cardinality explicitly. Do not accept the auto-detected one without reading it.
   2. Check the filter direction arrow on each. Single, pointing from the one side to the many side.

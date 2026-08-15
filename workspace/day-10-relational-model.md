@@ -47,6 +47,22 @@ resolves it, and say what would go wrong if you tried to model it without one.
 
 -
 
+**The two empty tables.** `CustomerDemographics` and `CustomerCustomerDemo` are
+in the schema with zero rows in them. Run the counts and confirm it yourself.
+
+An empty table in a live system is never nothing. It is one of three things:
+dead scope that was designed and never built, a feature that exists but was
+never switched on, or something that used to work and broke.
+
+**What I would ask the business about them, in one question:**
+
+-
+
+> This is a genuine BSA question and it comes up in interviews as "what would you
+> do if you found X in a system you'd inherited?". The wrong answer is to assume.
+> The right one is to find out which of the three it is before touching anything —
+> because deleting dead scope is safe and deleting a switched-off feature is not.
+
 ---
 
 ## 2. Why Orders and Order Details are two tables (20 min)

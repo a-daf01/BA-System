@@ -27,7 +27,12 @@ Microsoft's classic sample database modelling a fictional food trading company. 
 `CustomerDemographics` and `CustomerCustomerDemo` exist and are **empty** — a table
 nobody ever populated, which is a thing you will meet constantly in real systems.
 
-**Two things that will catch you out, both of which already have:**
+> **Full audit: `reference/dataset-profile.md`.** Row counts, the five verified traps, the
+> real data quality defects, every reference total, and a list of what this data *cannot*
+> support. The highlights are below; that file is the complete version and it is what
+> Claude Code checks before writing any exercise.
+
+**Things that will catch you out, several of which already have:**
 
 - **There are no orphan rows anywhere.** Every customer has orders, every product has
   been sold, every order has line items. So every "find the records with no match"
@@ -36,6 +41,19 @@ nobody ever populated, which is a thing you will meet constantly in real systems
   because of this.
 - **`Discontinued` is stored as text**, `'0'` / `'1'`, not as a number. SQLite compares
   it happily. SQL Server would not.
+- **A bare year in a date filter silently matches everything.** `OrderDate >= '2023'`
+  returns all 16,282 rows; `OrderDate >= '2023-01-01'` returns the correct 1,132. The
+  column is declared `DATETIME`, so `'2023'` is read as a *number* and every text date
+  sorts above it. No error, no warning, a believable number. This is the most dangerous
+  thing in the database.
+- **The date columns are mixed.** 830 rows hold `2017-03-31`; 15,452 hold
+  `2017-03-31 14:22:07`. Same column. Power Query will complain on Day 12 and it is right to.
+- **Discount is almost always zero** — 608,445 of 609,283 lines. Applying it moves total
+  revenue by 0.02% and does not change any top-5 ranking. Do not build a discount
+  analysis on this data.
+- **There is no seasonality.** Monthly order counts run 1,221 to 1,446 across all years.
+  Flat by construction. The same is true of shipper and employee performance — do not go
+  looking for a story that was never put there.
 
 **Know this before you write a date filter:** this build is *not* the original 1996–1998
 Northwind. It has been re-dated and expanded — **16,282 orders spanning 2012-07-10 to

@@ -5,7 +5,22 @@ The finished CV gets assembled from here on Day 6 — nothing in this file has t
 
 ---
 
-## Step 1 — Raw list (Day 4, 25 min)
+> ## ✅ Steps 1 and 2 are DONE — 2026-08-15
+>
+> You wrote the CV before Day 4 came round. It's at
+> `data/Ahmed_Dafalla_Business_Analyst_CV.pdf` and it already does what Steps 1 and 2
+> were for: the work is listed and it's in analyst language, not builder language.
+>
+> **Do not redo them.** Skip to **Step 3**, which is the only part still open and is
+> the part that actually gets tested in an interview.
+>
+> Steps 1 and 2 stay below as reference — the translation table and the vocabulary
+> list are still what you check new bullets against, and the phone block still adds
+> to that vocabulary list.
+
+---
+
+## Step 1 — Raw list (Day 4, 25 min) — ✅ done, see the CV
 
 Every piece of work you have done. Paid, unpaid, coursework, dissertation, a thing you
 built for a friend, a spreadsheet you fixed for someone. **No judgement about whether it
@@ -37,7 +52,7 @@ Prompts, if you stall — one line each is enough:
 
 ---
 
-## Step 2 — Rewrite in analyst language (Day 4, 45 min)
+## Step 2 — Rewrite in analyst language (Day 4, 45 min) — ✅ done, see the CV
 
 **The shape, every time:**
 
@@ -88,15 +103,54 @@ re-keying it by hand" is a result. Do not invent a percentage.
 
 ---
 
-## Step 3 — Pick your top 3 (end of Day 4, 5 min)
+## Step 3 — Pick your top 3 (Day 4, 15 min) ← **START HERE**
 
 The three that best match the ads you have actually read. These go into the review queue
-on Day 5 and you say them aloud from memory — because these are the three you will be
-asked to expand on in an interview.
+and you say them aloud from memory — because these are the three you will be asked to
+expand on in an interview.
 
-1.
-2.
-3.
+### The candidates, lifted from the CV you wrote
+
+Pick from these. Don't write new ones.
+
+| # | Bullet as it stands on the CV | Maps to the ads' |
+|---|---|---|
+| A | Rebuilt reporting logic from underlying database structures, improving dashboard performance by 40 percent by identifying and resolving inefficient PL/SQL queries | reporting, SQL depth |
+| B | Built automated validation scripts comparing source and target records during an enterprise data migration, confirming no records were dropped or corrupted before sign off | data quality, UAT, acceptance criteria |
+| C | Investigated data discrepancies end to end, tracing from reported figure through calculation logic to system configuration, rather than escalating to third party vendors | root cause |
+| D | Implemented row level access controls restricting sensitive financial and HR data to authorised personnel | data governance |
+| E | Translated legacy business logic into web based reporting tools used by non-technical stakeholders | translating business ↔ technical |
+| F | Wrote internal documentation explaining recurring technical issues in plain English, reducing repeat escalations | stakeholder communication |
+
+### Now write your three out in full, in the shape
+
+> **problem** → **what you did** → **what changed**
+
+The CV bullets above are mostly missing the *problem* half — they start at "what you
+did". An interviewer will open with "what was the situation?", so supply it here.
+
+**1.**
+
+**2.**
+
+**3.**
+
+### The defend-check — do this before you move on
+
+Read each of the three aloud, then answer the follow-up you'd actually get:
+
+- [ ] **Bullet A, the 40 percent.** Where did that number come from? Measured how,
+      before against after? **If you can't answer that in one sentence, either soften
+      the claim or take it off the CV.** An unbackable number is the single fastest
+      way to lose an interview, and it is the only hard figure on the page.
+- [ ] **Bullet B.** How did you know no records were dropped — what did the script
+      actually compare, and what would it have caught?
+- [ ] **Bullet C.** Name the specific discrepancy. What was the reported figure, and
+      what was the cause when you got to the bottom of it? *(This one becomes your
+      root-cause STAR story on Day 24 — get it straight now.)*
+
+Anything you couldn't defend goes in the "Things I couldn't defend in an interview"
+list at the bottom of `tracking/progress.md`.
 
 ---
 ---

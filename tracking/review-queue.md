@@ -53,6 +53,8 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [3] due:2026-08-16 | Say why `A OR B AND C` is not `(A OR B) AND C`, and which operator binds tighter. | 
 [3] due:2026-08-16 | Say the order you build a SQL query in, and why it is not the order it reads in. | 
 [1] due:2026-08-16 | Say your three strongest CV bullets aloud from memory, in the problem → action → change shape | 
+[1] due:2026-08-16 | Order 10273 carries £48.00 of freight and has 5 product lines. Join Orders to [Order Details] and that order's freight sums to £240.00. Say the rule that predicts the 240 before you run it | 
+[1] due:2026-08-16 | You ranked customers by freight two ways. Joined through [Order Details] the top 5 ended IT, B's Beverages, Hungry Coyote, Morgenstern, Piccolo; straight from Orders, positions 4 and 5 were two different companies. Say why inflated numbers still change *who* is top, and what that costs if you send it | 
 [1] due:2026-08-14 | Read "products above 20 that are not discontinued" aloud. How many conditions is that, and what is the five-second check that catches a dropped one? | 
 [3] due:2026-08-17 | Write the SQL for top 5 Northwind products by revenue. Say why Discount changes the answer. | 4
 [3] due:2026-08-17 | Why does WHERE COUNT(*) > 10 fail, and what do you use instead? | 4
@@ -66,6 +68,7 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [3] due:2026-08-18 | Is ROUND an alternative to SUM? Say what each one does and how you would use both in one query. | 4
 [1] due:2026-08-18 | A stakeholder wants "countries where we have more than 5 customers". Say which clause the `> 5` goes in, and what error you get if you put it in the other one | 
 [1] due:2026-08-18 | "Categories whose 2023 revenue was above £4m." Say why the year filter cannot go in HAVING, and why the £4m filter cannot go in WHERE | 
+[1] due:2026-08-18 | Northwind holds 93 customers but only 92 distinct company names, and one CustomerID has a trailing space. Say what breaks if you GROUP BY the company name instead of the key, and how you'd word that as a defect for a stakeholder | 
 [1] due:2026-08-19 | Your 30-second self-introduction, out loud and timed | 
 [1] due:2026-08-20 | Name the two things a CTE gives you that a subquery does not, and one case where the plain subquery is still the better call | 
 [1] due:2026-08-20 | Why is `NOT IN` dangerous when the inner query can return a NULL, and what do you write instead? | 

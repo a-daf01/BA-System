@@ -102,23 +102,31 @@
 
 ---
 
-## Day 4 — CV rewrite, part 1
-**Theme:** You currently read as a builder. You need to read as an analyst.
+## Day 4 — JOIN repair + the defect nobody found
+**Theme:** Day 3 scored a 5 with two wrong answers in it. Prove it or drop the score. *Dataset: Northwind.*
 
-**Open:** `tracking/cv-workspace.md`
+**Open:** `workspace/day-04-joins-repair.sql` and `tracking/cv-workspace.md`
+
+> **Rewritten 2026-08-15.** Day 4 was "CV rewrite, part 1" — Steps 1 and 2 of
+> `tracking/cv-workspace.md`. **He wrote the CV before Day 4 ran**, so that work is
+> done and it is in `data/Ahmed_Dafalla_Business_Analyst_CV.pdf`. Step 3 is the only
+> part still outstanding and it takes 15 minutes. The freed 55 minutes go to SQL,
+> which is what he asked for and what the Day 3 note says he needs.
 
 **DESK (70 min)**
-- [ ] 25 min — **Step 1 in the workspace file.** List every piece of work you've done, paid or unpaid. Raw list, no editing, no judgement about whether it "counts". Aim for 10 lines; the prompts in the file get you there if you stall.
-- [ ] 40 min — **Step 2 in the workspace file.** Rewrite each in **analyst language**. Every bullet: what the business problem was → what you did → what changed. The translation table and the ad vocabulary are already in the file — use the exact words, don't paraphrase them.
-- [ ] 5 min — **Step 3.** Pick the three strongest. These go into the review queue tomorrow and you say them from memory.
+
+- [ ] 15 min — **CV Step 3 only.** Open `tracking/cv-workspace.md`, go to Step 3, and pick the **three strongest bullets from the CV you already wrote**. Write each one out in problem → action → change shape. Then read each aloud and ask *could I survive two follow-up questions on this?* The 40 percent dashboard figure is the one to stress-test first — if you can't say where the number came from, it comes off the CV.
+- [ ] 15 min — **The lapsed-customer query you got right by accident.** Section 1 of the SQL file. "Which customers have not ordered since 1 Oct 2023?" Write it three ways: INNER + `IS NULL` *(0 rows)*, LEFT with the date in `ON` *(35 rows)*, LEFT with the date in `WHERE` *(0 rows)*. Then write the rule down in your own words.
+- [ ] 20 min — **Fan-out, small enough to count.** Section 2. Order 10273 carries **£48.00** of freight across **5** product lines; joined to `[Order Details]` it sums to **£240.00**. Then predict ALFKI's numbers before running them *(163 orders, £35,907.25 → 5,325 rows, £1,677,372.50)*. Then rank the top 5 customers by freight both ways — **positions 4 and 5 are different customers.** Write one sentence on what that costs if a manager acts on the wrong list. Finish with the fix: aggregate in a subquery, then join *(B's Beverages, 210 orders, £54,797.25)*.
+- [ ] 20 min — **Find the real defect.** Section 3. This database has **93 customers and 92 distinct company names**. Find the duplicate, find the trailing space, and write the two-sentence defect note a stakeholder would read. Then answer the follow-up: what would you change so it can't recur?
 
 **PHONE (20 min)**
 - [ ] 10 min — Review queue.
-- [ ] 10 min — Read 3 more BI Analyst ads on Reed. Don't apply. Add any repeated phrase you see to the vocabulary list in `cv-workspace.md`.
+- [ ] 10 min — Read 3 BI Analyst ads on Reed. Don't apply. Add any repeated phrase to the vocabulary list in `tracking/cv-workspace.md`.
 
-**Say It Out Loud:** "Most of what I've built was requirements analysis, data structuring and reporting — I just wasn't using those words for it."
+**Say It Out Loud:** "A joined query that returns more rows than it started with has multiplied every measure on the one side — and it doesn't just inflate the totals, it re-orders the ranking."
 
-**Adds to review queue:** Say your three strongest CV bullets aloud from memory, in the problem → action → change shape
+**Adds to review queue:** Order 10273 carries £48.00 of freight and has 5 product lines. Joined to [Order Details] that order's freight sums to £240.00. Say the rule that predicts the 240 before you run it · You ranked customers by freight two ways. Joined through [Order Details] the top 5 ended IT, B's Beverages, Hungry Coyote, Morgenstern, Piccolo; straight from Orders, positions 4 and 5 were two different companies. Say why inflated numbers still change *who* is top, and what that costs if you send it · Northwind holds 93 customers but only 92 distinct company names, and one CustomerID has a trailing space. Say what breaks if you GROUP BY the company name instead of the key, and how you'd word that as a defect for a stakeholder
 
 ---
 

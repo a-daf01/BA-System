@@ -504,6 +504,53 @@ origin/main --oneline -1` should be the work you just did.
 
 ---
 
+## 2026-08-17 — from the brain dump, catching up on the Day 4 SQL
+
+### "I tried it with LEFT JOIN and it did nothing different" — that *was* the answer
+
+**Gap:** ran the lapsed-customer query, swapped `JOIN` for `LEFT JOIN`, got an identical
+result, and concluded the exercise had no point. The query was:
+
+```sql
+SELECT * FROM Customers c
+JOIN Orders o ON c.CustomerID = o.CustomerID
+WHERE o.OrderDate >= '2023-10-01';
+```
+
+**Answer:** the two versions are identical **because the date filter is in the `WHERE`**.
+A LEFT JOIN keeps unmatched customers with NULLs in the Orders columns — and then
+`WHERE o.OrderDate >= '2023-10-01'` evaluates to unknown for every one of them and drops
+them. The LEFT JOIN silently becomes an INNER JOIN. Move the same condition into the `ON`
+and the difference appears: **93 customers with the filter in `ON`, 58 with it in `WHERE`**
+— and 93 − 58 = **35 lapsed customers**, which is the answer the exercise was actually
+asking for.
+
+**Why it matters:** this is the most common wrong answer in commercial SQL, and it is
+invisible. It does not error, it returns a smaller, plausible number, and it deletes
+exactly the rows a retention or churn analysis exists to find. The rule to say out loud:
+*on a LEFT JOIN, conditions on the right-hand table go in the `ON`; conditions on the
+left-hand table go in the `WHERE`.*
+
+**Status:** `queued` — already covered by the queue item *"'Every customer, and their
+order count since Oct 2023.' One version returns 93 customers, the other 58..."*, which
+is dated and has a full card behind it. Not duplicated.
+
+### Fan-out was answered wrong on Day 3 and has not been re-tested since
+
+**Gap:** the D03 note records the fan-out answer as *"described LEFT JOIN behaviour, not
+row multiplication"* — and Day 4, which existed specifically to repair that, was written
+off. So the wrong answer has never been corrected under test.
+**Answer:** a one-to-many join multiplies every column on the "one" side by that row's own
+match count. Order 10273: £48.00 freight × 5 lines = £240.00. Across the database, 16,282
+orders → 609,283 detail lines, so freight inflates from £4,047,470 to £206,911,676.
+**Why it matters:** it is the single most-asked SQL competency question, and the version he
+got wrong — that it re-orders rankings, not just inflates totals — is the commercially
+dangerous half.
+**Status:** `open` — two live queue items cover it, and the D07 phone block now ends on it
+as the week 1 boss fight. Re-check the score there.
+
+---
+
 ## How this file gets maintained
 
 Claude Code appends to it at the end of any session where you asked something you

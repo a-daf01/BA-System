@@ -37,6 +37,7 @@ function main() {
   const notes = [];
   const backfilled = [];   // done, but after the day it was set for
   const stillOpen = [];    // elapsed, not done, not written off — still catchable
+  const writtenOff = [];   // closed on purpose. Counted, then left alone.
 
   // Days that have not happened yet are not misses. Only judge elapsed days.
   const elapsed = days.filter((s) => s.date <= now);
@@ -51,6 +52,7 @@ function main() {
     // here — it is listed, and it stops being listed when it is done or logged
     // as a miss on purpose.
     if (s.date < now && L.dayOutstanding(r)) stillOpen.push(s.day);
+    if (L.dayWrittenOff(r)) writtenOff.push(s.day);
     if (!r || !r.logged) { unlogged++; continue; }
     const deskOk = /^[YP]$/.test(r.desk);
     const phoneOk = /^[YP]$/.test(r.phone);
@@ -184,15 +186,23 @@ function main() {
   line('');
 
   line('VERDICT');
+  // An empty VERDICT block reads as "no opinion", which is the one thing a
+  // checkpoint must never do. It happened on the week 1 dry run: a single
+  // unlogged day suppressed the "week held" line without tripping any warning,
+  // so the section printed nothing at all. `said` guarantees a verdict.
+  let said = 0;
   if (deskDoneOnly >= 1) {
+    said++;
     line(`  ${deskDoneOnly} day(s) with desk done and phone skipped. That is the dangerous pattern.`);
     line('  The phone block is where retention happens. Desk without phone is learning you will lose.');
   }
   if (deskMissed >= 2) {
+    said++;
     line(`  ${deskMissed} desk blocks missed. The week was too heavy.`);
     line(`  Cut next week's desk blocks by about 20 percent. Do not carry the backlog forward.`);
   }
   if (backfilled.length) {
+    said++;
     const lag = backfilled.reduce((a, b) => a + b.lateBy, 0) / backfilled.length;
     const worst = Math.max(...backfilled.map((b) => b.lateBy));
     line(`  ${backfilled.length} day(s) backfilled. The work happened, so this is not a miss.`);
@@ -206,16 +216,35 @@ function main() {
     }
   }
   if (stillOpen.length >= 3) {
+    said++;
     line(`  ${stillOpen.length} elapsed days are still open. That is a backlog, and a backlog you`);
     line('  cannot see the end of is the thing that gets systems abandoned. Pick the two');
     line('  most recent, backfill those, and write the rest off in progress.md as misses.');
     line('  Do not try to clear all of them.');
   }
-  if (elapsed.length && deskMissed < 2 && deskDoneOnly === 0 && unlogged === 0 && stillOpen.length < 3) {
-    line('  Week held. Nothing needs reducing.');
+  if (writtenOff.length) {
+    said++;
+    line(`  ${writtenOff.length} day(s) written off on purpose: ${writtenOff.map((d) => 'D' + String(d).padStart(2, '0')).join(' ')}.`);
+    line('  Closed questions. They are counted in the arithmetic above and nowhere else.');
+    line('  What matters is whether their material was rehomed or dropped — that is a');
+    line('  judgement call, so check it was actually made rather than assumed.');
   }
   if (avgConf !== null && avgConf < 2.5) {
+    said++;
     line(`  Average confidence ${avgConf.toFixed(1)}. Material is not landing. Expect more repeats than advances.`);
+  }
+  if (elapsed.length && deskMissed < 2 && deskDoneOnly === 0 && unlogged === 0 && stillOpen.length < 3) {
+    said++;
+    line('  Week held. Nothing needs reducing.');
+  }
+  // Never leave this section blank. Nothing tripping is itself a finding, and
+  // an unlogged day is the one thing that stops a verdict being trustworthy.
+  if (!said) {
+    line('  No rule tripped, so nothing needs reducing on the evidence so far.');
+    if (unlogged) {
+      line(`  But ${unlogged} elapsed day(s) are unlogged, so this verdict is incomplete.`);
+      line('  Log them and re-run before acting on it.');
+    }
   }
   line('');
 

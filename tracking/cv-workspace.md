@@ -103,7 +103,11 @@ re-keying it by hand" is a result. Do not invent a percentage.
 
 ---
 
-## Step 3 — Pick your top 3 (Day 4, 15 min) ← **START HERE**
+## Step 3 — Pick your top 3 (10 min) ← **START HERE**
+
+*This was Day 4's, which got written off. It moved into Day 6 rather than being dropped,
+because the review queue already asks you to say these three aloud from memory — and it
+cannot ask that until they exist.*
 
 The three that best match the ads you have actually read. These go into the review queue
 and you say them aloud from memory — because these are the three you will be asked to
@@ -158,8 +162,9 @@ list at the bottom of `tracking/progress.md`.
 # DAY 6 — assemble and send
 
 Steps 1–3 above are the raw material. Today it becomes a document and it goes out.
+**Do Step 3 first — it is ten minutes and everything below assumes it.**
 
-## Step 4 — The CV (30 min)
+## Step 4 — The CV (20 min)
 
 **Section order. Do not redesign this** — every minute spent on layout is a minute not
 spent on the pipeline, and a UK recruiter reads these in about 12 seconds.

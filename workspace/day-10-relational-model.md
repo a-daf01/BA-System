@@ -9,6 +9,50 @@ you'll meet constantly, and "there's a table nobody ever populated" is a finding
 
 ---
 
+## 0. The defect nobody found (10 min)
+
+*Moved here from Day 4, which was written off. It belongs on the keys day: this is
+a key-versus-label problem, which is the whole point of today.*
+
+Run these two:
+
+```sql
+SELECT COUNT(*) FROM Customers;              -- expect 93
+SELECT COUNT(DISTINCT CompanyName) FROM Customers;  -- expect 92
+```
+
+Ninety-three customers, ninety-two names. Find the two rows that collide:
+
+```sql
+SELECT CustomerID, CompanyName, Country
+FROM Customers
+WHERE CompanyName IN (
+  SELECT CompanyName FROM Customers GROUP BY CompanyName HAVING COUNT(*) > 1
+);
+```
+
+**Both rows come back named `IT`.** Look at the two CustomerIDs carefully — one of
+them is five characters where it looks like four. Write down which, and what the
+fifth character is:
+
+>
+
+Now the two sentences that matter. **What breaks** if a report groups by
+`CompanyName` instead of `CustomerID`:
+
+>
+
+**How you'd word it as a defect for a stakeholder.** Three beats, no jargon —
+what, so what, recommendation:
+
+>
+
+Follow-up, one line: what would you change so it can't recur?
+
+>
+
+---
+
 ## 1. Keys and cardinality (30 min)
 
 Fill this in. One row per table.

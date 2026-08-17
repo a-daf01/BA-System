@@ -54,6 +54,9 @@ friction in it is a review block that doesn't happen.
 Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 
 ```
+[1] due:2026-08-14 | Read "products above 20 that are not discontinued" aloud. How many conditions is that, and what is the five-second check that catches a dropped one? | 
+[1] due:2026-08-14 | Why does `= NULL` return nothing, and what do you use instead? | 
+[1] due:2026-08-14 | You wrote 'B%' and '%market%'. Say what each wildcard does, and name one case where LIKE is the wrong tool | 
 [3] due:2026-08-15 | Why does SELECT TOP 5 fail in SQLite, and what replaces it? | 
 [3] due:2026-08-15 | In a GROUP BY query, what does SUM() do, and where does the multiplication actually happen? | 
 [1] due:2026-08-15 | Write the SQL for Northwind customers with more than 180 orders, then say what it tells the business. (Every customer in this build has at least 154, so a threshold of 10 would return all 93 and tell you nothing — say how you'd pick a threshold on data you'd never seen.) | 
@@ -66,9 +69,6 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [3] due:2026-08-16 | Say the order you build a SQL query in, and why it is not the order it reads in. | 
 [1] due:2026-08-16 | Say your three strongest CV bullets aloud from memory, in the problem → action → change shape | 
 [1] due:2026-08-16 | Order 10273 carries £48.00 of freight and has 5 product lines. Join Orders to [Order Details] and that order's freight sums to £240.00. Say the rule that predicts the 240 before you run it | 
-[1] due:2026-08-16 | You ranked customers by freight two ways. Joined through [Order Details] the top 5 ended IT, B's Beverages, Hungry Coyote, Morgenstern, Piccolo; straight from Orders, positions 4 and 5 were two different companies. Say why inflated numbers still change *who* is top, and what that costs if you send it | 
-[1] due:2026-08-14 | Read "products above 20 that are not discontinued" aloud. How many conditions is that, and what is the five-second check that catches a dropped one? | 
-[1] due:2026-08-19 | Northwind's top 5 products by revenue come back in the same order whether you apply Discount or ignore it, and the total only moves 0.02%. Say why you apply it anyway. | 
 [3] due:2026-08-17 | Why does WHERE COUNT(*) > 10 fail, and what do you use instead? | 4
 [3] due:2026-08-17 | In Power Query, what does Remove Errors actually do to your rows, and why is that dangerous in an analysis? | 4
 [3] due:2026-08-17 | "Count of unshipped orders next to the count of all orders." Write it — one query, no subquery. Then say what phrase in a request tells you to reach for this pattern. | 
@@ -80,7 +80,7 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [3] due:2026-08-18 | Is ROUND an alternative to SUM? Say what each one does and how you would use both in one query. | 4
 [1] due:2026-08-18 | A stakeholder wants "countries where we have more than 5 customers". Say which clause the `> 5` goes in, and what error you get if you put it in the other one | 
 [1] due:2026-08-18 | "Categories whose 2023 revenue was above £4m." Say why the year filter cannot go in HAVING, and why the £4m filter cannot go in WHERE | 
-[1] due:2026-08-18 | Northwind holds 93 customers but only 92 distinct company names, and one CustomerID has a trailing space. Say what breaks if you GROUP BY the company name instead of the key, and how you'd word that as a defect for a stakeholder | 
+[1] due:2026-08-19 | Northwind's top 5 products by revenue come back in the same order whether you apply Discount or ignore it, and the total only moves 0.02%. Say why you apply it anyway. | 
 [1] due:2026-08-19 | Your 30-second self-introduction, out loud and timed | 
 [1] due:2026-08-19 | `WHERE OrderDate >= '2023'` returns all 16,282 orders. `WHERE OrderDate >= '2023-01-01'` returns 1,132. Say what the database did with the bare '2023', and why this is more dangerous than a query that errors. | 
 [1] due:2026-08-20 | Rank revenue by country using Customers.Country and then using Orders.ShipCountry: positions 2 and 3 swap between Germany and France. Both queries are correct SQL. Say what question each one actually answers, and what you'd ask the stakeholder before picking. | 
@@ -96,8 +96,6 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [1] due:2026-08-23 | State the grain of your Northwind fact table in one sentence, then say what you did with Freight and why | 
 [1] due:2026-08-23 | Draw a star and a snowflake in the air and say the one structural difference, then why BI tools generally prefer the star | 
 [1] due:2026-08-23 | What is a data mart, and how is it different from a warehouse? Answer as if a hiring manager asked it | 
-[1] due:2026-08-14 | Why does `= NULL` return nothing, and what do you use instead? | 
-[1] due:2026-08-14 | You wrote 'B%' and '%market%'. Say what each wildcard does, and name one case where LIKE is the wrong tool | 
 [1] due:2026-08-25 | What does Remove Errors actually do to your rows, and what do you do instead? | 
 [1] due:2026-08-25 | What is unpivot for, and what shape of data tells you that you need it? | 
 [1] due:2026-08-26 | You set one relationship to both-directional and the number on screen changed. Say what happened, and how you would spot it on a model someone else built | 
@@ -121,6 +119,8 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [1] due:2026-09-08 | Portfolio 2 — the two-minute walkthrough, ending on requirement-to-visual traceability | 
 [1] due:2026-09-09 | All six STAR stories, timed, no notes | 
 [1] due:2026-09-09 | The eight technical answers, no notes | 
+[1] due:hold | You ranked customers by freight two ways. Joined through [Order Details] the top 5 ended IT, B's Beverages, Hungry Coyote, Morgenstern, Piccolo; straight from Orders, positions 4 and 5 were two different companies. Say why inflated numbers still change *who* is top, and what that costs if you send it | 
+[1] due:hold | Northwind holds 93 customers but only 92 distinct company names, and one CustomerID has a trailing space. Say what breaks if you GROUP BY the company name instead of the key, and how you'd word that as a defect for a stakeholder | 
 ```
 
 *(Claude Code populates this as you progress. Items are added by the "Adds to review queue" line at the bottom of each day in `plan/month-01.md`.)*

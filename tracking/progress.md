@@ -43,8 +43,8 @@ This matters because the weekly review reads it. A day with `done:` set counts a
 D01 | 2026-08-12 | desk:Y phone:Y | conf:4 | note: baseline test - got 1,2,3 unaided; looked up 4 (HAVING) and 5 (revenue). Self-corrected TOP->LIMIT and SUM. Power Query remove-errors not understood.
 D02 | 2026-08-13 | desk:Y phone:Y | conf:4 | note: 13/15 queries correct. Q13 conditional aggregation failed - looked up CASE/SUM. Q4 and Q15 dropped a stated condition. Q9 BETWEEN silently lost the last day (350 vs 357). Everything unnoted was recalled from courses ~a year old.
 D03 | 2026-08-14 | desk:Y phone:Y | conf:5 | note: joins done, called it easy. INNER+IS NULL returned the right answer via a query that could not have produced it. Fan-out answer wrong - described LEFT JOIN behaviour, not row multiplication. Flagged system friction; system rebuilt same day.
-D04 | | desk: phone: | conf: | note:
-D05 | | desk:- phone: | conf: | note:
+D04 | 2026-08-15 | desk:N phone:N | conf: | note: written off 17 Aug. CV step 3 was covered by the 15 Aug career-profile rewrite; the three SQL exercises (lapsed-customer, fan-out on 10273, the 93/92 defect) were not done. Fan-out and the lapsed-customer query stay live in the queue - both were met on D03. The 93/92 defect is held, never seen.
+D05 | 2026-08-16 | desk:- phone:N | conf: | note: written off 17 Aug. Sunday consolidation, phone only. The week-1 boss fight moved into D07's phone block; the rest is absorbed by the D07 checkpoint.
 D06 | | desk: phone: | conf: | note:
 D07 | | desk: phone: | conf: | note:
 D08 | | desk: phone: | conf: | note:
@@ -76,7 +76,8 @@ D28 | | desk: phone: | conf: | note:
 
 Tangents that tried to eat a session. Write it here, move on. Claude Code will schedule one as a Sunday deep-dive if this list hits 3+.
 
-- **Full friction audit of Days 5–28** (raised Day 3). Every remaining day checked against `data/northwind.db` for exercises the data can't support, every vague instruction made concrete, every `Adds to review queue` stub expanded into real questions. Days 3 and 4 and the near-term queue are already done. This is a session of its own — Day 7 (Sunday) is the slot.
+- ~~**Full friction audit of Days 5–28**~~ (raised Day 3) — **closed 2026-08-17.** Mostly done by `reference/dataset-profile.md` on 15 Aug, which audited the whole database and invalidated the exercises it could not support. What remained is now mechanical: `node scripts/check.js` fails on a vague task, a day over budget, a missing workspace file, a review day over the cap, and a queue item with no card. It does not need a session of its own.
+  - *(The slot it was booked into never existed. It said "Day 7 (Sunday)", but Day 7 is a Tuesday — the Sunday was Day 5, which was written off.)*
 
 ---
 

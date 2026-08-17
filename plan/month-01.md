@@ -128,7 +128,24 @@
 
 **Say It Out Loud:** "A joined query that returns more rows than it started with has multiplied every measure on the one side — and it doesn't just inflate the totals, it re-orders the ranking."
 
-**Adds to review queue:** Order 10273 carries £48.00 of freight and has 5 product lines. Joined to [Order Details] that order's freight sums to £240.00. Say the rule that predicts the 240 before you run it · You ranked customers by freight two ways. Joined through [Order Details] the top 5 ended IT, B's Beverages, Hungry Coyote, Morgenstern, Piccolo; straight from Orders, positions 4 and 5 were two different companies. Say why inflated numbers still change *who* is top, and what that costs if you send it · Northwind holds 93 customers but only 92 distinct company names, and one CustomerID has a trailing space. Say what breaks if you GROUP BY the company name instead of the key, and how you'd word that as a defect for a stakeholder
+**Adds to review queue:** You ranked customers by freight two ways. Joined through [Order Details] the top 5 ended IT, B's Beverages, Hungry Coyote, Morgenstern, Piccolo; straight from Orders, positions 4 and 5 were two different companies. Say why inflated numbers still change *who* is top, and what that costs if you send it
+
+> **Written off 2026-08-17**, as calendar D04. This block never ran. Where its four
+> tasks went, decided at the Day 7 checkpoint:
+>
+> - **CV Step 3 — dropped as noise.** The 15 Aug career-profile rewrite covered it, and
+>   block 6 finishes the CV.
+> - **Lapsed-customer query — stays live in the queue**, not here. He attempted it
+>   anyway and misread the result *(tried LEFT JOIN, "it did nothing different" — which
+>   is the trap, because the date filter was in the WHERE)*. That queue item is dated
+>   and it has a card behind it.
+> - **Fan-out on 10273 — stays live in the queue.** The concept was met on Day 3 and the
+>   D03 note records the answer as wrong, so it is retention, not new material.
+> - **The 93/92 defect — moved to Day 10**, where it fits the relational-model theme
+>   better than it fitted here. Its queue item is on `hold` until that day runs.
+>
+> The freight-ranking item above stays held. Its lesson is already carried by the two
+> live fan-out items, so it is month 2 input rather than a gap.
 
 ---
 
@@ -169,24 +186,27 @@
 **Open:** `tracking/cv-workspace.md` and `tracking/applications.md`
 
 **DESK (75 min)**
-- [ ] 30 min — Assemble the CV from Step 2 of the workspace file. One page ideally, two maximum. Section order is in the workspace file — don't redesign it.
-- [ ] 20 min — Rewrite the LinkedIn headline and About to match. The headline formula and a worked example are in the workspace file.
-- [ ] 25 min — Send the recruiter message. The draft is already written in `tracking/cv-workspace.md` — change the name and send it to five, then tick them off in `tracking/applications.md`.
+- [ ] 30 min — **Step 3 then Step 4** of `tracking/cv-workspace.md`. *(Step 3 was Day 4's, which was written off — it takes 10 minutes and the queue already asks you to say these three aloud, so it has to happen.)* Pick your **three strongest bullets** from the six candidates in the table, write each in problem → action → change shape, and run the defend-check on the 40 percent figure. Then assemble the CV in Step 4's section order. One page ideally, two maximum — don't redesign the layout.
+- [ ] 20 min — **Step 5.** Rewrite the LinkedIn headline and About to match. The headline formula and a worked example are in the workspace file.
+- [ ] 25 min — **Step 6.** Send the recruiter message. The draft and subject line are already written — change the name and send it to five, then tick them off in the send log and mirror into `tracking/applications.md`.
   1. Circle Recruitment
   2. Harnham
   3. Robert Half
   4. Bristow Holland
   5. Hays Specialist Recruitment
 
-**PHONE (20 min)**
+**PHONE (30 min)**
 - [ ] 10 min — Review queue.
 - [ ] 10 min — Set job alerts on Reed, CWJobs, Indeed and LinkedIn. All three geographies: Peterborough +20, Cambridge +20, London remote.
+- [ ] 10 min — **Week 1 boss fight.** *(Moved here from the Sunday block, which was written off.)* No notes, out loud, in under 90 seconds: what a JOIN fan-out is, how you would spot one, and what it does to a report. Then the second half, which is the one you got wrong on Day 3: say why it changes **who** ranks top, not just how big the total is. If you stall on either, that is a confidence-2 and it goes back in the queue.
 
 **Say It Out Loud:** "I'm a CS graduate with hands-on SQL and Power BI moving into business systems analysis, looking in Peterborough, Cambridge and remote-London."
 
 **Adds to review queue:** Your 30-second self-introduction, out loud and timed
 
 **Why now:** recruiters work on month-long horizons. Contact them week 1, they're warm by week 4. Waiting until you feel ready costs a month.
+
+**Weekly checkpoint — this is the last day of week 1.** When the desk block and the review queue are both done, open `tracking/checkpoint-week-1.md`. It carries the week's readings, the decisions already made about the two written-off days, and the four questions to answer. Run the three commands at the top of it, then tell Claude Code you have done Day 7 and give it the confidence score.
 
 ---
 
@@ -268,7 +288,8 @@
 
 **Open:** `workspace/day-10-relational-model.md`
 
-**DESK (65 min)**
+**DESK (75 min)**
+- [ ] 10 min — **The defect nobody found.** *(Moved here from Day 4, which was written off. It belongs on the keys day anyway.)* Run `SELECT COUNT(*) FROM Customers` and `SELECT COUNT(DISTINCT CompanyName) FROM Customers`. You get **93 and 92**. Find the two rows that share a name *(both are called `IT`)*, and find the one CustomerID with a trailing space. Then write two sentences in the workspace file: what breaks if a report groups by company name instead of the key, and how you would word that as a defect for a stakeholder — what, so what, recommendation.
 - [ ] 30 min — Draw Northwind's schema **from the database itself**, not from a diagram you found. Eleven tables carry data. The workspace file has the table list and a blank grid to fill.
   1. For each table: name the primary key.
   2. For each table: name every foreign key and what it points at.
@@ -284,7 +305,7 @@
 
 **Say It Out Loud:** "Normalisation protects integrity on the transactional side, but reporting usually wants denormalised structures — knowing which side you're on is the job."
 
-**Adds to review queue:** Point at Northwind: name one primary key, one foreign key, and say what breaks if the foreign key is not enforced · Say the cardinality of Customers→Orders and of Orders→[Order Details] using the words "one to many", then say which of the two caused your £206m freight number · Explain 3NF to a non-technical manager in two sentences, without using the words "normal form"
+**Adds to review queue:** Point at Northwind: name one primary key, one foreign key, and say what breaks if the foreign key is not enforced · Say the cardinality of Customers→Orders and of Orders→[Order Details] using the words "one to many", then say which of the two caused your £206m freight number · Explain 3NF to a non-technical manager in two sentences, without using the words "normal form" · Northwind holds 93 customers but only 92 distinct company names, and one CustomerID has a trailing space. Say what breaks if you GROUP BY the company name instead of the key, and how you'd word that as a defect for a stakeholder
 
 ---
 

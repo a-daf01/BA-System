@@ -4,6 +4,20 @@ Digested days, newest first. Kept so a weekly or Month 2 review can read back ov
 the days actually felt like, not just the confidence scores.
 
 ---
+## 2026-08-17 — Day 06
+
+DAY 3 MISSING WORK:
+
+SELECT * FROM Customers c
+JOIN Orders o ON c.CustomerID = o.CustomerID
+WHERE o.OrderDate >= '2023-10-01';
+
+im not sure what the purpose of this was, it wasn't clear for me but I tried it with LEFT join and it did nothing different
+
+finished day 3
+
+I wrote day 4 and 5 off for now
+
 ## 2026-08-14 — Day 03
 
 Task 1:

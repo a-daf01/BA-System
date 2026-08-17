@@ -1,13 +1,15 @@
-DAY 3 MISSING WORK:
+# Brain dump
 
-SELECT * FROM Customers c
-JOIN Orders o ON c.CustomerID = o.CustomerID
-WHERE o.OrderDate >= '2023-10-01';
+**Type whatever, whenever. No format, no structure, no editing.** Prose, bullets, pasted
+SQL, half-sentences — all fine. Solutions that worked, things that blanked, questions,
+frustrations.
 
-im not sure what the purpose of this was, it wasn't clear for me but I tried it with LEFT join and it did nothing different
+Say **"I'm done"** at the end of the day and Claude Code digests it: struggles become
+review-queue items, open questions get answered, tangents go to the parking lot, and the
+day's log line gets written. Then this file is emptied into
+`tracking/braindump-archive.md` so tomorrow starts blank.
 
-finished day 3
+Nothing here is ever graded. "No idea what I was doing for 40 minutes" is more useful to
+the system than writing nothing.
 
-I wrote day 4 and 5 off for now
-
-
+---

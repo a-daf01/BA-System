@@ -549,6 +549,22 @@ dangerous half.
 **Status:** `open` — two live queue items cover it, and the D07 phone block now ends on it
 as the week 1 boss fight. Re-check the score there.
 
+### Tapping "Write it off" does not write anything off
+
+**Gap:** wrote Days 4 and 5 off on the phone and assumed they were closed. They were still
+listed as open two days later, and their review items were still coming due.
+**Answer:** the dashboard is a static page on GitHub Pages. It has **no way to write to the
+repo** — every tick, score and write-off lives in that device's `localStorage` only. The
+header counter that reads **"N unsynced"** is the entire warning that something has not
+landed. It becomes real when the line reaches `tracking/progress.md`: paste it with **Copy
+log line**, run `node scripts/catch-up.js --log-misses`, or just say so to Claude Code.
+**Why it matters:** this is not cosmetic. An unlogged write-off keeps the day in the
+catch-up list, keeps its review items due, and makes the weekly checkpoint read a week that
+did not happen. `progress.md` has been corrected — it previously implied the tap alone was
+enough, which is what caused this.
+**Status:** `open` — system operation, deliberately not queued. Same family as
+[[always-push-to-github]]: the phone can read the repo, it can never write to it.
+
 ---
 
 ## How this file gets maintained

@@ -33,7 +33,15 @@ Second column is when it was **scheduled**. `done:` is when it **happened**. The
 
 This matters because the weekly review reads it. A day with `done:` set counts as **backfilled, not missed** — it does not trigger the "week was too heavy, cut next week" rule. What it does do is tell you how far your learning is drifting from the review schedule, and `node scripts/catch-up.js --reflow` moves that day's review items so they follow the work instead of a date on which nothing happened.
 
-**If you're not going to do it, write it off.** Tap *Write it off* on that day in the dashboard, or run `node scripts/catch-up.js --log-misses`. A written-off day stops appearing in the catch-up list. That is the point: either it gets done or it gets closed, and nothing sits in limbo.
+**If you're not going to do it, write it off.** A written-off day stops appearing in the catch-up list. That is the point: either it gets done or it gets closed, and nothing sits in limbo.
+
+**But the dashboard cannot write to this file.** Tapping *Write it off* records it on that device only, and the header then shows **"N unsynced"** — that counter is the whole warning. It is not written off until the line lands here. Three ways, any one of them is enough:
+
+- Tap **Copy log line** (or **Copy all unsynced**) and paste it into the block below.
+- Run `node scripts/catch-up.js --log-misses`, which writes every elapsed unlogged day as a miss.
+- Tell Claude Code, which is the one that costs you nothing.
+
+This is not a detail. Days 4 and 5 were written off on the phone on 16 August and were still listed as open — and still firing review items — until 17 August, because the tap never reached this file.
 
 ---
 

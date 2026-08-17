@@ -25,8 +25,8 @@ Do **not** re-read the answer. That produces the illusion of knowing.
 For each item:
 1. Read the prompt only.
 2. Say the answer **out loud**, in full sentences, in business language.
-3. *Then* check.
-4. Score honestly.
+3. *Then* look it up and see whether you were right.
+4. Tap the item on the dashboard to mark it done and move on.
 
 Saying it aloud is not optional dressing — it's the same skill the interview tests. Silent recognition is not recall.
 
@@ -34,6 +34,8 @@ Saying it aloud is not optional dressing — it's the same skill the interview t
 no bare topic labels. If a line ever sends you to another file to work out what it
 is asking, that's a bug — say so and it gets fixed, because a review block with
 friction in it is a review block that doesn't happen.
+
+**Tapping an item is not scoring it.** It's your place in the block, it clears itself overnight, and it never reaches `progress.md`. You score **once**, at the end of the day, on the 1–5 buttons — that single number is what moves everything that fell due. Rating items one at a time would be friction, and friction is what gets this dropped.
 
 ---
 

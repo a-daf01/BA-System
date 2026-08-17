@@ -486,6 +486,24 @@ claim, a `do_not_claim` section listing what was removed and why, and a
 
 ---
 
+## 2026-08-17 — from checking the tappable-review fix
+
+### A commit is not a deploy
+
+**Gap:** assumed that because a Claude Code session had built and committed the
+tappable-review fix on 2026-08-16, it was live on your phone. It was not — nothing
+had changed on the dashboard.
+**Answer:** the fix went to `claude/backfill-missed-days-logging-wqw9kg`, a branch
+cut from a commit that was already 17 behind `main`, and it was never merged. GitHub
+Pages serves `main` only. So the work existed, was correct, and was invisible.
+Cherry-picked onto `main` on 2026-08-17 and verified in a browser before pushing.
+**Why it matters:** for this repo specifically — if a session ends without a push to
+`main`, your phone reads yesterday's plan. The check is one command: `git log
+origin/main --oneline -1` should be the work you just did.
+**Status:** `open` — system operation, deliberately not queued.
+
+---
+
 ## How this file gets maintained
 
 Claude Code appends to it at the end of any session where you asked something you

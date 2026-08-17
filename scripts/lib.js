@@ -11,6 +11,7 @@ const P = {
   config: path.join(ROOT, 'tracking', 'config.md'),
   progress: path.join(ROOT, 'tracking', 'progress.md'),
   queue: path.join(ROOT, 'tracking', 'review-queue.md'),
+  cards: path.join(ROOT, 'tracking', 'review-cards.md'),
   apps: path.join(ROOT, 'tracking', 'applications.md'),
   month1: path.join(ROOT, 'plan', 'month-01.md'),
   month2: path.join(ROOT, 'plan', 'month-02.md'),
@@ -264,6 +265,49 @@ function writeQueueFile(f, queue, permanent) {
   write(P.queue, out);
 }
 
+// --- review cards ----------------------------------------------------------
+// tracking/review-cards.md holds the flash-card back of every queue item:
+//
+//   ### <the prompt, copied exactly>
+//   **From:** where this came from, so he can place it
+//   **Hint:** a nudge, not the answer
+//   **Answer:**
+//   ...markdown, as many lines as it needs...
+//
+// Kept in its own file on purpose. seed-queue, weekly-review and catch-up all
+// rewrite the fenced blocks in review-queue.md, and anything living inside
+// those blocks would be destroyed on the next rewrite.
+//
+// Keyed on the normalised prompt so an edit to punctuation or casing does not
+// silently orphan a card. A prompt with no card still reviews — it just has no
+// back — which is the safe direction to fail in.
+function parseCards(md) {
+  const out = {};
+  const parts = String(md || '').split(/^###\s+/m).slice(1);
+  for (const part of parts) {
+    const nl = part.indexOf('\n');
+    const prompt = (nl === -1 ? part : part.slice(0, nl)).trim();
+    let body = nl === -1 ? '' : part.slice(nl + 1);
+    // A `## ` section heading ends the card. Without this the section title
+    // below a card gets swallowed into that card's answer.
+    const cut = body.search(/^##\s/m);
+    if (cut !== -1) body = body.slice(0, cut);
+    if (!prompt) continue;
+    const from = /^\*\*From:\*\*\s*(.*)$/m.exec(body);
+    const hint = /^\*\*Hint:\*\*\s*(.*)$/m.exec(body);
+    const ai = body.search(/^\*\*Answer:\*\*\s*$/m);
+    let answer = '';
+    if (ai !== -1) answer = body.slice(ai).replace(/^\*\*Answer:\*\*\s*\n?/, '').trim();
+    out[normalise(prompt)] = {
+      prompt,
+      from: from ? from[1].trim() : '',
+      hint: hint ? hint[1].trim() : '',
+      answer,
+    };
+  }
+  return out;
+}
+
 const INTERVALS = [1, 3, 7, 14, 30];
 function nextInterval(i) { const k = INTERVALS.indexOf(i); return INTERVALS[Math.min(k + 1, INTERVALS.length - 1)]; }
 function prevInterval(i) { const k = INTERVALS.indexOf(i); return INTERVALS[Math.max(k - 1, 0)]; }
@@ -331,7 +375,7 @@ module.exports = {
   getStartDate, buildSchedule, dayNumberFor, blockDate, CONSOLIDATION,
   parsePlan, splitAdds, parseProgress, parkingLot, logBlock, formatLogLine,
   dayComplete, dayWrittenOff, dayOutstanding,
-  readQueueFile, writeQueueFile, parseQueueLine, formatQueueLine,
+  readQueueFile, writeQueueFile, parseQueueLine, formatQueueLine, parseCards,
   INTERVALS, nextInterval, prevInterval, capDailyLoad, sortQueue,
   countApplications, normalise,
 };

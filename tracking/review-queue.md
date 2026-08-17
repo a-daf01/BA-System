@@ -24,11 +24,21 @@ Do **not** re-read the answer. That produces the illusion of knowing.
 
 For each item:
 1. Read the prompt only.
-2. Say the answer **out loud**, in full sentences, in business language.
-3. *Then* look it up and see whether you were right.
-4. Tap the item on the dashboard to mark it done and move on.
+2. Tap it if you can't place it — you get **where it came from** and a **hint**, not the answer.
+3. Say the answer **out loud**, in full sentences, in business language.
+4. *Then* tap **Show answer** and see whether you were right.
+5. Tap the tick box and move on.
 
 Saying it aloud is not optional dressing — it's the same skill the interview tests. Silent recognition is not recall.
+
+**The answer to every item is on the back of the card.** It lives in
+`tracking/review-cards.md` and the dashboard shows it inline — where the question came
+from, a hint, and the full answer with the reasoning. You should never have to go and
+find anything. If an item has no card, that's a bug: say so and it gets written.
+
+**The answer sits behind one extra tap on purpose.** Reading it first produces the feeling
+of knowing without the knowing, and that feeling is exactly what has cost you a degree's
+worth of material before. Say your version out loud, then reveal.
 
 **Every prompt is answerable from the prompt alone.** No "see Day 4", no "query 9",
 no bare topic labels. If a line ever sends you to another file to work out what it

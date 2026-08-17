@@ -23,6 +23,7 @@ function run(quiet) {
       'plan/month-01.md': L.read(L.P.month1),
       'tracking/progress.md': L.read(L.P.progress),
       'tracking/review-queue.md': L.read(L.P.queue),
+      'tracking/review-cards.md': L.read(L.P.cards),
       'tracking/applications.md': L.read(L.P.apps),
     },
   };

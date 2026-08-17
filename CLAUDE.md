@@ -58,6 +58,31 @@ When a day's `Adds to review queue` line is a list of topic labels — which mos
 `plan/month-01.md` still is — expand it into real questions **at the end of that day**,
 using what actually happened, rather than copying the labels in.
 
+**Every queue item needs a card in `tracking/review-cards.md`, written at the same time
+as the queue line.** He asked for this directly on Day 6: *"if you asked the questions you
+obviously have the answers... just put the answer and deep explanation there as if it's a
+flash card."* The card is:
+
+```
+### <the prompt, copied exactly — this is the key>
+**From:** where it came from, so he can place it without hunting
+**Hint:** a nudge towards the shape of the answer, never the answer
+**Answer:**
+the full thing, with the reasoning
+```
+
+- **Keyed on the normalised prompt.** If you edit a prompt, edit its heading in the same
+  pass or the card orphans. `node scripts/check.js` fails on a queue item with no card,
+  and on a card with no hint or no answer, so this cannot drift silently.
+- **The dashboard shows From and Hint on tap, and hides the answer behind one more tap.**
+  That second tap is the retrieval mechanism — do not write the answer into the hint.
+- **Cards for personal items** — his self-introduction, his CV bullets, his portfolio
+  walkthroughs, his STAR stories — carry the **marking scheme**, not an invented answer.
+  Never fabricate his content. Give him the structure, the timings and the fail conditions.
+- **Numbers in a card are run, not remembered.** Same rule as the exercises.
+- Answers render through a small markdown subset: paragraphs, `- ` bullets, fenced code,
+  and inline bold/italic/code. **No tables** — they will not render.
+
 **Before writing any day's exercise, read `reference/dataset-profile.md`, then verify the
 query against `data/northwind.db`.** The profile is a full audit of this build — row
 counts, the five verified traps, the real data quality defects, the reference totals, and

@@ -100,6 +100,28 @@ if (!over.length) {
   ok(`${qf.queue.length} items, ${qf.permanent.length} permanent, heaviest day ${busiest ? busiest[0] + ' with ' + busiest[1].length : 'n/a'}`);
 }
 
+// Every item needs a card, or it is a question with no back to it. He asked for
+// this directly: reading a prompt he cannot place, with no answer attached, is
+// what made the block skippable.
+const cards = fs.existsSync(L.P.cards) ? L.parseCards(L.read(L.P.cards)) : {};
+const missing = all.filter((q) => !cards[L.normalise(q.prompt)]);
+const thin = all.filter((q) => {
+  const c = cards[L.normalise(q.prompt)];
+  return c && (!c.answer || !c.hint);
+});
+if (!fs.existsSync(L.P.cards)) fail('tracking/review-cards.md is missing entirely');
+else if (missing.length) {
+  for (const q of missing.slice(0, 8)) fail(`no card for: "${q.prompt.slice(0, 64)}"`);
+  if (missing.length > 8) fail(`...and ${missing.length - 8} more items with no card`);
+} else if (thin.length) {
+  for (const q of thin.slice(0, 8)) fail(`card has no hint or no answer: "${q.prompt.slice(0, 55)}"`);
+} else {
+  ok(`${all.length} items, all with a From, a Hint and an Answer`);
+}
+const orphans = Object.values(cards)
+  .filter((c) => !all.some((q) => L.normalise(q.prompt) === L.normalise(c.prompt)));
+if (orphans.length) warn(`${orphans.length} card(s) match no queue item — a prompt was probably edited`);
+
 // Permanent items must not come due before the work that produces them exists.
 const lastDay = L.iso(schedule[27].date);
 for (const p of qf.permanent) {

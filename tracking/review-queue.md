@@ -92,13 +92,17 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [1] due:2026-08-22 | Point at Northwind: name one primary key, one foreign key, and say what breaks if the foreign key is not enforced | 
 [1] due:2026-08-22 | Say the cardinality of Customers→Orders and of Orders→[Order Details] using the words "one to many", then say which of the two caused your £206m freight number | 
 [1] due:2026-08-22 | Explain 3NF to a non-technical manager in two sentences, without using the words "normal form" | 
+[1] due:2026-08-22 | You wrote `JOIN Employees e ON o.EmployeeID = o.EmployeeID` — twice, once for shippers and once for last-order-per-employee. It returned exactly 9 rows both times and looked right. Say what that join actually did, and why the row count did not give it away | 
 [1] due:2026-08-23 | State the grain of your Northwind fact table in one sentence, then say what you did with Freight and why | 
 [1] due:2026-08-23 | Draw a star and a snowflake in the air and say the one structural difference, then why BI tools generally prefer the star | 
 [1] due:2026-08-23 | What is a data mart, and how is it different from a warehouse? Answer as if a hiring manager asked it | 
+[1] due:2026-08-23 | You wrote `WHERE ... AND (NOT (SELECT DISTINCT CustomerID FROM Orders WHERE ...))` for the churn list and said you were not sure why it failed. Say why `NOT` cannot take a subquery there, and what `NOT IN` is actually doing instead | 
 [1] due:2026-08-25 | What does Remove Errors actually do to your rows, and what do you do instead? | 
 [1] due:2026-08-25 | What is unpivot for, and what shape of data tells you that you need it? | 
+[1] due:2026-08-25 | The exercise asked for customers who ordered since **1 October** 2023. You filtered from 1 August, got 88, and doubted your SQL against the stated 58. Both numbers are correct. Say what actually went wrong, and the one habit that catches it | 
 [1] due:2026-08-26 | You set one relationship to both-directional and the number on screen changed. Say what happened, and how you would spot it on a model someone else built | 
 [1] due:2026-08-26 | Say what cardinality and filter direction each control in Power BI, and which way the arrow should point on a fact-to-dimension relationship | 
+[1] due:2026-08-26 | Chasing overall average order value, you wrote a CTE that took `AVG(...)` per customer and then `SUM`ed those averages, and said "thats just incorrect but I dont understand why". Say what that actually calculates, and why averaging twice does not work | 
 [1] due:2026-08-27 | When can SUM not do the job, so you need SUMX? Give the Northwind revenue example | 
 [1] due:2026-08-27 | Measure or calculated column? Say the rule, then say which of your ten you would delete first if the model got slow | 
 [1] due:2026-08-27 | What does DIVIDE do that `/` does not? | 

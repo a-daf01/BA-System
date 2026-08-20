@@ -1566,3 +1566,74 @@ And the framing that ties it to everything else you know: **it is the DAX versio
 Then the answer that separates you: **"and before any of that, I'd ask whether the business actually did twice as much yesterday — because occasionally the number is right."**
 
 Close on prevention: a row-count reconciliation check on the load, and an alert when the daily total moves outside an expected band.
+
+### You wrote `JOIN Employees e ON o.EmployeeID = o.EmployeeID` — twice, once for shippers and once for last-order-per-employee. It returned exactly 9 rows both times and looked right. Say what that join actually did, and why the row count did not give it away
+**From:** Day 8 desk 1.9 and Day 6 desk 1.10, your own queries, 20 August.
+**Hint:** Read the ON clause again, one side at a time. Which table does each side belong to?
+**Answer:**
+Both sides of the ON clause are the **same table**: `o.EmployeeID = o.EmployeeID`. That is always true for every row, so there is no join condition at all — it is a **cross join**. Every one of the 16,282 orders is paired with every one of the 9 employees: **146,538 rows**, nine times the data.
+
+The reason it looked fine is the `GROUP BY e.EmployeeID`. Grouping collapsed 146,538 rows back down to 9, so the shape of the answer was right and the row count matched the expected 9 exactly.
+
+**Every value was wrong.** `MAX(o.OrderDate)` for employee 1 came back `2023-10-28`, which is the latest order in the whole company. The real answer is `2023-10-19`. Every employee got handed the same global maximum.
+
+This is the defect worth telling an interviewer about, because it is the dangerous shape: **a wrong number that passes the row-count check**. Aggregation hides fan-out. The check that catches it is to run the query *without* the `GROUP BY` and look at the row count before aggregating — 146,538 against 16,282 orders is the tell.
+
+The fix is one character: `ON o.EmployeeID = e.EmployeeID`.
+
+
+### You wrote `WHERE ... AND (NOT (SELECT DISTINCT CustomerID FROM Orders WHERE ...))` for the churn list and said you were not sure why it failed. Say why `NOT` cannot take a subquery there, and what `NOT IN` is actually doing instead
+**From:** Day 8 desk 1.3, the churn list. Your own words: "im not actually quite sure i understand why not".
+**Hint:** What kind of value does `NOT` expect on its right? What kind of thing does that subquery hand back?
+**Answer:**
+`NOT` is a **boolean** operator. It expects one true/false value. Your subquery returns a **set of rows** — 88 customer IDs — and there is no sensible way to read a list of 88 IDs as true or false, so the comparison is meaningless.
+
+`NOT IN` is a different operator. It is a **membership test**: take this one value, check whether it appears anywhere in that set, then negate the answer. The set is allowed to be a subquery because `IN` is built to consume a set.
+
+The general rule, and it is worth saying in an interview:
+
+- A subquery returning **one value** can sit anywhere a value can — `> (SELECT AVG(...))`.
+- A subquery returning **a column of values** needs a set operator — `IN`, `NOT IN`, `ANY`, `ALL`.
+- A subquery returning **rows you only want to test for existence** wants `EXISTS` / `NOT EXISTS`.
+
+Your corrected version was right, and you were right that it reads better. **Watch one thing though:** `NOT IN` breaks silently if the inner query can return a `NULL` — the whole result comes back empty. `NOT EXISTS` does not have that problem. That is already a separate card in this queue and it is the reason it is there.
+
+
+### The exercise asked for customers who ordered since **1 October** 2023. You filtered from 1 August, got 88, and doubted your SQL against the stated 58. Both numbers are correct. Say what actually went wrong, and the one habit that catches it
+**From:** Day 8 desk 1.2, 20 August. Also Day 2, where two of fifteen queries dropped a stated condition.
+**Hint:** Your SQL was not the problem. Compare the date in the question with the date in your WHERE clause.
+**Answer:**
+The query was correct. It answered a **different question**. 88 customers have ordered since 1 August; 58 have ordered since 1 October. Both are right; only one was asked.
+
+This is the third time in a week a stated condition has gone missing — Day 2 dropped a condition on questions 4 and 15, and question 3 on this same day used 1 August correctly, which is almost certainly where the date came from.
+
+It matters more than a syntax slip because **nothing catches it**. The SQL runs, returns plausible rows, and the only signal is a number that does not match — and your instinct was to doubt yourself rather than the requirement. In a job, there is no expected number printed next to the request.
+
+The habit: **read the requirement back as a sentence before writing any SQL, and again against your WHERE clause before you send the result.** Say it out loud — "since the first of October" — then point at the date in your query. Ten seconds.
+
+For a stakeholder this is the whole job: the number is only right if it answers the question that was asked.
+
+
+### Chasing overall average order value, you wrote a CTE that took `AVG(...)` per customer and then `SUM`ed those averages, and said "thats just incorrect but I dont understand why". Say what that actually calculates, and why averaging twice does not work
+**From:** Day 6 desk 1.7, overall average order value. Your own words.
+**Hint:** Write out what one row of your CTE contains before the outer query touches it.
+**Answer:**
+Your CTE produced, per customer, the average value of a **single line item** — because the join to `[Order Details]` had already exploded each order into one row per product. The outer `SUM` then added those per-customer averages together, which is a number with no meaning at all: it is neither a total nor an average of anything real.
+
+The correct shape, which is what you found, does the aggregation in **two stages at the right grain**:
+
+```
+WITH OrderTotals AS (
+  SELECT OrderID, SUM(UnitPrice * Quantity * (1 - Discount)) AS TotalOrderValue
+  FROM [Order Details]
+  GROUP BY OrderID
+)
+SELECT ROUND(AVG(TotalOrderValue), 2) FROM OrderTotals;
+```
+
+First collapse line items **up to one row per order**. Then average across orders. The grain is the whole point: "average order value" means the unit being averaged is an **order**, so you must be at one-row-per-order before you average.
+
+The general trap is called the **average of averages**, and it is wrong whenever the groups are different sizes — an order with 12 lines and an order with 1 line get equal weight, which silently over-weights small orders.
+
+You also wrote that `WITH ... AS` is "like an IF statement". It is not. It is a **named temporary result set** — closer to declaring a variable that holds a table, and the reason it reads better than a nested subquery is that it gets a name and can be read top to bottom.
+

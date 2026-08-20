@@ -55,7 +55,7 @@ D04 | 2026-08-15 | desk:N phone:N | conf: | note: written off 17 Aug. CV step 3 
 D05 | 2026-08-16 | desk:- phone:N | conf: | note: written off 17 Aug. Sunday consolidation, phone only. The week-1 boss fight moved into D07's phone block; the rest is absorbed by the D07 checkpoint.
 D06 | 2026-08-17 | desk:Y phone:Y | conf:4 | note: SQL aggregation. Done on the day, logged 20 Aug because the dashboard cannot write to the repo and the tap never reached this file.
 D07 | 2026-08-18 | desk:N phone:N | conf: | note: written off 20 Aug. CV finish + agency outreach not done. The outreach half is the part that produces interviews - parked, not lost.
-D08 | 2026-08-19 | desk:Y phone:Y | conf:4 | done:2026-08-20 | note: subqueries and CTEs, done in full one day late.
+D08 | 2026-08-19 | desk:Y phone:Y | conf:5 | done:2026-08-20 | note: subqueries and CTEs, done in full one day late. Self-scored 5 - "i dont think i have ever been this confident with SQL ever".
 D09 | | desk: phone: | conf: | note:
 D10 | | desk: phone: | conf: | note:
 D11 | | desk: phone: | conf: | note:

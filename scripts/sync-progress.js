@@ -10,7 +10,8 @@
 //   D01 | 2026-08-03 | desk:Y phone:Y | conf:3 | note:
 //   D01 | 2026-08-03 | desk:Y phone:Y | conf:3 | done:2026-08-05 | note:
 //   R | 2026-08-03 | 4 | the review prompt you graded
-//   N | 2026-08-03 | D08 desk 2.3 | what you typed under that task
+//   N | 2026-08-03 14:32 | D08 desk 2.3 | what you typed under that task
+//   T | 2026-08-03 | D08 desk 2.3 | 612 | 14:20-14:31 | budget:10
 //   - tangent I parked
 //
 // An `R` line is one graded review card. It reschedules that item in
@@ -19,8 +20,12 @@
 // so pasting the same export twice cannot advance an item twice.
 //
 // An `N` line is a working note, filed under the task it was typed against in
-// tracking/notes.md. Line breaks travel as the pilcrow character, because the
-// export has to survive being one line in a clipboard.
+// tracking/notes.md, stamped with the time it was logged. Line breaks travel as
+// the pilcrow character, because the export has to survive being one line in a
+// clipboard.
+//
+// A `T` line is a stopwatch reading, carrying the running total for that task on
+// that day against the minutes the plan asked for. Latest reading wins.
 //
 // The optional `done:` field marks work finished after the day it was set for.
 // It is written by the dashboard when you backfill a day, and it is what the
@@ -31,13 +36,15 @@ const L = require('./lib');
 
 const LOG_RE = /^D(\d{2})\s*\|.*\|\s*desk:\S*\s+phone:\S*\s*\|\s*conf:\S*\s*\|.*note:/;
 const REV_RE = /^R\s*\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*([1-5])\s*\|\s*(.+)$/;
-const NOTE_RE = /^N\s*\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*([^|]+?)\s*\|\s*([\s\S]+)$/;
+const NOTE_RE = /^N\s*\|\s*(\d{4}-\d{2}-\d{2})(?:[ T](\d{2}:\d{2}))?\s*\|\s*([^|]+?)\s*\|\s*([\s\S]+)$/;
+const TIME_RE = /^T\s*\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*([^|]+?)\s*\|\s*(\d+)\s*\|\s*([^|]*?)\s*\|\s*budget:(\d*)\s*$/;
 
 function apply(input) {
   const lines = input.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
   const logs = new Map();
   const revs = [];
   const notes = [];
+  const times = [];
   let parks = [];
 
   for (const line of lines) {
@@ -47,14 +54,25 @@ function apply(input) {
     if (r) { revs.push({ date: r[1], conf: +r[2], prompt: r[3].trim() }); continue; }
     const n = NOTE_RE.exec(line);
     if (n) {
-      notes.push({ date: n[1], context: n[2].trim(), text: n[3].split('\u00b6').join('\n').trim() });
+      notes.push({
+        date: n[1], time: n[2] || '', context: n[3].trim(),
+        text: n[4].split('\u00b6').join('\n').trim(),
+      });
+      continue;
+    }
+    const tm = TIME_RE.exec(line);
+    if (tm) {
+      times.push({
+        date: tm[1], context: tm[2].trim(), seconds: +tm[3],
+        span: tm[4].trim(), budget: tm[5] ? +tm[5] : null,
+      });
       continue;
     }
     if (/^-\s+\S/.test(line)) { parks.push(line.replace(/^-\s+/, '')); continue; }
     console.log(`Ignored (not a log line): ${line}`);
   }
 
-  if (!logs.size && !parks.length && !revs.length && !notes.length) {
+  if (!logs.size && !parks.length && !revs.length && !notes.length && !times.length) {
     console.log('Nothing to sync.');
     return;
   }
@@ -109,6 +127,14 @@ function apply(input) {
     console.log(n
       ? `Wrote ${n} working note(s) to tracking/notes.md${n < notes.length ? ` (${notes.length - n} unchanged)` : ''}.`
       : `${notes.length} working note(s) already in tracking/notes.md, unchanged.`);
+  }
+
+  if (times.length) {
+    const n = L.writeTimeLog(times);
+    console.log(n
+      ? `Wrote ${n} stopwatch reading(s) to tracking/time-log.md.`
+      : `${times.length} stopwatch reading(s) already current in tracking/time-log.md.`);
+    reportTime(times);
   }
 
   if (revs.length) applyReviews(revs);
@@ -182,6 +208,26 @@ function applyReviews(revs) {
   if (applied.length) {
     try { require('./build-snapshot.js').run(true); console.log('Offline snapshot refreshed in index.html and week.html.'); }
     catch (e) { console.log('Snapshot refresh skipped: ' + e.message); }
+  }
+}
+
+// Say what the timings mean while he is still looking at the terminal. A number
+// in a file he has to go and read is a number he will not read.
+function reportTime(times) {
+  const withBudget = times.filter((t) => t.budget);
+  if (!withBudget.length) return;
+  const spent = withBudget.reduce((a, t) => a + t.seconds, 0) / 60;
+  const planned = withBudget.reduce((a, t) => a + t.budget, 0);
+  const pct = Math.round((spent / planned) * 100);
+  console.log(`  ${Math.round(spent)} min against a ${planned} min budget (${pct}%).`);
+  const over = withBudget
+    .filter((t) => t.seconds / 60 > t.budget * 1.5)
+    .sort((a, b) => b.seconds - a.seconds);
+  for (const t of over.slice(0, 3)) {
+    console.log(`  ${Math.round(t.seconds / 60)} min on a ${t.budget} min task: ${t.context}`);
+  }
+  if (over.length) {
+    console.log('  Consistently over on the same kind of task means the estimate is wrong.');
   }
 }
 

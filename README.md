@@ -117,17 +117,24 @@ the box under a task, a sub-step, or a review card — and that is the whole hab
 wrong, what finally worked, what you assumed, where the forty minutes went. Fragments are
 the point. Nothing in it is graded.
 
+Every entry is **stamped with the time you logged it**, so how the thinking went is part of
+the record. Tap **Log** (or hit Enter) and the box clears for the next one — several entries
+on one task is the normal case, not a mess.
+
 It lands in `tracking/notes.md` under a heading that says exactly where it came from:
 
 ```
 ## 2026-08-20
 
 #### D08 desk 2.3
-NOT IN returned nothing. The subquery had a NULL in it.
-NOT EXISTS worked.
+
+**14:32** — NOT IN returned nothing. The subquery had a NULL in it.
+
+**14:41** — NOT EXISTS worked
 
 #### review — Why is `NOT IN` dangerous when the inner query can return a NULL
-blanked, said "it ignores nulls" which is the wrong way round
+
+**19:04** — blanked, said "it ignores nulls" which is the wrong way round
 ```
 
 A note under a review card you missed is the most useful line in the system: a recall
@@ -153,6 +160,34 @@ it invented would corrupt every review interval that derives from it.
 Nothing needs archiving. Notes stay filed under their day permanently, which is what makes
 the file worth reading back at the weekly checkpoint and at Month 2 planning — the days as
 they actually felt, not just the scores.
+
+---
+
+## The stopwatch
+
+**Opening a task starts it.** It counts *down* against the minutes the task states, and
+turns amber when you go past. Ticking the task stops it, and so does opening another —
+two tasks cannot both be the thing you are doing.
+
+| | |
+|---|---|
+| Starts | when you open a task |
+| Stops | when you tick it, open another, or tap Pause |
+| Shows | time remaining against the stated budget |
+| Caps at | 3× the budget, so a timer left running overnight cannot poison the data |
+
+Readings land in `tracking/time-log.md` and drive **Time on task** on the week page.
+
+Three reasons it is there, and only one of them is urgency:
+
+- **Urgency.** A task that says "10 min" with nothing counting is a suggestion.
+- **The plan gets re-estimated.** Consistently running at 150% means the estimate is wrong,
+  and a 75-minute day that really takes two hours is a day you stop starting.
+- **It is the only thing that shows the work getting easier.** Confidence 4 in week 1 and
+  confidence 4 in week 3 look identical until you see the second took half as long.
+
+It is never a target. Racing the clock produces work you cannot recall tomorrow, which is
+the opposite of the point.
 
 ---
 
@@ -190,6 +225,8 @@ when you open it — a written report goes stale the day after it is written.
   dangerous pattern, and the fix is to move the phone slot, not shrink it.
 - **Decay board** — every overdue item, oldest first. Material you have met and have not
   said out loud since.
+- **Time on task** — measured minutes against stated budget, and the six tasks furthest
+  over. This is where "is it getting easier" gets answered with a number.
 - **Interview drill** — a Say It Out Loud line from a day you actually completed. Never
   from a day you have not met.
 - **Orders for the week ahead** — the CLAUDE.md rules evaluated against live numbers, each
@@ -233,7 +270,7 @@ All Node, no dependencies, all run from the repo root.
 | Command | What it does |
 |---|---|
 | `node scripts/seed-queue.js` | Builds `tracking/review-queue.md` from the plan. Run once at setup, and again after changing `START_DATE`. Rebuilds every due date. |
-| `node scripts/sync-progress.js paste.txt` | Writes everything the dashboard exports. `D..` log lines into `tracking/progress.md`, `R \|` graded reviews into `tracking/review-log.md` (rescheduling the queue), `N \|` working notes into `tracking/notes.md`, `- ` lines into the parking lot. Re-running the same paste changes nothing. Also reads stdin. |
+| `node scripts/sync-progress.js paste.txt` | Writes everything the dashboard exports. `D..` log lines into `tracking/progress.md`, `R \|` graded reviews into `tracking/review-log.md` (rescheduling the queue), `N \|` working notes into `tracking/notes.md`, `T \|` stopwatch readings into `tracking/time-log.md`, `- ` lines into the parking lot. Re-running the same paste changes nothing. Also reads stdin. |
 | `node scripts/braindump.js` | *Retired.* Notes are filed under the task now — see `tracking/notes.md`. |
 | `node scripts/catch-up.js` | Missed days. Reports what is still open. `--log-misses` writes unlogged elapsed days as misses, `--reflow` re-dates review items to follow the work you actually did, `--restart-today` moves Day 1 to today. |
 | `node scripts/weekly-review.js` | The weekly checkpoint. `--dry` reports without writing. Pass a week number to force one, for example `node scripts/weekly-review.js 2`. |
@@ -362,6 +399,7 @@ ba-system/
 │   ├── questions-log.md          ← every prompt, captured automatically
 │   ├── notes.md                  ← your working, filed under the task that produced it
 │   ├── review-log.md             ← every graded review, the retention evidence
+│   ├── time-log.md               ← how long each task took vs what the plan asked
 │   ├── braindump.md              ← retired 20 Aug, points at notes.md
 │   ├── braindump-archive.md      ← what was digested before the change
 │   ├── knowledge-gaps.md         ← what you didn't know, curated and audited

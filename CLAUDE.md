@@ -156,6 +156,11 @@ note, so a gap can be traced to the task that caused it without asking him to ex
 note under a review card is a recall failure with the reason attached — the most valuable
 line in the file.
 
+**Every entry is stamped with the minute it was logged.** He asked for that so you never
+have to ask when something happened: *"log them instead of a notepad to type in, so you know
+exactly when I did them without having to ask."* Read the times — three entries inside four
+minutes is a struggle; one at the start and one an hour later is a task that ran long.
+
 When he says **"I'm done"**, or anything equivalent that means the day is over, run the
 digest. Do not wait to be asked twice, and do not digest mid-day unless he says so.
 
@@ -194,6 +199,29 @@ Rules for the digest itself:
 - **Read the graded reviews too.** `tracking/review-log.md` carries the score he gave each
   card. A card graded 1 with a note under it is a confirmed gap; promote it. A card graded 4
   twice running is the evidence that marks a knowledge gap `known`.
+
+### 6b. Time on task
+
+`tracking/time-log.md` records how long each task actually took against the minutes the plan
+asked for. The dashboard stopwatch starts when he opens a task and stops when he ticks it or
+opens another; readings arrive with the export as `T |` lines.
+
+Added 20 August at his request, for three things at once — urgency while working, a plan
+that gets re-estimated when it is wrong, and evidence of getting faster.
+
+- **Over budget is a fact about the estimate, not about him.** If a task type consistently
+  runs past 150% of its stated minutes, the plan is wrong. Re-cut the day and say you have.
+  Do not tell him to work faster and do not build the timings into a target.
+- **A day that costs 150% of its stated 75 minutes is a two-hour day**, and a two-hour day
+  is one he stops starting. This is the earliest warning of abandonment the system has, and
+  it arrives before any confidence score moves.
+- **Falling time at steady confidence is the single best progress signal available.** A 4 in
+  week 1 and a 4 in week 3 look identical until you see the second took half as long. Say so
+  when it happens; it is the evidence he cannot feel from the inside.
+- **Readings capped at 3× budget are marked and must not be read as real.** That is a timer
+  left running, not a task that took five hours. Ignore them in any average.
+- **Never infer a confidence score from a time.** Fast is not the same as retained, and the
+  rule against inventing that number has no exceptions.
 
 ### 7. Next-day readiness check — run this at the end of every digest
 
@@ -240,6 +268,7 @@ that — it is information, not filler.
 - **Don't gamify with streaks that punish.** A broken streak should not reset visible progress. He's had motivation collapse from single-point failures before.
 - **Never invent a confidence score, anywhere, for any reason.** Not from his notes, not from a week average, not from "it looked like it went well". `scripts/weekly-review.js` used to fall back to the week average for items that fell due on an unlogged day; that was a bug and it is fixed. If there is no evidence, the item carries forward unscored.
 - **He never opens a blank page.** Every day that asks him to write something has an `Open:` line naming a prefilled file in `workspace/`. If you add a day, you add its file.
+- **Every task carries a stated time.** The stopwatch and its countdown read the leading `N min` from the task text, so a task written without one gets no budget and no urgency. Keep the minutes on the front of every task you write.
 - **Verify against the real data before writing an exercise.** Not from memory of what Northwind usually contains — this build is re-dated, re-sized and fully dense, and it has already broken two days' worth of tasks.
 - **Model answers live in `reference/answers/` and say "open me second".** Never paste a full solution into the plan or the workspace file. Expected row counts and totals, yes; the query, no.
 

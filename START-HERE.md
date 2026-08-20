@@ -171,6 +171,7 @@ Full version in `prompts/tutor-prompt.md`, including the Day 28 mock interview p
 | `tracking/review-queue.md` | Spaced repetition — the retention engine |
 | `tracking/notes.md` | **Your working, filed under the task.** Type under the thing you are doing |
 | `tracking/review-log.md` | Every review you have graded, with the score and the date |
+| `tracking/time-log.md` | How long each task took, against what the plan asked for |
 | `tracking/knowledge-gaps.md` | What you didn't know, the answer, and whether it stuck |
 | `tracking/cv-workspace.md` | Where the CV gets written, Days 4 and 6 |
 | `tracking/applications.md` | Job pipeline + agency contacts |

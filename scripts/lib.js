@@ -14,6 +14,7 @@ const P = {
   cards: path.join(ROOT, 'tracking', 'review-cards.md'),
   reviewLog: path.join(ROOT, 'tracking', 'review-log.md'),
   notes: path.join(ROOT, 'tracking', 'notes.md'),
+  timeLog: path.join(ROOT, 'tracking', 'time-log.md'),
   apps: path.join(ROOT, 'tracking', 'applications.md'),
   month1: path.join(ROOT, 'plan', 'month-01.md'),
   month2: path.join(ROOT, 'plan', 'month-02.md'),
@@ -351,19 +352,26 @@ function applyReview(item, conf, date, permanent) {
 // on the phone does not litter the file.
 function parseNotes(md) {
   const out = {};
-  let date = null, ctx = null, buf = [];
+  let date = null, ctx = null, entries = null, cur = null;
+  const closeEntry = () => {
+    if (cur) { cur.text = cur.text.join('\n').replace(/^\s+|\s+$/g, ''); entries.push(cur); }
+    cur = null;
+  };
   const flush = () => {
-    if (date && ctx) out[date + ' ' + normalise(ctx)] = {
-      date, context: ctx, text: buf.join('\n').replace(/^\n+|\s+$/g, ''),
-    };
-    ctx = null; buf = [];
+    closeEntry();
+    if (date && ctx) out[date + ' ' + normalise(ctx)] = { date, context: ctx, entries };
+    ctx = null; entries = null;
   };
   for (const line of String(md).split(/\r?\n/)) {
     const d = /^##\s+(\d{4}-\d{2}-\d{2})\s*$/.exec(line);
     if (d) { flush(); date = d[1]; continue; }
     const c = /^####\s+(.+?)\s*$/.exec(line);
-    if (c) { flush(); ctx = c[1]; continue; }
-    if (ctx) buf.push(line);
+    if (c) { flush(); ctx = c[1]; entries = []; continue; }
+    if (!ctx) continue;
+    const e = /^\*\*(\d{2}:\d{2})\*\*\s+—\s+([\s\S]*)$/.exec(line);
+    if (e) { closeEntry(); cur = { time: e[1], text: [e[2]] }; continue; }
+    if (cur) cur.text.push(line);
+    else if (line.trim()) { cur = { time: '', text: [line] }; }   // pre-timestamp notes
   }
   flush();
   return out;
@@ -371,8 +379,18 @@ function parseNotes(md) {
 
 const noteKey = (date, context) => date + ' ' + normalise(context);
 
-// Merge notes in, newest body wins, then re-render the whole file below the
-// prose. Rewriting rather than appending is what makes an edit an edit.
+// One entry per line typed, each stamped with the time it was logged. He asked
+// for this directly: "make it so the notes I can enter and log them ... so you
+// know exactly when I did them without having to ask." An entry is identified by
+// its time within a context, so re-exporting edits rather than duplicating.
+function renderNote(n) {
+  return n.entries
+    .slice()
+    .sort((a, b) => (a.time || '').localeCompare(b.time || ''))
+    .map((e) => (e.time ? `**${e.time}** — ${e.text}` : e.text))
+    .join('\n\n');
+}
+
 function writeNotes(entries) {
   const md = read(P.notes);
   const cut = md.indexOf('\n---\n');
@@ -382,11 +400,18 @@ function writeNotes(entries) {
 
   let changed = 0;
   for (const e of entries) {
-    const k = noteKey(e.date, e.context);
     const text = String(e.text || '').replace(/\s+$/, '');
     if (!text) continue;
-    if (existing[k] && existing[k].text === text) continue;
-    existing[k] = { date: e.date, context: e.context, text };
+    const k = noteKey(e.date, e.context);
+    const bucket = (existing[k] ||= { date: e.date, context: e.context, entries: [] });
+    const time = e.time || '';
+    const hit = bucket.entries.find((x) => x.time === time);
+    if (hit) {
+      if (hit.text === text) continue;
+      hit.text = text;
+    } else {
+      bucket.entries.push({ time, text });
+    }
     changed++;
   }
   if (!changed) return 0;
@@ -398,12 +423,70 @@ function writeNotes(entries) {
   for (const date of Object.keys(byDate).sort()) {
     body += '\n## ' + date + '\n';
     for (const n of byDate[date].sort((a, b) => a.context.localeCompare(b.context))) {
-      body += '\n#### ' + n.context + '\n\n' + n.text + '\n';
+      body += '\n#### ' + n.context + '\n\n' + renderNote(n) + '\n';
     }
   }
   write(P.notes, head + body);
   return changed;
 }
+
+// --- time log --------------------------------------------------------------
+// tracking/time-log.md, one line per task per day:
+//
+//   2026-08-20 | D08 desk 2 | 612 | 14:20-14:31 | budget:10
+//
+// Seconds are what the stopwatch measured, budget is the minutes the plan asked
+// for. Both are kept because the interesting number is the ratio, and the plan
+// gets rewritten every month.
+const T_RE = /^(\d{4}-\d{2}-\d{2})\s*\|\s*([^|]+?)\s*\|\s*(\d+)\s*\|\s*([^|]*?)\s*\|\s*budget:(\d*)\s*$/;
+
+function timeLogBlock(md) {
+  const i = md.indexOf('## Log');
+  if (i === -1) return null;
+  const m = /```[^\n]*\n([\s\S]*?)```/.exec(md.slice(i));
+  if (!m) return null;
+  return { body: m[1], start: i + m.index, end: i + m.index + m[0].length };
+}
+
+function parseTimeLog(md) {
+  const out = {};
+  const b = timeLogBlock(md);
+  for (const raw of (b ? b.body : '').split(/\r?\n/)) {
+    const m = T_RE.exec(raw.trim());
+    if (!m) continue;
+    out[m[1] + ' ' + normalise(m[2])] = {
+      date: m[1], context: m[2].trim(), seconds: +m[3],
+      span: m[4].trim(), budget: m[5] ? +m[5] : null,
+    };
+  }
+  return out;
+}
+
+// Latest reading wins: a task worked on twice in a day reports its running
+// total, not two rows that have to be added up later.
+function writeTimeLog(rows) {
+  const md = read(P.timeLog);
+  const b = timeLogBlock(md);
+  if (!b) throw new Error('time-log.md: no "## Log" fenced block');
+  const existing = parseTimeLog(md);
+
+  let changed = 0;
+  for (const r of rows) {
+    const k = r.date + ' ' + normalise(r.context);
+    const prev = existing[k];
+    if (prev && prev.seconds === r.seconds && prev.span === r.span) continue;
+    existing[k] = r;
+    changed++;
+  }
+  if (!changed) return 0;
+
+  const lines = Object.values(existing)
+    .sort((a, c) => (a.date === c.date ? a.context.localeCompare(c.context) : a.date < c.date ? -1 : 1))
+    .map((r) => `${r.date} | ${r.context} | ${r.seconds} | ${r.span} | budget:${r.budget == null ? '' : r.budget}`);
+  write(P.timeLog, md.slice(0, b.start) + '```\n' + lines.join('\n') + '\n```' + md.slice(b.end));
+  return changed;
+}
+
 
 // --- review cards ----------------------------------------------------------
 // tracking/review-cards.md holds the flash-card back of every queue item:
@@ -517,7 +600,8 @@ module.exports = {
   dayComplete, dayWrittenOff, dayOutstanding,
   readQueueFile, writeQueueFile, parseQueueLine, formatQueueLine, parseCards,
   reviewLogBlock, parseReviewLog, appendReviewLog, reviewKey, applyReview,
-  parseNotes, writeNotes, noteKey,
+  parseNotes, writeNotes, noteKey, renderNote,
+  timeLogBlock, parseTimeLog, writeTimeLog,
   INTERVALS, nextInterval, prevInterval, capDailyLoad, sortQueue,
   countApplications, normalise,
 };

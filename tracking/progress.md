@@ -53,9 +53,9 @@ D02 | 2026-08-13 | desk:Y phone:Y | conf:4 | note: 13/15 queries correct. Q13 co
 D03 | 2026-08-14 | desk:Y phone:Y | conf:5 | note: joins done, called it easy. INNER+IS NULL returned the right answer via a query that could not have produced it. Fan-out answer wrong - described LEFT JOIN behaviour, not row multiplication. Flagged system friction; system rebuilt same day.
 D04 | 2026-08-15 | desk:N phone:N | conf: | note: written off 17 Aug. CV step 3 was covered by the 15 Aug career-profile rewrite; the three SQL exercises (lapsed-customer, fan-out on 10273, the 93/92 defect) were not done. Fan-out and the lapsed-customer query stay live in the queue - both were met on D03. The 93/92 defect is held, never seen.
 D05 | 2026-08-16 | desk:- phone:N | conf: | note: written off 17 Aug. Sunday consolidation, phone only. The week-1 boss fight moved into D07's phone block; the rest is absorbed by the D07 checkpoint.
-D06 | | desk: phone: | conf: | note:
-D07 | | desk: phone: | conf: | note:
-D08 | | desk: phone: | conf: | note:
+D06 | 2026-08-17 | desk:Y phone:Y | conf:4 | note: SQL aggregation. Done on the day, logged 20 Aug because the dashboard cannot write to the repo and the tap never reached this file.
+D07 | 2026-08-18 | desk:N phone:N | conf: | note: written off 20 Aug. CV finish + agency outreach not done. The outreach half is the part that produces interviews - parked, not lost.
+D08 | 2026-08-19 | desk:Y phone:Y | conf:4 | done:2026-08-20 | note: subqueries and CTEs, done in full one day late.
 D09 | | desk: phone: | conf: | note:
 D10 | | desk: phone: | conf: | note:
 D11 | | desk: phone: | conf: | note:
@@ -86,6 +86,7 @@ Tangents that tried to eat a session. Write it here, move on. Claude Code will s
 
 - ~~**Full friction audit of Days 5–28**~~ (raised Day 3) — **closed 2026-08-17.** Mostly done by `reference/dataset-profile.md` on 15 Aug, which audited the whole database and invalidated the exercises it could not support. What remained is now mechanical: `node scripts/check.js` fails on a vague task, a day over budget, a missing workspace file, a review day over the cap, and a queue item with no card. It does not need a session of its own.
   - *(The slot it was booked into never existed. It said "Day 7 (Sunday)", but Day 7 is a Tuesday — the Sunday was Day 5, which was written off.)*
+- **D07's agency outreach never happened** (written off 20 Aug) — the CV half was already covered by the 15 Aug career-profile rewrite, but contacting Circle, Harnham, Robert Half, Bristow Holland and Hays was not. This is the only block in month 1 that produces interviews, and the pipeline is at 0 of 15. Needs a slot, not a rewrite. The self-introduction it fed is already a permanent queue item, so the recall side is covered.
 
 ---
 

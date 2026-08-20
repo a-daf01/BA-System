@@ -97,33 +97,45 @@ tap it again and it closes. The count on the right (`3/15`) is how far through y
 
 - **Tap a sub-step** to tick it off.
 - **Tick every sub-step** and the parent task ticks itself. Untick one and it comes back off.
-- **Tap the pencil** on any sub-step to write a note against that step specifically — what
-  went wrong, what you had to look up, what surprised you.
+- **Tap the pencil** on any task, any sub-step or any review card to write a note against
+  that exact thing — what went wrong, what you had to look up, what surprised you.
 - **Tap the parent's checkbox** (not the row) to tick the whole task without walking the
   list, for a day you did the work another way.
 
 Sub-steps are collapsed by default. Fifteen queries on screen at once is exactly the wall
 this layout exists to prevent.
 
-Notes gather into a **Copy brain dump** button next to the log line buttons. Paste them
-into `tracking/braindump.md` and they get digested with everything else.
+Notes ride out on **Export all unsaved** with everything else and land in
+`tracking/notes.md`, filed under the task that produced them.
 
 ---
 
-## Brain dump, digested at the end of the day
+## Working notes, filed under the task
 
-`tracking/braindump.md` is a scratch file with no format. Type into it whenever — what
-worked, what blanked, what took forty minutes for no reason, questions you could not be
-bothered to chase mid-session. Fragments are the point. Nothing in it is graded.
+There is no separate scratch file to remember. **You type under the thing you are doing** —
+the box under a task, a sub-step, or a review card — and that is the whole habit. What went
+wrong, what finally worked, what you assumed, where the forty minutes went. Fragments are
+the point. Nothing in it is graded.
 
-```bash
-node scripts/braindump.js                    # show today's entries
-node scripts/braindump.js "HAVING blanked"   # append a line without opening the file
-node scripts/braindump.js --archive          # move today into the archive
+It lands in `tracking/notes.md` under a heading that says exactly where it came from:
+
+```
+## 2026-08-20
+
+#### D08 desk 2.3
+NOT IN returned nothing. The subquery had a NULL in it.
+NOT EXISTS worked.
+
+#### review — Why is `NOT IN` dangerous when the inner query can return a NULL
+blanked, said "it ignores nulls" which is the wrong way round
 ```
 
-Or just open the file and type. The script only exists so capture from a terminal is one
-command.
+A note under a review card you missed is the most useful line in the system: a recall
+failure with the reason attached.
+
+*(This replaced `tracking/braindump.md` on 20 August. A separate dump file asked you to
+re-find the context and write it down again, so it stayed empty for eight days. The old
+entries are preserved in `tracking/braindump-archive.md`.)*
 
 **Say "I'm done" to Claude Code at the end of the day** and it digests the lot:
 
@@ -138,9 +150,50 @@ It then proposes the day's log line and **asks you for the confidence score**. I
 guess that number — it saw a description of your day, not your day, and a confidence score
 it invented would corrupt every review interval that derives from it.
 
-Once you confirm, the day is archived to `tracking/braindump-archive.md` and the file is
-blank again for tomorrow. The archive is kept so the weekly review and Month 2 planning can
-read what the days actually felt like, not just the scores.
+Nothing needs archiving. Notes stay filed under their day permanently, which is what makes
+the file worth reading back at the weekly checkpoint and at Month 2 planning — the days as
+they actually felt, not just the scores.
+
+---
+
+## Reviews are graded, and the grade is a real record
+
+Every card carries three buttons: **Got it** (4), **Shaky** (3), **Missed** (1).
+
+| You tap | The item |
+|---|---|
+| Got it | moves to the next interval — 1 → 3 → 7 → 14 → 30 days |
+| Shaky | repeats its current interval |
+| Missed | drops back one |
+
+The date it counts from is the day you graded it, not the day you got round to syncing.
+Grades land in `tracking/review-log.md`, and a line already there is never applied twice —
+re-paste the same export as often as you like.
+
+**Grade all eight, then tap Next 8** to pull the next eight overdue. That button is how a
+backlog gets cleared without the block ever growing past eight.
+
+> Before 20 August a review tick stored only the current date and threw the rest away. It
+> never reached a file, so an item you recalled perfectly stayed overdue forever and the
+> queue could only grow. That was the largest hole in the system.
+
+---
+
+## The week analysis page
+
+`week.html`, reachable from the ☰ button on the dashboard. Everything on it is computed
+when you open it — a written report goes stale the day after it is written.
+
+- **Verdict** — one headline, bad news first, no menu of options.
+- **Scorecard** — confidence, desk, phone, overdue, graded, applications.
+- **Desk vs phone** — the divergence that matters. Desk landing and phone not is the
+  dangerous pattern, and the fix is to move the phone slot, not shrink it.
+- **Decay board** — every overdue item, oldest first. Material you have met and have not
+  said out loud since.
+- **Interview drill** — a Say It Out Loud line from a day you actually completed. Never
+  from a day you have not met.
+- **Orders for the week ahead** — the CLAUDE.md rules evaluated against live numbers, each
+  ending in one action.
 
 ---
 
@@ -180,12 +233,12 @@ All Node, no dependencies, all run from the repo root.
 | Command | What it does |
 |---|---|
 | `node scripts/seed-queue.js` | Builds `tracking/review-queue.md` from the plan. Run once at setup, and again after changing `START_DATE`. Rebuilds every due date. |
-| `node scripts/sync-progress.js paste.txt` | Writes copied log lines into `tracking/progress.md`. Replaces the row for that day, never duplicates it. Lines starting with `- ` go to the parking lot. Also reads stdin, so `node scripts/sync-progress.js` then paste then Ctrl+Z works. |
-| `node scripts/braindump.js` | Shows today's brain dump. Pass text to append a line, `--archive` to file the day away once digested. |
+| `node scripts/sync-progress.js paste.txt` | Writes everything the dashboard exports. `D..` log lines into `tracking/progress.md`, `R \|` graded reviews into `tracking/review-log.md` (rescheduling the queue), `N \|` working notes into `tracking/notes.md`, `- ` lines into the parking lot. Re-running the same paste changes nothing. Also reads stdin. |
+| `node scripts/braindump.js` | *Retired.* Notes are filed under the task now — see `tracking/notes.md`. |
 | `node scripts/catch-up.js` | Missed days. Reports what is still open. `--log-misses` writes unlogged elapsed days as misses, `--reflow` re-dates review items to follow the work you actually did, `--restart-today` moves Day 1 to today. |
 | `node scripts/weekly-review.js` | The weekly checkpoint. `--dry` reports without writing. Pass a week number to force one, for example `node scripts/weekly-review.js 2`. |
 | `node scripts/new-month.js` | Generates `plan/month-02.md` from `plan/day-template.md`, weighted by your weakest confidence scores. `--dry` prints the weighting only. |
-| `node scripts/build-snapshot.js` | Refreshes the offline copy inside `index.html`. `weekly-review.js` calls it for you. |
+| `node scripts/build-snapshot.js` | Refreshes the offline copy inside `index.html` and `week.html`. The other scripts call it for you. |
 | `node scripts/check.js` | Health check on the whole system: day time budgets, missing Say It Out Loud lines, `Open:` files that don't exist or are empty, stub review prompts, days over the review cap, permanent items due before their material exists. `--tomorrow` checks just the next day. Exits non-zero on failure. |
 | `python scripts/export-csv.py` | Exports every Northwind table to `data/csv/` for Power BI, which has no SQLite connector. Run once; Days 13 to 17 need it. |
 
@@ -307,8 +360,10 @@ ba-system/
 │   ├── progress.md               ← the one file you write to daily
 │   ├── review-queue.md           ← spaced repetition, the retention engine
 │   ├── questions-log.md          ← every prompt, captured automatically
-│   ├── braindump.md              ← unstructured notes, digested each evening
-│   ├── braindump-archive.md      ← digested days, kept for review
+│   ├── notes.md                  ← your working, filed under the task that produced it
+│   ├── review-log.md             ← every graded review, the retention evidence
+│   ├── braindump.md              ← retired 20 Aug, points at notes.md
+│   ├── braindump-archive.md      ← what was digested before the change
 │   ├── knowledge-gaps.md         ← what you didn't know, curated and audited
 │   ├── cv-workspace.md           ← Days 4 and 6 type in here
 │   └── applications.md           ← job pipeline
@@ -348,7 +403,7 @@ ba-system/
 └── scripts/
     ├── lib.js                    ← shared parsing and date logic
     ├── log-question.js           ← hook target: captures every prompt
-    ├── braindump.js              ← show / append / archive the brain dump
+    ├── braindump.js              ← retired, kept for the archive
     ├── seed-queue.js
     ├── sync-progress.js
     ├── catch-up.js               ← missed days: backfill, write off, reflow

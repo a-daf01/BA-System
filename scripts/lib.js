@@ -12,11 +12,15 @@ const P = {
   progress: path.join(ROOT, 'tracking', 'progress.md'),
   queue: path.join(ROOT, 'tracking', 'review-queue.md'),
   cards: path.join(ROOT, 'tracking', 'review-cards.md'),
+  reviewLog: path.join(ROOT, 'tracking', 'review-log.md'),
+  notes: path.join(ROOT, 'tracking', 'notes.md'),
   apps: path.join(ROOT, 'tracking', 'applications.md'),
   month1: path.join(ROOT, 'plan', 'month-01.md'),
   month2: path.join(ROOT, 'plan', 'month-02.md'),
   template: path.join(ROOT, 'plan', 'day-template.md'),
   index: path.join(ROOT, 'index.html'),
+  week: path.join(ROOT, 'week.html'),
+  gaps: path.join(ROOT, 'tracking', 'knowledge-gaps.md'),
 };
 
 const read = (f) => fs.readFileSync(f, 'utf8');
@@ -265,6 +269,142 @@ function writeQueueFile(f, queue, permanent) {
   write(P.queue, out);
 }
 
+// --- review log ------------------------------------------------------------
+// tracking/review-log.md is the append-only record of every graded review:
+//
+//   2026-08-19 | 4 | the exact prompt
+//
+// It exists because the dashboard cannot write files. A grade tapped on the
+// phone lives in localStorage until it is exported and synced, and this file is
+// what "already synced" means - the dashboard diffs against it, so re-pasting
+// the same export cannot advance an item twice.
+const RL_RE = /^(\d{4}-\d{2}-\d{2})\s*\|\s*([1-5])\s*\|\s*(.+)$/;
+
+function reviewLogBlock(md) {
+  const i = md.indexOf('## Log');
+  if (i === -1) return null;
+  const m = /```[^\n]*\n([\s\S]*?)```/.exec(md.slice(i));
+  if (!m) return null;
+  return { body: m[1], start: i + m.index, end: i + m.index + m[0].length };
+}
+
+function parseReviewLog(md) {
+  const b = reviewLogBlock(md);
+  const out = [];
+  for (const raw of (b ? b.body : '').split(/\r?\n/)) {
+    const m = RL_RE.exec(raw.trim());
+    if (m) out.push({ date: m[1], conf: +m[2], prompt: m[3].trim() });
+  }
+  return out;
+}
+
+// One review of one item on one date. Re-grading the same item on the same day
+// is an edit, not a second review, so the key deliberately ignores the score.
+const reviewKey = (date, prompt) => date + ' ' + normalise(prompt);
+
+function appendReviewLog(entries) {
+  const md = read(P.reviewLog);
+  const b = reviewLogBlock(md);
+  if (!b) throw new Error('review-log.md: no "## Log" fenced block');
+  const seen = new Set(parseReviewLog(md).map((e) => reviewKey(e.date, e.prompt)));
+  const fresh = entries.filter((e) => {
+    const k = reviewKey(e.date, e.prompt);
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+  if (!fresh.length) return 0;
+  const lines = fresh
+    .sort((a, b2) => (a.date < b2.date ? -1 : a.date > b2.date ? 1 : 0))
+    .map((e) => e.date + ' | ' + e.conf + ' | ' + e.prompt);
+  const body = (b.body.replace(/\s*$/, '') + '\n' + lines.join('\n') + '\n').replace(/^\n+/, '');
+  write(P.reviewLog, md.slice(0, b.start) + '```\n' + body + '```' + md.slice(b.end));
+  return fresh.length;
+}
+
+// Apply one graded review to a queue item, exactly as weekly-review.js would:
+// 4-5 advances, 3 repeats, 1-2 drops back, and the next due date counts from
+// the day the review actually happened rather than from today.
+function applyReview(item, conf, date, permanent) {
+  const before = item.interval;
+  if (permanent) item.interval = 30;
+  else if (conf >= 4) item.interval = nextInterval(before);
+  else if (conf === 3) item.interval = before;
+  else item.interval = prevInterval(before);
+  const base = toDate(date) || today();
+  item.due = iso(addDays(base, item.interval));
+  item.hist = [...item.hist, conf].slice(-2);
+  return { prompt: item.prompt, conf, from: before, to: item.interval, due: item.due };
+}
+
+// --- working notes ---------------------------------------------------------
+// tracking/notes.md is everything typed under a task while the work was being
+// done. Structure is deliberately plain markdown, because he reads it:
+//
+//   ## 2026-08-20
+//
+//   #### D08 desk 2.3
+//   the note, as many lines as it needs
+//
+// Keyed on date + context, one note per task per day. Re-exporting an edited
+// note replaces the body rather than appending a second copy, so fixing a typo
+// on the phone does not litter the file.
+function parseNotes(md) {
+  const out = {};
+  let date = null, ctx = null, buf = [];
+  const flush = () => {
+    if (date && ctx) out[date + ' ' + normalise(ctx)] = {
+      date, context: ctx, text: buf.join('\n').replace(/^\n+|\s+$/g, ''),
+    };
+    ctx = null; buf = [];
+  };
+  for (const line of String(md).split(/\r?\n/)) {
+    const d = /^##\s+(\d{4}-\d{2}-\d{2})\s*$/.exec(line);
+    if (d) { flush(); date = d[1]; continue; }
+    const c = /^####\s+(.+?)\s*$/.exec(line);
+    if (c) { flush(); ctx = c[1]; continue; }
+    if (ctx) buf.push(line);
+  }
+  flush();
+  return out;
+}
+
+const noteKey = (date, context) => date + ' ' + normalise(context);
+
+// Merge notes in, newest body wins, then re-render the whole file below the
+// prose. Rewriting rather than appending is what makes an edit an edit.
+function writeNotes(entries) {
+  const md = read(P.notes);
+  const cut = md.indexOf('\n---\n');
+  if (cut === -1) throw new Error('notes.md: no "---" separator after the preamble');
+  const head = md.slice(0, cut + 5);
+  const existing = parseNotes(md.slice(cut + 5));
+
+  let changed = 0;
+  for (const e of entries) {
+    const k = noteKey(e.date, e.context);
+    const text = String(e.text || '').replace(/\s+$/, '');
+    if (!text) continue;
+    if (existing[k] && existing[k].text === text) continue;
+    existing[k] = { date: e.date, context: e.context, text };
+    changed++;
+  }
+  if (!changed) return 0;
+
+  const byDate = {};
+  for (const n of Object.values(existing)) (byDate[n.date] ||= []).push(n);
+
+  let body = '';
+  for (const date of Object.keys(byDate).sort()) {
+    body += '\n## ' + date + '\n';
+    for (const n of byDate[date].sort((a, b) => a.context.localeCompare(b.context))) {
+      body += '\n#### ' + n.context + '\n\n' + n.text + '\n';
+    }
+  }
+  write(P.notes, head + body);
+  return changed;
+}
+
 // --- review cards ----------------------------------------------------------
 // tracking/review-cards.md holds the flash-card back of every queue item:
 //
@@ -376,6 +516,8 @@ module.exports = {
   parsePlan, splitAdds, parseProgress, parkingLot, logBlock, formatLogLine,
   dayComplete, dayWrittenOff, dayOutstanding,
   readQueueFile, writeQueueFile, parseQueueLine, formatQueueLine, parseCards,
+  reviewLogBlock, parseReviewLog, appendReviewLog, reviewKey, applyReview,
+  parseNotes, writeNotes, noteKey,
   INTERVALS, nextInterval, prevInterval, capDailyLoad, sortQueue,
   countApplications, normalise,
 };

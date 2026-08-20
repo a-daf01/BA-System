@@ -9,7 +9,18 @@
 // Accepted input, one per line:
 //   D01 | 2026-08-03 | desk:Y phone:Y | conf:3 | note:
 //   D01 | 2026-08-03 | desk:Y phone:Y | conf:3 | done:2026-08-05 | note:
+//   R | 2026-08-03 | 4 | the review prompt you graded
+//   N | 2026-08-03 | D08 desk 2.3 | what you typed under that task
 //   - tangent I parked
+//
+// An `R` line is one graded review card. It reschedules that item in
+// tracking/review-queue.md from the date you actually reviewed it, and records
+// the score in tracking/review-log.md. Lines already in that log are skipped,
+// so pasting the same export twice cannot advance an item twice.
+//
+// An `N` line is a working note, filed under the task it was typed against in
+// tracking/notes.md. Line breaks travel as the pilcrow character, because the
+// export has to survive being one line in a clipboard.
 //
 // The optional `done:` field marks work finished after the day it was set for.
 // It is written by the dashboard when you backfill a day, and it is what the
@@ -19,20 +30,31 @@ const fs = require('fs');
 const L = require('./lib');
 
 const LOG_RE = /^D(\d{2})\s*\|.*\|\s*desk:\S*\s+phone:\S*\s*\|\s*conf:\S*\s*\|.*note:/;
+const REV_RE = /^R\s*\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*([1-5])\s*\|\s*(.+)$/;
+const NOTE_RE = /^N\s*\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*([^|]+?)\s*\|\s*([\s\S]+)$/;
 
 function apply(input) {
   const lines = input.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
   const logs = new Map();
+  const revs = [];
+  const notes = [];
   let parks = [];
 
   for (const line of lines) {
     const m = LOG_RE.exec(line);
     if (m) { logs.set(+m[1], line); continue; }
+    const r = REV_RE.exec(line);
+    if (r) { revs.push({ date: r[1], conf: +r[2], prompt: r[3].trim() }); continue; }
+    const n = NOTE_RE.exec(line);
+    if (n) {
+      notes.push({ date: n[1], context: n[2].trim(), text: n[3].split('\u00b6').join('\n').trim() });
+      continue;
+    }
     if (/^-\s+\S/.test(line)) { parks.push(line.replace(/^-\s+/, '')); continue; }
     console.log(`Ignored (not a log line): ${line}`);
   }
 
-  if (!logs.size && !parks.length) {
+  if (!logs.size && !parks.length && !revs.length && !notes.length) {
     console.log('Nothing to sync.');
     return;
   }
@@ -82,6 +104,15 @@ function apply(input) {
   L.write(L.P.progress, md);
   console.log(`Wrote ${replaced} log line(s) and ${parks.length} parking lot item(s) to tracking/progress.md.`);
 
+  if (notes.length) {
+    const n = L.writeNotes(notes);
+    console.log(n
+      ? `Wrote ${n} working note(s) to tracking/notes.md${n < notes.length ? ` (${notes.length - n} unchanged)` : ''}.`
+      : `${notes.length} working note(s) already in tracking/notes.md, unchanged.`);
+  }
+
+  if (revs.length) applyReviews(revs);
+
   const rows = L.parseProgress(md);
   const done = Object.values(rows).filter((r) => /^[YP]$/.test(r.desk) || /^[YP]$/.test(r.phone)).length;
   console.log(`${done} of 28 days now have activity logged.`);
@@ -93,6 +124,64 @@ function apply(input) {
       console.log(`  D${String(r.day).padStart(2, '0')} scheduled ${r.date}, done ${r.done} (+${r.lateBy}d)`);
     }
     console.log('Run node scripts/catch-up.js --reflow so the review queue follows the work.');
+  }
+}
+
+// Graded review cards. Each one reschedules its queue item from the date it was
+// actually reviewed, not from today - a card you got right on Tuesday is due
+// three days after Tuesday, however long the export sat on your phone.
+//
+// Oldest first, because two grades of the same item in one paste have to
+// compound in the order they happened.
+function applyReviews(revs) {
+  const f = L.readQueueFile();
+  const index = new Map();
+  for (const it of f.queue) index.set(L.normalise(it.prompt), { item: it, permanent: false });
+  for (const it of f.permanent) index.set(L.normalise(it.prompt), { item: it, permanent: true });
+
+  const done = new Set(
+    L.parseReviewLog(L.read(L.P.reviewLog)).map((e) => L.reviewKey(e.date, e.prompt)));
+
+  const applied = [], skipped = [], unknown = [];
+  for (const r of revs.slice().sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0))) {
+    const key = L.reviewKey(r.date, r.prompt);
+    if (done.has(key)) { skipped.push(r); continue; }
+    const hit = index.get(L.normalise(r.prompt));
+    if (!hit) { unknown.push(r); continue; }
+    done.add(key);
+    const rec = L.applyReview(hit.item, r.conf, r.date, hit.permanent);
+    applied.push({ ...rec, date: r.date });
+  }
+
+  if (applied.length) {
+    const promoted = L.capDailyLoad(f.queue, 8);
+    L.sortQueue(f.queue);
+    L.writeQueueFile(f, f.queue, f.permanent);
+    L.appendReviewLog(applied.map((a) => ({ date: a.date, conf: a.conf, prompt: a.prompt })));
+
+    const up = applied.filter((a) => a.conf >= 4).length;
+    const same = applied.filter((a) => a.conf === 3).length;
+    const back = applied.filter((a) => a.conf <= 2).length;
+    console.log('');
+    console.log(`${applied.length} review(s) applied: ${up} advanced, ${same} repeating, ${back} dropped back.`);
+    for (const a of applied) {
+      const arrow = a.from === a.to ? `${a.from}d` : `${a.from}d -> ${a.to}d`;
+      console.log(`  ${a.conf}  ${arrow.padEnd(12)} next ${a.due}  ${a.prompt}`);
+    }
+    if (promoted.length) {
+      console.log(`${promoted.length} item(s) promoted to protect the 8-a-day cap.`);
+    }
+  }
+  if (skipped.length) console.log(`${skipped.length} review(s) already in tracking/review-log.md, skipped.`);
+  if (unknown.length) {
+    console.log('');
+    console.log(`${unknown.length} graded review(s) match no queue item. Nothing was written for these:`);
+    for (const r of unknown) console.log(`  ${r.date} | ${r.conf} | ${r.prompt}`);
+    console.log('That usually means the prompt was edited after you graded it. Tell Claude Code.');
+  }
+  if (applied.length) {
+    try { require('./build-snapshot.js').run(true); console.log('Offline snapshot refreshed in index.html and week.html.'); }
+    catch (e) { console.log('Snapshot refresh skipped: ' + e.message); }
   }
 }
 

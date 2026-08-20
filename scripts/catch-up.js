@@ -287,7 +287,7 @@ function restartToday(s) {
 }
 
 function snapshot() {
-  try { require('./build-snapshot.js').run(true); console.log('Offline snapshot in index.html refreshed.'); }
+  try { require('./build-snapshot.js').run(true); console.log('Offline snapshot refreshed in index.html and week.html.'); }
   catch (e) { console.log('Snapshot refresh skipped: ' + e.message); }
 }
 

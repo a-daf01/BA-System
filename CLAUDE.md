@@ -58,6 +58,14 @@ When a day's `Adds to review queue` line is a list of topic labels — which mos
 `plan/month-01.md` still is — expand it into real questions **at the end of that day**,
 using what actually happened, rather than copying the labels in.
 
+**Reviews are graded per item on the dashboard, and the grade is a real record.** Three
+buttons — Got it (4), Shaky (3), Missed (1) — reschedule that item from the date it was
+graded and append to `tracking/review-log.md`. Before 20 August a review tick stored nothing
+that survived the day, so an item recalled perfectly stayed overdue forever; that was the
+single largest hole in the system and it is closed. When you reschedule at a checkpoint,
+**read `review-log.md` first** — an item already graded there has been dealt with and must
+not be re-scored from the day's confidence.
+
 **Every queue item needs a card in `tracking/review-cards.md`, written at the same time
 as the queue line.** He asked for this directly on Day 6: *"if you asked the questions you
 obviously have the answers... just put the answer and deep explanation there as if it's a
@@ -132,9 +140,21 @@ the same as a confidence 1–2 item.
 
 ### 6. End-of-day digest
 
-`tracking/braindump.md` is where he types unstructured notes during the day — solutions,
-struggles, half-thoughts, frustrations. It has no format and he should never be asked to
-impose one.
+`tracking/notes.md` is where his working goes — solutions, struggles, half-thoughts,
+frustrations — filed under the exact task, sub-step or review card he was on when he typed
+it. He types into the box on the dashboard; the export carries it into the file. It has no
+format and he should never be asked to impose one.
+
+**This replaced `tracking/braindump.md` on 20 August, at his request.** A separate dump file
+asked him to re-find the context and write it down again, so it stayed empty. Filing under
+the task has worked from the first day, in his words *"because I am typing under the exact
+problem I am doing"*. `braindump.md` is retired: do not ask him to write in it, do not read
+it for the digest, and do not reinstate it.
+
+**Use the context heading.** `#### D08 desk 2.3` tells you exactly which step produced the
+note, so a gap can be traced to the task that caused it without asking him to explain. A
+note under a review card is a recall failure with the reason attached — the most valuable
+line in the file.
 
 When he says **"I'm done"**, or anything equivalent that means the day is over, run the
 digest. Do not wait to be asked twice, and do not digest mid-day unless he says so.
@@ -150,12 +170,15 @@ Read today's section, then sort every entry into one of four buckets:
 
 Then:
 
-1. **Propose the day's log line.** Desk and phone marks read from what the dump describes.
+1. **Propose the day's log line.** Desk and phone marks read from what the notes describe.
 2. **Ask him for the confidence score. Never infer it.** You saw a description of the work,
    not the work. A number you invented corrupts every interval that derives from it, and it
-   is the one field the whole system hangs on.
-3. Write the line only after he confirms, then `node scripts/braindump.js --archive` so
-   tomorrow opens on a blank file.
+   is the one field the whole system hangs on. The **per-item** scores in
+   `tracking/review-log.md` are his, not yours, and they are evidence — the day confidence
+   still has to be asked for.
+3. Write the line only after he confirms. Nothing needs archiving: notes stay filed under
+   their day in `tracking/notes.md` permanently, which is what makes the file worth reading
+   back at the weekly checkpoint.
 
 Rules for the digest itself:
 
@@ -164,10 +187,13 @@ Rules for the digest itself:
   pick the ones that matter and say which you left out.
 - **Quote his own words back in the queue prompt** where you can. "Why did Power BI default
   to Sum?" lands harder than "Explain Power BI aggregation defaults."
-- **A dump that says the day went badly is good data, not a problem to solve.** Log it,
+- **Notes that say the day went badly are good data, not a problem to solve.** Log it,
   adjust, and do not turn the digest into a pep talk.
-- **An empty braindump on a day he worked is worth one sentence, not a lecture.** Say it is
-  empty, ask for the confidence score, move on.
+- **A day with no notes is worth one sentence, not a lecture.** Say there are none, ask for
+  the confidence score, move on.
+- **Read the graded reviews too.** `tracking/review-log.md` carries the score he gave each
+  card. A card graded 1 with a note under it is a confirmed gap; promote it. A card graded 4
+  twice running is the evidence that marks a knowledge gap `known`.
 
 ### 7. Next-day readiness check — run this at the end of every digest
 
@@ -212,7 +238,7 @@ that — it is information, not filler.
 - **Keep the Say It Out Loud line on every day.** It's the interview-readiness mechanism and it's easy to drop when regenerating.
 - **Preserve the DESK/PHONE split.** Phone tasks must be genuinely doable lying down with no keyboard: reading, watching, recall, voice notes, reviewing job ads.
 - **Don't gamify with streaks that punish.** A broken streak should not reset visible progress. He's had motivation collapse from single-point failures before.
-- **Never invent a confidence score, anywhere, for any reason.** Not from a braindump, not from a week average, not from "it looked like it went well". `scripts/weekly-review.js` used to fall back to the week average for items that fell due on an unlogged day; that was a bug and it is fixed. If there is no evidence, the item carries forward unscored.
+- **Never invent a confidence score, anywhere, for any reason.** Not from his notes, not from a week average, not from "it looked like it went well". `scripts/weekly-review.js` used to fall back to the week average for items that fell due on an unlogged day; that was a bug and it is fixed. If there is no evidence, the item carries forward unscored.
 - **He never opens a blank page.** Every day that asks him to write something has an `Open:` line naming a prefilled file in `workspace/`. If you add a day, you add its file.
 - **Verify against the real data before writing an exercise.** Not from memory of what Northwind usually contains — this build is re-dated, re-sized and fully dense, and it has already broken two days' worth of tasks.
 - **Model answers live in `reference/answers/` and say "open me second".** Never paste a full solution into the plan or the workspace file. Expected row counts and totals, yes; the query, no.

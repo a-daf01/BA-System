@@ -34,3 +34,9 @@ Context reads as `D08 desk 2` for a task, `D08 desk 2.3` for a sub-step, and
 `D08 review — <the prompt>` for a review card.
 
 ---
+
+## 2026-08-13
+
+#### D02 desk 1.2
+
+forgot you cannot use quotes round 20, it is a number not text

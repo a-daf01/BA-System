@@ -22,6 +22,7 @@ const P = {
   template: path.join(ROOT, 'plan', 'day-template.md'),
   index: path.join(ROOT, 'index.html'),
   week: path.join(ROOT, 'week.html'),
+  day: path.join(ROOT, 'day.html'),
   gaps: path.join(ROOT, 'tracking', 'knowledge-gaps.md'),
 };
 

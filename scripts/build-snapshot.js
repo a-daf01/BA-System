@@ -38,7 +38,8 @@ function run(quiet) {
 
   // Both pages get the same snapshot. week.html reads the same files and has to
   // survive being opened off the disk exactly as the dashboard does.
-  const pages = [['index.html', L.P.index], ['week.html', L.P.week]];
+  const pages = [['index.html', L.P.index], ['week.html', L.P.week],
+                 ['day.html', L.P.day]];
   for (const [name, file] of pages) {
     const html = L.read(file);
     const s = html.indexOf(START);
@@ -48,7 +49,7 @@ function run(quiet) {
   }
   if (!quiet) {
     const kb = Math.round(json.length / 1024);
-    console.log(`Snapshot rebuilt (${kb} KB) into index.html and week.html, dated ${snap.generatedAt}.`);
+    console.log(`Snapshot rebuilt (${kb} KB) into ${pages.length} pages, dated ${snap.generatedAt}.`);
   }
 }
 

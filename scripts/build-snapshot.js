@@ -27,6 +27,7 @@ function run(quiet) {
       'tracking/review-log.md': L.read(L.P.reviewLog),
       'tracking/notes.md': L.read(L.P.notes),
       'tracking/time-log.md': L.read(L.P.timeLog),
+      'tracking/day-reviews.md': L.read(L.P.dayReviews),
       'tracking/applications.md': L.read(L.P.apps),
       'tracking/knowledge-gaps.md': L.read(L.P.gaps),
     },

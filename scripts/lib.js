@@ -15,6 +15,7 @@ const P = {
   reviewLog: path.join(ROOT, 'tracking', 'review-log.md'),
   notes: path.join(ROOT, 'tracking', 'notes.md'),
   timeLog: path.join(ROOT, 'tracking', 'time-log.md'),
+  dayReviews: path.join(ROOT, 'tracking', 'day-reviews.md'),
   apps: path.join(ROOT, 'tracking', 'applications.md'),
   month1: path.join(ROOT, 'plan', 'month-01.md'),
   month2: path.join(ROOT, 'plan', 'month-02.md'),

@@ -223,6 +223,60 @@ that gets re-estimated when it is wrong, and evidence of getting faster.
 - **Never infer a confidence score from a time.** Fast is not the same as retained, and the
   rule against inventing that number has no exceptions.
 
+### 6c. Day recap — write one every time he finishes a day
+
+**Trigger: he says he has finished a day.** "I finished day 9", "day 9 done, push", or
+anything that means it. No need to be asked for the recap separately — it is part of
+finishing a day, alongside the digest and the log line, and it goes in before the push.
+
+He asked for this on 21 August, and the reason is the whole point:
+
+> *"i literally just realised i have not been checking whether ive been doing things right
+> or wrong this entire time"*
+
+He was right. Eight days of confidence scores against work nobody had marked. Day 8 scored
+a 5 with two silently wrong queries in it.
+
+**Write it into `tracking/day-reviews.md` as a `## Day NN` section.** The dashboard renders
+it on that day's card behind a *Day recap* button, so he reads it where the day is.
+
+#### Mark the work first, by running it
+
+**Run every query he wrote against `data/northwind.db` before writing a word.** His queries
+are in `tracking/notes.md` under that day's context headings. Compare each result to the
+expected figure in the plan.
+
+**Never mark from reading the SQL.** Three of the defects found on 21 August — a wrong
+revenue formula, a duplicated column, and a self-join — all produced the expected row count.
+Reading them would have passed all three.
+
+#### The sections, in this order
+
+1. **Bottom line.** One sentence. Bad news first, no build-up.
+2. **Scoreboard.** Every task, marked, with the actual number it returned and the expected
+   one. Bullets, not a table — the renderer has no table support.
+3. **Silent defects — looked right, wasn't.** The most important section in the file.
+   A query that errors teaches him something immediately; a query that returns the right
+   shape and the wrong values teaches him nothing and ships. Give the real numbers on both
+   sides, and say what check would have caught it.
+4. **What went right.** Specific and earned. Self-corrections count double — those are the
+   skill being built. Never invent praise; if a day was thin, say so.
+5. **What I changed.** Queue items added, plan changes, and **what you deliberately left
+   out and why**, because the queue has a hard cap and he should see the triage.
+
+#### Rules
+
+- **His own questions get answered in the recap.** If he wrote "i dont understand how this
+  is a subquery", that is the highest-value thing in the file — answer it in full, in the
+  recap, not only as a queue item.
+- **Say when he was right and the exercise was wrong.** It has happened three times. He
+  defaults to doubting himself, and leaving that uncorrected trains exactly the wrong
+  instinct for a job where he has to defend a number.
+- **Quote his words back.** They anchor the day better than any summary.
+- **Never infer the confidence score from the marking.** Six correct out of ten is not a
+  confidence 3. The score is his and it is asked for, always.
+- **A written-off day gets no recap.** There is no work to mark.
+
 ### 7. Next-day readiness check — run this at the end of every digest
 
 He asked for this directly: *"the skill checks and updates the next day to ensure it's

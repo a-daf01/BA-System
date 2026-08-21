@@ -31,3 +31,4 @@ This is the inbox, not the record. The reviewable record is
 - 2026-08-20 04:05 | when i go to index.html it says nothing was loaded, also did you absolutely check all our logs throughout the week for the analysis? also why does it say week 2 review when its supposed to be week 1, i understand some of week 2 days are in it i guess
 - 2026-08-20 04:38 | i just want to make sure my notes are actually getting logged give me some comments from my day 8 notes and tell me what have you done with them
 - 2026-08-20 05:19 | i literally still see all my day 8 notes, and they even got updates to the new notes feature, they're logged how can you not see them
+- 2026-08-21 11:23 | ok here's what we will do, based on my workings and solutions after each session ends, i will tell you here that i finished the specific day and we will have a dedicated section where a recap of the day and my working outs and what went wrong and what went right and basically just a full ADHD-frien…

@@ -313,6 +313,30 @@ as closed until you have done both. Five checks, in order:
 Say in one line what you checked and what you changed. If nothing needed changing, say
 that — it is information, not filler.
 
+## Design
+
+**`DESIGN.md` governs every UI change to `index.html` and `week.html`. Read it before
+touching either file, and do not wait to be asked.**
+
+He set this up on 21 August so design quality stops being something he has to request.
+The short version, and all of it is enforceable:
+
+- **Semantic tokens only.** No raw hex in a component. Both themes are authored in the same
+  edit and checked separately — dark is not an inversion.
+- **Contrast is measured, not eyeballed.** 4.5:1 for text, 3:1 for control borders, in both
+  themes. A measurement script lives in the scratchpad suite; a failing pair is a bug.
+- **No emoji in the interface.** Inline SVG from the sprite, `currentColor`. Emoji stay fine
+  inside content — plan text and recap prose are markdown, not chrome.
+- **44px minimum touch targets**, 8px apart.
+- **`:focus-visible` on everything interactive.** Never removed.
+- **`prefers-reduced-motion` respected**, always.
+- **Tabular figures on anything that counts** — timers, scores, tallies — or the layout
+  jitters every tick.
+- Check at **375px** before pushing.
+
+Restyling must not change what the logic functions return. The scratchpad test suites are
+the proof of that, and they run before every push.
+
 ## Hard rules
 
 - **Never let a day be unspecified.** Vague instructions ("practice SQL") are the failure mode. Every block names a concrete deliverable.

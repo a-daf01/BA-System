@@ -83,15 +83,9 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [1] due:2026-08-19 | Northwind's top 5 products by revenue come back in the same order whether you apply Discount or ignore it, and the total only moves 0.02%. Say why you apply it anyway. | 
 [1] due:2026-08-19 | `WHERE OrderDate >= '2023'` returns all 16,282 orders. `WHERE OrderDate >= '2023-01-01'` returns 1,132. Say what the database did with the bare '2023', and why this is more dangerous than a query that errors. | 
 [1] due:2026-08-20 | Rank revenue by country using Customers.Country and then using Orders.ShipCountry: positions 2 and 3 swap between Germany and France. Both queries are correct SQL. Say what question each one actually answers, and what you'd ask the stakeholder before picking. | 
-[1] due:2026-08-21 | "Rank products by revenue within each category." Say which clause does the "within each category" part, and why GROUP BY cannot do this job | 
-[1] due:2026-08-21 | Describe the top-N-per-group pattern out loud, and say why you cannot filter on the rank in the same SELECT | 
-[1] due:2026-08-21 | Your 2016 month-on-month query returned NULL for January. Say why, and what you show a stakeholder instead of a blank cell | 
 [1] due:2026-08-21 | Name the two things a CTE gives you that a subquery does not, and one case where the plain subquery is still the better call | 
 [1] due:2026-08-21 | Why is `NOT IN` dangerous when the inner query can return a NULL, and what do you write instead? | 
 [1] due:2026-08-21 | Say the difference between a correlated and an uncorrelated subquery, and which one runs once per row | 
-[1] due:2026-08-22 | Point at Northwind: name one primary key, one foreign key, and say what breaks if the foreign key is not enforced | 
-[1] due:2026-08-22 | Say the cardinality of Customers→Orders and of Orders→[Order Details] using the words "one to many", then say which of the two caused your £206m freight number | 
-[1] due:2026-08-22 | Explain 3NF to a non-technical manager in two sentences, without using the words "normal form" | 
 [1] due:2026-08-22 | You wrote `JOIN Employees e ON o.EmployeeID = o.EmployeeID` — twice, once for shippers and once for last-order-per-employee. It returned exactly 9 rows both times and looked right. Say what that join actually did, and why the row count did not give it away | 
 [1] due:2026-08-23 | State the grain of your Northwind fact table in one sentence, then say what you did with Freight and why | 
 [1] due:2026-08-23 | Draw a star and a snowflake in the air and say the one structural difference, then why BI tools generally prefer the star | 
@@ -122,9 +116,27 @@ Format: `[interval] due:YYYY-MM-DD | prompt | last-conf`
 [1] due:2026-09-08 | Portfolio 2 — the two-minute walkthrough, ending on requirement-to-visual traceability | 
 [1] due:2026-09-09 | All six STAR stories, timed, no notes | 
 [1] due:2026-09-09 | The eight technical answers, no notes | 
+[1] due:2026-08-22 | "Rank products by revenue within each category." Say which clause does the "within each category" part, and why GROUP BY cannot do this job | 
+[1] due:2026-08-22 | Describe the top-N-per-group pattern out loud, and say why you cannot filter on the rank in the same SELECT | 
+[1] due:2026-08-22 | Your 2016 month-on-month query returned NULL for January. Say why, and what you show a stakeholder instead of a blank cell | 
+[1] due:hold | Point at Northwind: name one primary key, one foreign key, and say what breaks if the foreign key is not enforced | 
+[1] due:hold | Say the cardinality of Customers→Orders and of Orders→[Order Details] using the words "one to many", then say which of the two caused your £206m freight number | 
+[1] due:hold | Explain 3NF to a non-technical manager in two sentences, without using the words "normal form" | 
 [1] due:hold | Your 30-second self-introduction, out loud and timed | 
 [1] due:hold | You ranked customers by freight two ways. Joined through [Order Details] the top 5 ended IT, B's Beverages, Hungry Coyote, Morgenstern, Piccolo; straight from Orders, positions 4 and 5 were two different companies. Say why inflated numbers still change *who* is top, and what that costs if you send it | 
 [1] due:hold | Northwind holds 93 customers but only 92 distinct company names, and one CustomerID has a trailing space. Say what breaks if you GROUP BY the company name instead of the key, and how you'd word that as a defect for a stakeholder | 
+[1] due:2026-08-23 | What is the grain of a fact table, and why is it the first thing you decide? | 
+[1] due:2026-08-25 | In Power Query, what is the difference between Remove errors, Replace errors and Keep errors, and which one loses data without telling you? | 
+[1] due:2026-08-25 | What is query folding, and why does it matter on a large table? | 
+[1] due:2026-08-26 | Why does a Power BI model need its own date table rather than the date column already on the fact? | 
+[1] due:2026-08-26 | A card visual shows freight as £206m when the database says £4.0m. Say what is wrong with the model, in one sentence | 
+[1] due:2026-08-24 | Your 60-second answer to "so what have you been working on?" — out loud, timed, no notes | 
+[1] due:2026-08-27 | Say the difference between a measure and a calculated column, including when each is evaluated and which one costs model memory | 
+[1] due:2026-08-27 | Why is the average of an average wrong, and what do you compute instead? | 
+[1] due:2026-08-28 | What does CALCULATE do? One sentence, in the words you'd use with a manager | 
+[1] due:2026-08-28 | When do you need SUMX instead of SUM, and what is the row context doing? | 
+[1] due:2026-08-29 | Name the three functions you'd reach for to compare this year to last, and the one thing the model must have for any of them to work | 
+[1] due:2026-08-29 | Your first year has no prior year to compare against. Say what you show a stakeholder instead of a blank cell | 
 ```
 
 *(Claude Code populates this as you progress. Items are added by the "Adds to review queue" line at the bottom of each day in `plan/month-01.md`.)*

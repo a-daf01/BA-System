@@ -55,6 +55,25 @@ function daysBetween(a, b) {
 }
 
 // --- config ----------------------------------------------------------------
+// Minutes a day may ask for. Standing values are 75 and 30; tracking/config.md
+// can raise them for a deliberate, dated sprint. Read rather than hardcoded so
+// the ceiling is one edit away from being put back.
+function getCeilings() {
+  const md = read(P.config);
+  const num = (key, dflt) => {
+    const m = new RegExp('^' + key + ':\\s*(\\d+)', 'm').exec(md);
+    return m ? +m[1] : dflt;
+  };
+  const until = /^SPRINT_UNTIL:\s*(\S+)/m.exec(md);
+  const active = until && toDate(until[1]) && toDate(until[1]) >= today();
+  return {
+    desk: active ? num('DESK_CEILING', 75) : 75,
+    phone: active ? num('PHONE_CEILING', 30) : 30,
+    sprint: !!active,
+    until: until ? until[1] : null,
+  };
+}
+
 function getStartDate() {
   const m = /^START_DATE:\s*(\S+)/m.exec(read(P.config));
   const d = m ? toDate(m[1]) : null;
@@ -597,7 +616,7 @@ const normalise = (s) => s.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\
 
 module.exports = {
   P, read, write, toDate, iso, addDays, today, daysBetween,
-  getStartDate, buildSchedule, dayNumberFor, blockDate, CONSOLIDATION,
+  getStartDate, getCeilings, buildSchedule, dayNumberFor, blockDate, CONSOLIDATION,
   parsePlan, splitAdds, parseProgress, parkingLot, logBlock, formatLogLine,
   dayComplete, dayWrittenOff, dayOutstanding,
   readQueueFile, writeQueueFile, parseQueueLine, formatQueueLine, parseCards,

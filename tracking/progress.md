@@ -56,8 +56,8 @@ D05 | 2026-08-16 | desk:- phone:N | conf: | note: written off 17 Aug. Sunday con
 D06 | 2026-08-17 | desk:Y phone:Y | conf:4 | note: SQL aggregation. Done on the day, logged 20 Aug because the dashboard cannot write to the repo and the tap never reached this file.
 D07 | 2026-08-18 | desk:N phone:N | conf: | note: written off 20 Aug. CV finish + agency outreach not done. The outreach half is the part that produces interviews - parked, not lost.
 D08 | 2026-08-19 | desk:Y phone:Y | conf:5 | done:2026-08-20 | note: subqueries and CTEs, done in full one day late. Self-scored 5 - "i dont think i have ever been this confident with SQL ever".
-D09 | | desk: phone: | conf: | note:
-D10 | | desk: phone: | conf: | note:
+D09 | 2026-08-20 | desk:P phone:N | conf: | done:2026-08-21 | note: window functions, backfilled 21 Aug. Both desk exercises attempted with 14 notes; ROW_NUMBER/RANK/DENSE_RANK explained correctly unaided. Running total and moving average both looked up. Phone block not done. UNSCORED - he was not asked, and a number nobody gave is not evidence.
+D10 | 2026-08-21 | desk:N phone:N | conf: | note: written off 22 Aug. Relational foundations - keys, normalisation, the 93/92 defect. Its material is carried into D11, which cannot be done without it.
 D11 | | desk: phone: | conf: | note:
 D12 | | desk:- phone: | conf: | note:
 D13 | | desk: phone: | conf: | note:

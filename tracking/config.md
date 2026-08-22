@@ -4,9 +4,30 @@ Set this once. Everything else derives from it: the dashboard, every script, eve
 
 ```
 START_DATE: 2026-08-12
+DESK_CEILING: 100
+PHONE_CEILING: 40
+SPRINT_UNTIL: 2026-08-28
 ```
 
 `START_DATE` is the calendar date of **Day 1**. Format `YYYY-MM-DD`.
+
+---
+
+## The sprint ceilings
+
+`DESK_CEILING` and `PHONE_CEILING` are the minutes a single day may ask for.
+**The standing values are 75 and 30.** They are 100 and 40 until `SPRINT_UNTIL`,
+raised on 22 August because he said he would be locked in for the week and asked
+to be pushed harder.
+
+That is a real trade, not a free upgrade. The 75/30 ceiling exists because he
+does exactly what is written, so an over-written day is as damaging as an
+under-written one — a 100-minute day that becomes 140 in practice is a day he
+stops starting, and that is how the whole thing gets abandoned.
+
+**On 29 August these go back to 75 and 30 unless he says otherwise.** `check.js`
+reads them from here, so lowering them is one edit and every day is re-validated
+against the new number.
 
 ---
 

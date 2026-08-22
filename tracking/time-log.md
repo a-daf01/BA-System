@@ -45,4 +45,6 @@ sum, not two rows to add up.
 ## Log
 
 ```
+2026-08-21 | D09 desk 1 | 1764 | 11:20-12:14 | budget:30
+2026-08-21 | D09 desk 2 | 2214 | 14:44-12:13 | budget:30
 ```

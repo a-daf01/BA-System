@@ -1637,3 +1637,185 @@ The general trap is called the **average of averages**, and it is wrong whenever
 
 You also wrote that `WITH ... AS` is "like an IF statement". It is not. It is a **named temporary result set** — closer to declaring a variable that holds a table, and the reason it reads better than a nested subquery is that it gets a name and can be read top to bottom.
 
+### What is the grain of a fact table, and why is it the first thing you decide?
+**From:** Day 11, designing the star.
+**Hint:** Describe one single row of the fact table, out loud, as a sentence.
+**Answer:**
+**The grain is what one row of the fact table represents** — said as a sentence: "one row per product per order". In Northwind that is a row of `[Order Details]`, so the fact table has **609,283** rows, not 16,282.
+
+It comes first because **every measure depends on it**. Put freight on a fact grained at order-line and it repeats once per line — that is the £4.0m becoming £206m, in model form rather than SQL form.
+
+It also decides your dimensions: anything that describes the grain becomes an attribute, anything that measures it becomes a measure. Getting the grain wrong is not a detail you patch later; it is a rebuild.
+
+
+### In Power Query, what is the difference between Remove errors, Replace errors and Keep errors, and which one loses data without telling you?
+**From:** Day 13. You used Remove errors on Day 1 and wrote "I don't even understand what the error was or what it did to fix it."
+**Hint:** One of the three changes your row count.
+**Answer:**
+- **Remove errors** deletes the whole row. **This is the one that loses data silently** — your row count drops and nothing announces it.
+- **Replace errors** keeps the row and substitutes a value you choose, usually null or 0. Be careful: replacing with 0 turns a missing number into a real zero, which then averages.
+- **Keep errors** filters *down to* the error rows so you can look at them. It is the diagnostic step, not a fix.
+
+**The order to work in is Keep, then decide, then Remove or Replace.** Looking first is the whole point — an error is usually a type mismatch or a bad source value, and both are worth reporting rather than deleting.
+
+For a business analyst the answer to "how many rows did we drop and why" is the deliverable. Remove errors without checking makes that question unanswerable.
+
+
+### What is query folding, and why does it matter on a large table?
+**From:** Day 13, Power Query.
+**Hint:** Where does the work actually happen — your machine or the source?
+**Answer:**
+**Query folding is Power Query translating your steps back into a query the source database runs itself.** Filter, remove columns, group by — if it folds, the database does the work and sends you the smaller result.
+
+It matters because the alternative is pulling every row over the wire and doing it in memory. On `[Order Details]` that is **609,283 rows** you did not need.
+
+**Folding breaks** at steps the source cannot express — custom functions, some merges, anything after you add an index column. Everything downstream of the break stops folding too, so the order of your steps changes performance.
+
+Check it by right-clicking a step and looking for **View Native Query**. If it is greyed out, folding has stopped there.
+
+
+### Why does a Power BI model need its own date table rather than the date column already on the fact?
+**From:** Day 14, building the model.
+**Hint:** What does SAMEPERIODLASTYEAR need that a fact column cannot promise?
+**Answer:**
+Time intelligence needs a **continuous, unbroken range of dates**, and your fact column only contains dates on which something happened. A month with no orders simply has no rows, so shifting back a year lands on nothing and the comparison silently returns blank.
+
+A date table also:
+
+- gives every table **one shared calendar**, so a single slicer filters orders and shipments together;
+- carries the attributes you actually report on — year, quarter, month name, fiscal period — which do not belong on a fact;
+- lets you sort month names correctly, which a text column will not.
+
+Build it with `CALENDAR`, cover the **whole span of the data — 2012 to 2023 here** — and **mark it as the date table**, or DAX will not treat it as one.
+
+
+### A card visual shows freight as £206m when the database says £4.0m. Say what is wrong with the model, in one sentence
+**From:** Day 14. The same defect you met in SQL on Day 3 and still had not re-tested.
+**Hint:** Which table is freight stored on, and what is the grain of the table it is being counted through?
+**Answer:**
+**Freight lives on the order, and it is being summed through a table grained at order line, so it repeats once per line.**
+
+16,282 orders carry £4,047,470.50 of freight. There are 609,283 order lines — roughly 37 per order — so the same freight value is counted about 37 times and returns **£206,911,676**.
+
+This is fan-out, in the model rather than in a join. The fixes:
+
+- keep order-level measures on an **order-level table** and relate it to the line table, or
+- write the measure so it aggregates at the right grain, or
+- move freight into the fact only if you first divide it across the lines.
+
+**The check that catches it:** every measure should be sanity-checked against the source once. A number fifty times too big never looks wrong on a card — it only looks large.
+
+
+### Your 60-second answer to "so what have you been working on?" — out loud, timed, no notes
+**From:** Day 12. Asked casually by a recruiter on a call you were not expecting.
+**Hint:** Three things and stop. The setup is what runs over, never the finding.
+**Answer:**
+**This is marked, not answered — the content is yours.**
+
+Full marks means all four of these:
+
+- **Under 90 seconds.** Time it. Over that and you have described the setup instead of the work.
+- **Three things, named concretely.** Window functions for ranking and running totals; star schema design at a stated grain; one defect you actually found.
+- **One real number in it.** "Freight came back fifty times too big" beats "I found a data quality issue".
+- **Ends on business language, not tooling.** What the finding would have cost if it shipped.
+
+**Fail conditions:** listing technologies with no result attached; saying "I've been learning" rather than "I built"; running past 90 seconds; apologising for the gap in your CV.
+
+
+### Say the difference between a measure and a calculated column, including when each is evaluated and which one costs model memory
+**From:** Day 15, DAX basics.
+**Hint:** One is computed once and stored. The other is computed every time you look at it.
+**Answer:**
+**A calculated column** is evaluated **at refresh**, row by row, and the result is **stored in the model**. It costs memory, it can be used on an axis or in a slicer, and it does not respond to filters — it was already decided before the visual existed.
+
+**A measure** is evaluated **at query time**, in the **filter context of the visual it sits in**. It stores nothing, so it costs no memory, and it recalculates whenever you touch a slicer.
+
+The rule of thumb: **if you need it on an axis, in a slicer or as a relationship key, it has to be a column. If it is a number you want aggregated, it should be a measure.**
+
+The common mistake is a calculated column for revenue per line, then `SUM` over it. That works, and it stores 609,283 numbers you did not need. `SUMX` over the same expression stores none.
+
+
+### Why is the average of an average wrong, and what do you compute instead?
+**From:** Day 15. You hit exactly this on Day 6 chasing average order value, and wrote "thats just incorrect but I dont understand why".
+**Hint:** What is each of the inner averages weighted by?
+**Answer:**
+Averaging averages **gives every group equal weight regardless of size**. An order with 12 lines and an order with 1 line count the same, which silently over-weights the small ones.
+
+The fix is to **aggregate up to the grain you are averaging, then average once**:
+
+```
+WITH OrderTotals AS (
+  SELECT OrderID, SUM(UnitPrice * Quantity * (1 - Discount)) AS TotalOrderValue
+  FROM [Order Details] GROUP BY OrderID
+)
+SELECT AVG(TotalOrderValue) FROM OrderTotals;
+```
+
+**£27,538.79** is the answer. Your first attempt returned £67,707.68.
+
+"Average order value" means the thing being averaged is an **order**, so you must be at one row per order before you average. In DAX the same rule appears as `AVERAGEX` over the orders table rather than `AVERAGE` over the lines.
+
+
+### What does CALCULATE do? One sentence, in the words you'd use with a manager
+**From:** Day 16.
+**Hint:** It does two things, and the second one is the part people get wrong.
+**Answer:**
+**`CALCULATE` evaluates an expression in a filter context you modify.**
+
+The part that catches people: its filter arguments **replace** the existing filter on that column, they do not narrow it. `CALCULATE([Revenue], Category = "Beverages")` inside a visual already sliced to Confections returns **Beverages**, not nothing.
+
+To narrow rather than replace, you keep the existing context explicitly — `KEEPFILTERS`.
+
+For a manager: *"it answers the same question under different conditions — same revenue calculation, but pretend the filter says this instead."*
+
+Everything else in DAX that changes what a number covers is `CALCULATE` underneath, including every time-intelligence function.
+
+
+### When do you need SUMX instead of SUM, and what is the row context doing?
+**From:** Day 16, row context versus filter context.
+**Hint:** Can SUM see two columns at once?
+**Answer:**
+`SUM` takes **one column** and adds it. `SUMX` **iterates a table**, evaluates an expression **for each row**, and then adds the results.
+
+You need `SUMX` whenever the thing you are adding does not already exist as a column:
+
+```
+SUMX('Order Details', 'Order Details'[UnitPrice] * 'Order Details'[Quantity] * (1 - 'Order Details'[Discount]))
+```
+
+There is no revenue column, so there is nothing for `SUM` to take. `SUMX` creates a **row context** — inside the iteration, each column name means "this row's value" — computes the line value, and totals it.
+
+The alternative is a calculated column storing 609,283 numbers you then `SUM`. Same answer, and it costs model memory that `SUMX` does not.
+
+
+### Name the three functions you'd reach for to compare this year to last, and the one thing the model must have for any of them to work
+**From:** Day 17, time intelligence.
+**Hint:** Three functions, and one prerequisite they all share.
+**Answer:**
+**`SAMEPERIODLASTYEAR`**, **`DATEADD`** and **`TOTALYTD`**.
+
+- `SAMEPERIODLASTYEAR` shifts the current filter back exactly one year.
+- `DATEADD` shifts by any interval you name — the general form, and what you use for month-on-month.
+- `TOTALYTD` accumulates from the start of the year to the current point.
+
+**All three need a marked date table with a continuous, unbroken date range.** Without it there is nothing to shift against, and they return blank rather than erroring — which is worse, because a blank looks like "no sales" rather than "broken model".
+
+Marked matters as much as present: an unmarked date table is just another table with dates in it.
+
+
+### Your first year has no prior year to compare against. Say what you show a stakeholder instead of a blank cell
+**From:** Day 17. The same problem as the NULL your LAG query returned for January on Day 9.
+**Hint:** A blank tells them nothing about why it is blank.
+**Answer:**
+**A blank is ambiguous** — it reads identically to zero sales, a broken measure, and a missing relationship. The stakeholder cannot tell which, so they ask you, and you have to go and look.
+
+Show one of these instead, and say which you chose:
+
+- **"n/a — no prior year"**, which is honest and self-explanatory;
+- **a dash**, if the report has an established convention for it;
+- **suppress the first period entirely** from the comparison view, and say so in a footnote.
+
+In SQL that is `COALESCE` or a `CASE` around the `LAG`; in DAX it is an `IF` on `ISBLANK`.
+
+**Never fill it with 0.** Zero is a number, it averages, it charts, and it will end up in a total that somebody presents.
+

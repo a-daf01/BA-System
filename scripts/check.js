@@ -49,8 +49,9 @@ for (const b of blocks) {
   }, 0);
   const desk = mins(d.desk), phone = mins(d.phone);
 
-  if (desk > 75) fail(`${tag}: desk block is ${desk} min, over the 75 min ceiling`);
-  if (desk > 0 && phone > 30) fail(`${tag}: phone block is ${phone} min, over the 30 min ceiling`);
+  const cap = L.getCeilings();
+  if (desk > cap.desk) fail(`${tag}: desk block is ${desk} min, over the ${cap.desk} min ceiling`);
+  if (desk > 0 && phone > cap.phone) fail(`${tag}: phone block is ${phone} min, over the ${cap.phone} min ceiling`);
   if (!d.say) fail(`${tag}: no Say It Out Loud line`);
   if (desk > 0 && !d.desk.length) fail(`${tag}: desk block has no tasks`);
   if (!d.phone.length) fail(`${tag}: phone block has no tasks`);

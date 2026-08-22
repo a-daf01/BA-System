@@ -17,6 +17,55 @@ number of rows and the wrong numbers inside them.** Every recap has a section fo
 
 ---
 
+## Day 09 — SQL: window functions
+**Thu 20 Aug, done Fri 21 Aug · partial · 3 exercises attempted, all 3 correct**
+
+### Bottom line
+Everything you attempted was right, and your from-memory rewrite was **better than the
+answer you copied**. You stopped a third of the way in — the LAG task and two running-total
+variants were never started, and the phone block did not happen.
+
+### Scoreboard
+- **Q1.1** top 3 products per category — first attempt was a plain `GROUP BY` (77 rows), you
+  said so yourself, then looked it up. Final CTE returns **24 rows**, Beverages back as
+  **Côte de Blaye, Ipoh Coffee, Chang**. Exactly right.
+- **Q1.2** why you cannot filter on the rank in the same `SELECT` — answered in your notes,
+  correctly: the CTE exists so the rank is available to filter on.
+- **Q1.3** `ROW_NUMBER` vs `RANK` vs `DENSE_RANK` — **correct, unaided, and clearly said.**
+- **Q2.1** running total of 2016 monthly orders — **12 rows, Jan 113, December's running
+  total 1,506.** Correct.
+- **Q2.2** three-month moving average — **113.00, 111.00, 119.00.** Correct.
+- **Q2.3, Q2.4** running total by category, freight per customer — not attempted.
+- **LAG** month-on-month — not attempted. *(February −4, March +26, January NULL.)*
+- **Phone block** — not done.
+
+### The good bit
+You looked up the running total, then wrote in your notes *"I rewrote it from my head to
+ensure it"* — and the rewrite dropped `ROWS UNBOUNDED PRECEDING`.
+
+**That is not a mistake. It is the default frame for `ORDER BY`, so your version is
+correct and shorter than the one you copied.** You simplified a looked-up answer without
+being told to, and it still returns 1,506.
+
+### Where you stalled
+Both stalls were the same shape: *"no clue where to start so im just looking it up, i dont
+even know what a moving average is"*. Not SQL — vocabulary. You could not start because you
+did not know what the words meant, and once you saw the pattern you explained it back
+correctly both times.
+
+That is the composition gap again, and it is worth naming: **when a task stalls, check
+whether you are missing the SQL or the definition.** They need different fixes.
+
+### What I changed
+- Your three Day 9 review items were **held** because the day logged as partial. Released,
+  dated from 21 August when you actually did the work — you asked to be tested on it.
+- Logged **unscored**. You were not asked for a confidence and I will not invent one; give
+  me the number and the intervals follow from it.
+- The `*` in your SQL was rendering as italics and eating both asterisks. **Fixed** — you
+  found that one yourself, mid-task.
+
+---
+
 ## Day 01 — Setup and honest baseline
 **Wed 12 Aug · conf 4 · 3 unaided, 2 looked up**
 

@@ -309,183 +309,153 @@
 
 ---
 
-## Day 11 — Data modelling: design the star
-**Theme:** Turning a transactional schema into a reporting one. This is the Business Systems Analyst job in a single exercise, and tomorrow you build what you design today.
+## Day 11 — Relational foundations + design the star
+**Theme:** Every BI model is a relational model with the arguments already settled. *Dataset: Northwind.*
 
 **Open:** `workspace/day-11-star-schema.md`
 
-**DESK (70 min)**
-- [ ] 25 min — **Write the grain statement first.** One sentence: "one row in my fact table represents ______." Get this wrong and everything downstream is wrong. The workspace file has three candidate grains for Northwind — pick one and justify it in two lines.
-- [ ] 30 min — Design the star on paper. The workspace file has the slots; fill them.
-  1. Name the fact table and list every column in it. Measures and foreign keys only — no descriptions.
-  2. Name each dimension and its columns. *(You should land on five: product, customer, employee, shipper, date.)*
-  3. For each Northwind column, say which side it goes on and why. `UnitPrice` is the one worth arguing about — decide and write your reasoning.
-  4. Say where `Categories` and `Suppliers` go. Folding them into the product dimension makes a star; leaving them separate makes a snowflake. Pick one and name the trade.
-- [ ] 15 min — Classify every Northwind table as **reference** or **transactional**, then write "reporting data mart" in a paragraph as you'd explain it to a non-technical manager.
+**DESK (100 min)**
+- [ ] 15 min — **The defect nobody found.** *(Carried from the written-off Day 10. It belongs here.)* Run `SELECT COUNT(*) FROM Customers` and `SELECT COUNT(DISTINCT CompanyName) FROM Customers`. *(93 and 92.)* Find the two rows sharing a name — both are called `IT` — and find the one CustomerID with a trailing space. *(It is `Val2 `.)* Write two sentences in the workspace file: what breaks if a report groups by company name instead of the key, and how you word that as a defect — what, so what, recommendation.
+- [ ] 20 min — **Keys and cardinality, on the real tables.** For Customers, Orders and `[Order Details]`, write down the primary key of each, the foreign keys between them, and the cardinality of each relationship. Then check yourself: `SELECT COUNT(*) FROM Orders` is 16,282 and `SELECT COUNT(*) FROM [Order Details]` is 609,283 — say what that ratio tells you about the grain, out loud, before you look at the answer file.
+- [ ] 20 min — **Fan-out, closed for good.** *(This is the oldest unresolved item in the system — met Day 3, answered wrong, and the repair day was written off.)* Run `SELECT SUM(Freight) FROM Orders` *(£4,047,470.50)*, then the same sum joined to `[Order Details]` *(£206,911,676.00)*. Write the one sentence that explains the gap, and the one check that catches it before a report goes out.
+- [ ] 30 min — **Design the star.** On paper or in the workspace file: one fact table and its dimensions, for "revenue by product, category, customer, employee and month". Name the grain of the fact table in a single sentence before you draw anything. Mark which columns are keys, which are measures, and which are attributes.
+- [ ] 15 min — **Pipeline.** Search Reed, CWJobs and LinkedIn on the three searches in `tracking/applications.md`. **Submit two applications.** Log both in the table with date, company, title and source.
 
-**PHONE (25 min)**
-- [ ] 10 min — Review queue.
-- [ ] 15 min — Re-read the BSA requirements in `reference/target-roles.md`. Count how many phrases from today appear in them.
+**PHONE (40 min)**
+- [ ] 25 min — Review queue. **Grade every card, then tap Next 8 and keep going.** The backlog is the target today, not the block.
+- [ ] 15 min — Read two BI Analyst job ads end to end. Write down every data-modelling word you cannot define, and check them against `reference/glossary.md`.
 
-**Say It Out Loud:** "A star schema keeps measures in a fact table and descriptive attributes in dimensions, so the model stays fast and the business can slice it themselves."
+**Say It Out Loud:** "A star schema is one fact table at a stated grain, surrounded by dimensions — and the grain is the first thing I decide, because every measure depends on it."
 
-**Adds to review queue:** State the grain of your Northwind fact table in one sentence, then say what you did with Freight and why · Draw a star and a snowflake in the air and say the one structural difference, then why BI tools generally prefer the star · What is a data mart, and how is it different from a warehouse? Answer as if a hiring manager asked it
+**Adds to review queue:** Point at Northwind: name one primary key, one foreign key, and say what breaks if the foreign key is not enforced · Say the cardinality of Customers→Orders and of Orders→[Order Details] using the words "one to many", then say which of the two caused your £206m freight number · Northwind holds 93 customers but only 92 distinct company names, and one CustomerID has a trailing space. Say what breaks if you GROUP BY the company name instead of the key, and how you'd word that as a defect for a stakeholder · Orders holds 16,282 rows and £4,047,470 of freight. Join it to [Order Details] and freight comes back £206,911,676. Say what happened, and the one check that catches it before you send the report · What is the grain of a fact table, and why is it the first thing you decide?
 
 ---
 
 ## Day 12 — Power BI: Power Query
-**Theme:** Where 80% of real Power BI work happens, and where you already know you have a gap. *Dataset: a messy UK public CSV.*
+**Theme:** The cleaning step is where the defects get caught or shipped. *Dataset: `data/csv/`.*
 
-**Open:** `workspace/day-12-power-query.md`
+**Open:** `workspace/day-13-power-query.md`
 
-**DESK (75 min)**
-- [ ] 15 min — Get a messy CSV. `data.gov.uk`, search **"local authority spending over £500"**. Take the **first result** that is a `.csv`, is over 1,000 rows, and has a date column. Do not look past the third candidate.
-  1. **Hard stop at 15 minutes.** If it is fighting you, use `data/csv/Orders.csv` instead and log the swap in the brain dump. The exercise is the transformations, not the sourcing.
-  2. *Useful to know if you do fall back to `Orders.csv`: its date columns are genuinely mixed — 830 rows are `2017-03-31` and 15,452 are `2017-03-31 14:22:07`, in the same column. Power Query will complain. That is the dataset, not you.*
-- [ ] 40 min — Clean it. Each of these at least once, in this order:
-  1. Remove unneeded columns.
-  2. Change a column type — and when one throws errors, **click the error cell and read the actual value before doing anything else.**
-  3. Fix that type properly with Change Type → Using Locale (`en-GB` for UK dates). Note how many rows came back.
-  4. Split a column.
-  5. Replace values.
-  6. Remove duplicates — record the row count before and after.
-  7. Unpivot a set of columns into rows.
-- [ ] 20 min — Open Applied Steps, rename every step to what it actually did, then write two sentences in the workspace file: what **Remove Errors** does to your rows, and why "I removed the errors" is a bad answer in an interview.
+**DESK (100 min)**
+- [ ] 10 min — Load `data/csv/` into Power BI. All eleven files. Confirm the row counts against SQL: Orders 16,282, `Order Details` 609,283, Products 77, Customers 93.
+- [ ] 20 min — **"Remove errors", properly this time.** *(You used it on Day 1 and wrote "I don't even understand what the error was or what it did to fix it.")* Find a column with errors, open the error, and say what caused it. Then compare **Remove errors**, **Replace errors** and **Keep errors** — and write one line on which one silently loses data.
+- [ ] 25 min — Six transformations, each in its own applied step, named: promote headers, set data types explicitly, trim the `CustomerID` column *(this fixes `Val2 `)*, split a column, merge Orders with Customers, group by to a summary table.
+- [ ] 20 min — **Break it on purpose.** Change a source column name, refresh, read the error, then fix it. Write one line on why hardcoded column names make a refresh fragile.
+- [ ] 15 min — **The applied-steps trail.** Screenshot your Applied Steps pane and write two sentences on why an auditable transformation list matters to a business analyst more than to a developer.
+- [ ] 10 min — **Pipeline.** Submit two more applications. Log them.
 
-**PHONE (20 min)**
-- [ ] 10 min — Review queue.
-- [ ] 10 min — Watch one Power Query video.
+**PHONE (40 min)**
+- [ ] 20 min — Review queue.
+- [ ] 20 min — Watch one Power Query video. Close it, then re-explain **query folding** aloud without replaying.
 
-**Say It Out Loud:** "Power Query is where I control data quality before it reaches the model — and naming the applied steps means someone else can audit what I did."
+**Say It Out Loud:** "Power Query gives me an auditable list of every transformation applied — which is the difference between a number I can defend and a number I merely have."
 
-**Adds to review queue:** What does Remove Errors actually do to your rows, and what do you do instead? · What is unpivot for, and what shape of data tells you that you need it?
+**Adds to review queue:** In Power Query, what is the difference between Remove errors, Replace errors and Keep errors, and which one loses data without telling you? · What is query folding, and why does it matter on a large table?
 
 ---
 
 ## Day 13 — Power BI: build the model
-**Theme:** Build the star you designed on Day 11. *Dataset: Northwind CSVs — already exported to `data/csv/`.*
+**Theme:** A model that fights you at DAX time was built wrong at modelling time. *Dataset: `data/csv/`.*
 
-**Open:** `workspace/day-13-power-bi-model.md`
+**Open:** `workspace/day-14-power-bi-model.md`
 
-**DESK (70 min)**
-- [ ] 10 min — Load the data. Power BI → Get Data → **Folder** → `data/csv` → Combine and Load. Keep Orders, OrderDetails, Products, Customers, Employees, Shippers, Categories.
-  1. *If Folder import gives you trouble, load the seven CSVs individually. Same result, two extra minutes.*
-  2. **Drop the `Picture` column from Categories** on the way in. It is a binary image blob, it is useless to you, and it bloats the model.
-- [ ] 5 min — **A modelling decision you have to make before you build anything.** Both `Customers.Country` and `Orders.ShipCountry` exist, and they disagree on **13,832 of 16,282 orders (85%)**. Revenue by country ranks Germany 2nd and France 3rd on one, and the reverse on the other. Write one line in the workspace file: which one your model will use, and what business question that choice answers. *(Neither is wrong. Billing country and delivery country are different things — the failure is not noticing you chose.)*
-- [ ] 30 min — Build the relationships in Model view to match your Day 11 design.
-  1. Set every relationship's cardinality explicitly. Do not accept the auto-detected one without reading it.
-  2. Check the filter direction arrow on each. Single, pointing from the one side to the many side.
-  3. Fold Categories into Products with a merge — or leave it separate and note that you have built a snowflake.
-- [ ] 15 min — **Break it on purpose.** Set one relationship to both-directional, put a visual on screen, and watch the number change. Write down what it showed and why. Then fix it.
-- [ ] 15 min — Build a date dimension and **mark it as a date table**. Northwind spans 2012-07-10 to 2023-10-28, so it needs to cover 2012 to 2023 with no gaps.
+**DESK (100 min)**
+- [ ] 25 min — Build the star you designed on Day 11. Fact table plus dimensions, relationships drawn explicitly, every relationship's cardinality and filter direction checked by hand rather than accepted from autodetect.
+- [ ] 15 min — **Turn autodetect off and do it again.** Delete every relationship, disable "autodetect during load", and rebuild by hand. Write one line on what autodetect got wrong or right.
+- [ ] 20 min — **Build a proper date table** with `CALENDAR`, mark it as the date table, and relate it to the fact. The data spans **2012 to 2023** — your date table must cover all of it.
+- [ ] 20 min — Three visuals off the model: revenue by category, revenue by month, top 10 products. Each must return a number you can check against SQL. Total revenue across all years is **£448,386,633.17**; 2023 alone is **£33,054,490.00**.
+- [ ] 10 min — **Prove the fan-out is dead.** Put freight on a card visual. If it reads anything near £206m, your relationship grain is wrong. It should read **£4,047,470.50**.
+- [ ] 10 min — **Pipeline.** Two more applications. Log them.
 
-**PHONE (25 min)**
-- [ ] 10 min — Review queue.
-- [ ] 15 min — Glossary sweep: everything from week 2, covered and recalled.
+**PHONE (40 min)**
+- [ ] 20 min — Review queue.
+- [ ] 20 min — Re-explain, aloud: why a date table, why one direction, and what a many-to-many relationship costs you.
 
-**Say It Out Loud:** "Most broken Power BI reports aren't broken visuals — they're broken relationships in the model underneath."
+**Say It Out Loud:** "I model one-to-many with single-direction filters by default, because bidirectional filtering creates ambiguity that shows up later as a number nobody can explain."
 
-**Adds to review queue:** You set one relationship to both-directional and the number on screen changed. Say what happened, and how you would spot it on a model someone else built · Say what cardinality and filter direction each control in Power BI, and which way the arrow should point on a fact-to-dimension relationship
+**Adds to review queue:** Why does a Power BI model need its own date table rather than the date column already on the fact? · A card visual shows freight as £206m when the database says £4.0m. Say what is wrong with the model, in one sentence
 
 ---
 
-## Day 14 — SUNDAY: consolidation (phone only)
-**No desk block.**
+## Day 14 — SUNDAY: clear the backlog + agency outreach
+**Theme:** The week's material is only yours if you can still produce it cold. *Phone and messages only — no desk block.*
 
-**PHONE (35 min)**
-- [ ] 15 min — Full review queue sweep. Aloud, then check.
-- [ ] 10 min — **Week 2 boss fight.** No notes, under 2 minutes: your Northwind star schema. The grain, the fact table, the five dimensions, and one design decision you made and why.
-- [ ] 10 min — Applications check. Any recruiter reply gets answered today, not tomorrow.
+**Open:** `workspace/day-12-outreach.md`
 
-**Say It Out Loud:** 90-second summary of weeks 1–2, as an interview answer.
+**PHONE (40 min)**
+- [ ] 20 min — **Review queue, all of it.** Grade every card due, tap Next 8, repeat until the overdue count is zero. This is the whole point of the day.
+- [ ] 10 min — **Agency outreach.** *(Carried from the written-off Day 7. It is the only block in month 1 that produces interviews.)* Message three of the five agencies in `tracking/applications.md` — Circle, Harnham, Robert Half, Bristow Holland, Hays. Two sentences each: what you are targeting, and what you have built. Ask every one: *"for the roles I'm targeting, what's the single biggest gap in my profile right now?"*
+- [ ] 10 min — **Week 2 out loud.** Sixty seconds, as if answering "so what have you been working on?" Cover window functions, the star schema and one defect you found. Time it. Anything over ninety seconds gets cut.
 
-**Weekly checkpoint:** Claude Code adjusts week 3.
+**Say It Out Loud:** "I've spent the week on SQL analytics and dimensional modelling — window functions for ranking and running totals, and star schema design for reporting."
+
+**Adds to review queue:** Your 60-second answer to "so what have you been working on?" — out loud, timed, no notes
 
 ---
-
-# WEEK 3 — DAX, dashboards, portfolio artifact 1
 
 ## Day 15 — DAX: measures vs calculated columns
-*Dataset: your Northwind model from Day 13.*
+**Theme:** The distinction that separates people who use Power BI from people who understand it.
 
 **Open:** `workspace/day-15-dax-basics.md`
 
-**DESK (70 min)**
-- [ ] 30 min — Five measures, then five calculated columns, on the same model.
-  1. Measure — Total Revenue. `SUMX` over OrderDetails: quantity × price × (1 − discount). *(Should total £448,386,633.17 with no filters.)*
-  2. Measure — Total Quantity.
-  3. Measure — Order Count. *(16,282)*
-  4. Measure — Average Order Value. *(£27,538.79)*
-  5. Measure — Distinct Customer Count. *(93)*
-  6. Column — line total on the fact table.
-  7. Column — price band (`High` / `Medium` / `Low`) on Products.
-  8. Column — order year on the date table.
-  9. Column — full name, first and last concatenated, on Employees.
-  10. Column — `Yes`/`No` flag for whether a row was discounted. *(Only 0.1% of lines are discounted in this build — worth knowing before you build a discount analysis on it.)*
-- [ ] 25 min — `SUM` vs `SUMX`, `COUNTROWS`, `DISTINCTCOUNT`, `DIVIDE`.
-  1. Build Average Order Value with `/` and then with `DIVIDE`. Filter the visual down to something that returns no rows and watch what each one does.
-  2. Write the one-line rule for when `SUM` cannot do the job and you need `SUMX`.
-- [ ] 15 min — The rule for measure vs calculated column, in your own words, in the workspace file. Then say which of your ten above you would delete if the model got slow, and why.
+**DESK (100 min)**
+- [ ] 20 min — Write the same calculation twice — once as a calculated column, once as a measure. Put both on a visual. Write down what differs, and when each is evaluated.
+- [ ] 25 min — Eight measures: total revenue, total quantity, order count, distinct customers, average order value, revenue per customer, average line value, and freight total. **Check three of them against SQL** — total revenue **£448,386,633.17**, order count **16,282**, distinct customers **93**.
+- [ ] 20 min — **Break one on purpose.** Write a measure that returns the wrong answer because it aggregates at the wrong grain — average of an average. Then fix it. *(You hit exactly this on Day 6 and could not say why it was wrong.)*
+- [ ] 20 min — Format every measure: currency, thousands separators, decimal places. Then write one sentence on why an unformatted number costs you credibility in a meeting.
+- [ ] 15 min — **Pipeline.** Two more applications, and reply to any agency that came back.
 
-**PHONE (25 min)**
-- [ ] 10 min — Review queue.
-- [ ] 15 min — Watch one DAX fundamentals video.
+**PHONE (40 min)**
+- [ ] 20 min — Review queue.
+- [ ] 20 min — Say aloud, in business language: what a measure is, what a calculated column is, and which one costs memory.
 
-**Say It Out Loud:** "Calculated columns compute once at refresh and sit in memory; measures compute at query time in filter context. The wrong choice gives you a slow report or a wrong one."
+**Say It Out Loud:** "A calculated column is computed once at refresh and stored in the model. A measure is computed at query time, in the filter context of the visual — which is why measures respond to slicers and columns do not."
 
-**Adds to review queue:** When can SUM not do the job, so you need SUMX? Give the Northwind revenue example · Measure or calculated column? Say the rule, then say which of your ten you would delete first if the model got slow · What does DIVIDE do that `/` does not?
+**Adds to review queue:** Say the difference between a measure and a calculated column, including when each is evaluated and which one costs model memory · Why is the average of an average wrong, and what do you compute instead?
 
 ---
 
 ## Day 16 — DAX: CALCULATE and filter context
-**Theme:** The hardest concept in Power BI. Expect discomfort — that is the day working, not failing.
+**Theme:** `CALCULATE` is the whole language. Everything else is arithmetic.
 
 **Open:** `workspace/day-16-calculate.md`
 
-**DESK (75 min)**
-- [ ] 35 min — Ten `CALCULATE` variations on Total Revenue, in order. Each one is one line.
-  1. Revenue for Beverages only. *(£92,163,184.18)*
-  2. Revenue for customers in Germany.
-  3. Revenue for 2016 only. *(£40,568,672)*
-  4. Revenue for Beverages **and** Confections together.
-  5. Revenue for everything **except** Beverages.
-  6. Revenue where unit price is above £50.
-  7. Revenue for Beverages in 2016 — two filters at once.
-  8. Revenue for Beverages **or** German customers. *(This one needs `FILTER`. Work out why the simple form can't express it.)*
-  9. Revenue for the High price band, reusing your Day 15 column.
-  10. Put measure 1 in a visual sliced by category, and look at the Confections row. Say which filter won and why.
-- [ ] 25 min — `ALL`, `ALLEXCEPT`, `FILTER`. Build a **% of total revenue** measure and put it in a table by category. *(The percentages must sum to 100. If they don't, your `ALL` is in the wrong place.)*
-- [ ] 15 min — Explain filter context in writing, under 100 words, no jargon, in the workspace file. Then read it aloud and cut anything a non-technical manager would not follow.
+**DESK (100 min)**
+- [ ] 25 min — Five `CALCULATE` measures with simple filter arguments — revenue for one category, one year, one country, one employee, one shipper. Say aloud what the filter argument *replaces* rather than adds.
+- [ ] 25 min — `ALL`, `ALLEXCEPT` and `REMOVEFILTERS`. Build a "% of total" measure and a "% of category" measure. Both must total 100% when you check them.
+- [ ] 20 min — **Row context vs filter context.** Write the one measure that needs `SUMX` rather than `SUM`, and say out loud why iterating is required. Revenue is the obvious case: `SUMX([Order Details], UnitPrice * Quantity * (1 - Discount))`.
+- [ ] 20 min — **Break it, then explain it.** Put a measure inside a visual filtered two ways that contradict each other. Predict the number before you look, then explain the result you actually got.
+- [ ] 10 min — **Pipeline.** Two more applications.
 
-**PHONE (25 min)**
-- [ ] 10 min — Review queue.
-- [ ] 15 min — Second pass on filter context from a different source. This concept genuinely needs two explanations — that is not you being slow.
+**PHONE (40 min)**
+- [ ] 20 min — Review queue.
+- [ ] 20 min — Re-explain `CALCULATE` in one sentence, in the words you would use with a manager who does not write DAX.
 
-**Say It Out Loud:** "CALCULATE modifies the filter context a measure evaluates in. That's the whole idea — everything else in DAX is a variation on it."
+**Say It Out Loud:** "CALCULATE evaluates an expression in a filter context you modify — and its filter arguments replace the existing filter on that column rather than narrowing it."
 
-**Adds to review queue:** Say what CALCULATE does to filter context in one sentence — the version you would say to a manager, not to an analyst · Your % of total has to sum to 100. Say where ALL goes to make that true, and what ALLEXCEPT would have given you instead
+**Adds to review queue:** What does CALCULATE do? One sentence, in the words you'd use with a manager · When do you need SUMX instead of SUM, and what is the row context doing?
 
 ---
 
-## Day 17 — DAX: time intelligence
-*Dataset: your Northwind model.*
+## Day 17 — DAX: time intelligence + close the week
+**Theme:** Every management report is a comparison to last year.
 
 **Open:** `workspace/day-17-time-intelligence.md`
 
-**DESK (70 min)**
-- [ ] 25 min — YTD, QTD and MTD against your marked date dimension. Put all three in one table sliced by month.
-- [ ] 25 min — `SAMEPERIODLASTYEAR`, then a year-on-year variance measure and a YoY % measure. Slice by year. *(2022 £39.7m, 2023 £33.1m.)*
-  1. **That 2023 drop is not a drop.** The data stops on 28 Oct 2023, so 2023 is ten months against twelve. Write the sentence you would put on the dashboard so nobody reads it as a collapse in trading.
-  2. This is the single most common way a real YoY chart lies. Say out loud how you would check for it on a dataset you had never seen.
-- [ ] 20 min — Unmark the date table and watch time intelligence break. Write down exactly what changed and why, then mark it again.
+**DESK (100 min)**
+- [ ] 25 min — `SAMEPERIODLASTYEAR`, `DATEADD`, `TOTALYTD`. Build year-on-year revenue and a YTD measure. Check one against SQL: 2023 revenue is **£33,054,490.00**.
+- [ ] 20 min — Build a "% change vs last year" measure and handle the first year correctly — it has no prior year, so decide what a stakeholder sees instead of a blank. *(Same problem as the `LAG` NULL you met on Day 9.)*
+- [ ] 20 min — **Prove the date table earns its place.** Break the relationship to your date table and watch the time-intelligence measures fail. Write one line on why.
+- [ ] 20 min — **Week close.** In the workspace file, write the three things you could not do on Monday and can do now, with one concrete example each. This is CV and interview material, not journalling.
+- [ ] 15 min — **Pipeline.** Two more applications, and update every row's status in `tracking/applications.md`.
 
-**PHONE (25 min)**
-- [ ] 10 min — Review queue.
-- [ ] 15 min — Glossary: reporting and KPI terms.
+**PHONE (40 min)**
+- [ ] 20 min — Review queue.
+- [ ] 20 min — Say the whole week aloud in two minutes: window functions, the star, Power Query, the model, DAX. Time it.
 
-**Say It Out Loud:** "Time intelligence only works against a properly marked date dimension — and before I report a year-on-year fall I check whether the current period is complete."
+**Say It Out Loud:** "Time intelligence needs a marked date table with a continuous unbroken date range — without it, SAMEPERIODLASTYEAR has nothing to shift against."
 
-**Adds to review queue:** 2022 was £39.7m and 2023 was £33.1m. Say why that is not a 17% fall, and how you would check for it on a dataset you had never seen · Say what YTD, QTD and MTD each give you, and what breaks the moment the date table is unmarked
+**Adds to review queue:** Name the three functions you'd reach for to compare this year to last, and the one thing the model must have for any of them to work · Your first year has no prior year to compare against. Say what you show a stakeholder instead of a blank cell
 
 ---
 

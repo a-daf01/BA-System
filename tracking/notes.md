@@ -265,3 +265,126 @@ JOIN Employees e on o.EmployeeID = o.EmployeeID
 GROUP BY e.EmployeeID;
 
 we getting a lil confident i decided to see what I can do to show this as a clean neat query from everything I learned
+
+## 2026-08-21
+
+#### D09 desk 1.1
+
+**11:34** — I have gotten to this point already:
+SELECT p.ProductName, c.CategoryName, SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)) as [Total Revenue] FROM Products p
+JOIN [Order Details] od ON p.ProductID = od.ProductID
+JOIN Categories c ON p.CategoryID = c.CategoryID
+GROUP BY p.ProductName
+ORDER BY [Total Revenue] DESC;
+
+**11:35** — I understand it doesnt give me what I want yet but I am trying to figure out how to choose exactly 3 of each category so I will look it up now
+
+**11:44** — the solution it gave and explained to me was this:
+
+WITH RankedRevenue AS (
+    SELECT 
+        p.ProductName, 
+        c.CategoryName, 
+        SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)) AS [Total Revenue],
+        -- This ranks the products from highest to lowest revenue inside each category
+        ROW_NUMBER() OVER (
+            PARTITION BY c.CategoryName 
+            ORDER BY SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)) DESC
+        ) AS rank_num
+    FROM Products p
+    JOIN [Order Details] od ON p.ProductID = od.ProductID
+    JOIN Categories c ON p.CategoryID = c.CategoryID
+    GROUP BY p.ProductName, c.CategoryName
+)
+SELECT 
+    ProductName, 
+    CategoryName, 
+    [Total Revenue]
+FROM RankedRevenue
+WHERE rank_num <= 3
+ORDER BY CategoryName ASC, [Total Revenue] DESC;
+
+**11:48** — ok I think i understand this, test me on it sometimes in the next couple days
+
+**14:06** — note for the things about I use * to multiply in the sql but in here it makes the text italic so note that but also change it so we dont have this issue going forward
+
+#### D09 desk 1.2
+
+**14:02** — I wrapped it in a CTE because we need a temporary list for each category so we can pick only 3 from each, the CTE is so that we can pick just 3 from each list and the window function is to seperate and then organise by category.
+
+#### D09 desk 1.3
+
+**14:11** — for ROW_NUMBER() it would simply ignore them and just rank them as a unique position depending on the order it was queried regardless on if they tie or not, RANK() will simply make them share the rank and then skip the next rank and finally DENSE_RANK() will make them share the rank but won't skip the next rank, easiest way i could explain it as its how i understood it
+
+#### D09 desk 2.1
+
+**14:48** — I just did:
+
+SELECT * FROM ORDERS
+WHERE strftime('%Y', OrderDate) = '2016'
+ORDER BY OrderDate;
+
+and have no idea where to go from there
+
+**14:49** — I straight up looked up the answer and got:
+
+WITH MonthlyCounts AS (
+    SELECT 
+        strftime('%m', OrderDate) AS Month,
+        COUNT(OrderID) AS OrderCount
+    FROM Orders
+    WHERE strftime('%Y', OrderDate) = '2016'
+    GROUP BY Month
+)
+SELECT 
+    Month,
+    OrderCount,
+    -- This accumulates the monthly order counts in order of the months
+    SUM(OrderCount) OVER (
+        ORDER BY Month 
+        ROWS UNBOUNDED PRECEDING
+    ) AS RunningTotal
+FROM MonthlyCounts
+ORDER BY Month ASC;
+
+now I will try to figure out how each part works
+
+**14:56** — ok i somewhat understand it now
+
+**15:07** — I rewrote it from my head to ensure it:
+
+WITH MonthCount AS (
+	SELECT strftime('%m', OrderDate) AS Month, COUNT(OrderID) AS OrderCount FROM Orders
+	WHERE strftime('%Y', OrderDate) = '2016'
+	GROUP BY Month)
+	
+SELECT Month, OrderCount,
+SUM(OrderCount) OVER (
+ORDER BY Month) AS RunningTotal
+FROM MonthCount
+ORDER BY Month;
+
+#### D09 desk 2.2
+
+**12:10** — WITH MonthlyCounts AS (
+    SELECT 
+        strftime('%m', OrderDate) AS Month,
+        COUNT(OrderID) AS OrderCount
+    FROM Orders
+    WHERE strftime('%Y', OrderDate) = '2016'
+    GROUP BY Month
+)
+SELECT 
+    Month,
+    OrderCount,
+    -- This calculates the average of the current row and the 2 rows right above it
+    AVG(OrderCount) OVER (
+        ORDER BY Month 
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+    ) AS ThreeMonthRollingAvg
+FROM MonthlyCounts
+ORDER BY Month ASC;
+
+**12:11** — obviously I just looked up the answer but I get it, instead of SUM() obviously we use AVG() to get the average, ROWS BETWEEN 2 PRECEDING AND CURRENT ROW to have it only read the current row and the 2 previous to it for counting the average
+
+**15:08** — no clue where to start so im just looking it up, i dont even know what a moving average is
